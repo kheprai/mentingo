@@ -150,6 +150,22 @@ export interface MFAVerifyResponse {
   };
 }
 
+export interface CreateMagicLinkBody {
+  email: string;
+}
+
+export interface CreateMagicLinkResponse {
+  data: {
+    message: string;
+  };
+}
+
+export interface HandleMagicLinkResponse {
+  data: {
+    message: string;
+  };
+}
+
 export interface GetPublicGlobalSettingsResponse {
   data: {
     unregisteredUserCoursesAccessibility: boolean;
@@ -3049,7 +3065,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3058,7 +3074,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3067,7 +3083,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3076,7 +3092,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3128,7 +3144,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3137,7 +3153,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3146,7 +3162,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3155,7 +3171,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3186,7 +3202,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3195,7 +3211,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3204,7 +3220,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3213,7 +3229,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3363,7 +3379,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3372,7 +3389,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3381,7 +3399,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3390,7 +3409,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3438,7 +3458,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3447,7 +3468,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3456,7 +3478,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3465,7 +3488,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3492,7 +3516,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3501,7 +3526,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3510,7 +3536,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3519,7 +3546,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3984,6 +4012,42 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AuthControllerCreateMagicLink
+     * @request POST:/api/auth/magic-link/create
+     */
+    authControllerCreateMagicLink: (data: CreateMagicLinkBody, params: RequestParams = {}) =>
+      this.request<CreateMagicLinkResponse, any>({
+        path: `/api/auth/magic-link/create`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AuthControllerHandleMagicLink
+     * @request GET:/api/auth/magic-link/verify
+     */
+    authControllerHandleMagicLink: (
+      query: {
+        token: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<HandleMagicLinkResponse, any>({
+        path: `/api/auth/magic-link/verify`,
+        method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -7530,6 +7594,19 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name NewsControllerGetNewsResource
+     * @request GET:/api/news/news-resource/{resourceId}
+     */
+    newsControllerGetNewsResource: (resourceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/news/news-resource/${resourceId}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name NewsControllerGetNews
      * @request GET:/api/news/{id}
      */
@@ -7844,6 +7921,19 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "GET",
         query: query,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ArticlesControllerGetArticleResource
+     * @request GET:/api/articles/articles-resource/{resourceId}
+     */
+    articlesControllerGetArticleResource: (resourceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/articles/articles-resource/${resourceId}`,
+        method: "GET",
         ...params,
       }),
 
