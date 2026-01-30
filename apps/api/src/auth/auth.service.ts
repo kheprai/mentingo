@@ -1,3 +1,5 @@
+import { createHmac } from "node:crypto";
+
 import {
   BadRequestException,
   ConflictException,
@@ -50,7 +52,6 @@ import { ResetPasswordService } from "./reset-password.service";
 import { TokenService } from "./token.service";
 
 import type { CreatePasswordBody } from "./schemas/create-password.schema";
-import type { MagicLinkToken } from "./types";
 import type { Response } from "express";
 import type { CommonUser } from "src/common/schemas/common-user.schema";
 import type { CurrentUser } from "src/common/types/current-user.type";
@@ -59,6 +60,8 @@ import type { ProviderLoginUserType } from "src/utils/types/provider-login-user.
 
 @Injectable()
 export class AuthService {
+  private readonly ENCRYPTION_KEY: Buffer;
+
   constructor(
     @Inject("DB") private readonly db: DatabasePg,
     @Inject(forwardRef(() => UserService)) private readonly userService: UserService,
@@ -70,7 +73,9 @@ export class AuthService {
     private settingsService: SettingsService,
     private eventBus: EventBus,
     private tokenService: TokenService,
-  ) {}
+  ) {
+    this.ENCRYPTION_KEY = Buffer.from(process.env.MASTER_KEY!, "base64");
+  }
 
   public async register({
     email,
@@ -592,7 +597,7 @@ export class AuthService {
     const defaultEmailSettings = await this.emailService.getDefaultEmailProperties(user.id);
 
     const magicLinkEmail = new MagicLinkEmail({
-      magicLink: `${CORS_ORIGIN}/auth/login?token=${magicLinkToken.token}`,
+      magicLink: `${CORS_ORIGIN}/auth/login?token=${magicLinkToken}`,
       ...defaultEmailSettings,
     });
 
@@ -611,11 +616,13 @@ export class AuthService {
 
     const dateNow = new Date();
 
+    const hashedToken = this.hashMagicLinkToken(token);
+
     const { user, accessToken, refreshToken } = await this.db.transaction(async (trx) => {
       const [magicLinkToken] = await trx
         .select()
         .from(magicLinkTokens)
-        .where(eq(magicLinkTokens.token, token))
+        .where(eq(magicLinkTokens.token, hashedToken))
         .limit(1)
         .for("update");
 
@@ -667,14 +674,14 @@ export class AuthService {
     };
   }
 
-  async createMagicLinkToken(userId: UUIDType): Promise<MagicLinkToken> {
+  async createMagicLinkToken(userId: UUIDType): Promise<string> {
     const token = nanoid(64);
-    const hashedToken = await bcrypt.hash(token, 10);
+    const hashedToken = this.hashMagicLinkToken(token);
 
     const expiryDate = new Date();
     expiryDate.setTime(expiryDate.getTime() + MAGIC_LINK_EXPIRATION_TIME);
 
-    const [magicLinkToken] = await this.db
+    await this.db
       .insert(magicLinkTokens)
       .values({
         userId,
@@ -683,6 +690,10 @@ export class AuthService {
       })
       .returning();
 
-    return magicLinkToken;
+    return token;
+  }
+
+  hashMagicLinkToken(token: string): string {
+    return createHmac("sha256", this.ENCRYPTION_KEY).update(token, "utf8").digest("hex");
   }
 }
