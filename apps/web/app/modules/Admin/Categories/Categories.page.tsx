@@ -58,6 +58,11 @@ import type { GetAllCategoriesResponse } from "~/api/generated-api";
 
 type TCategory = GetAllCategoriesResponse["data"][number];
 
+const getCategoryTitle = (title: string | Record<string, string>, language: string): string => {
+  if (typeof title === "string") return title;
+  return title[language] || title.en || Object.values(title)[0] || "";
+};
+
 export const meta: MetaFunction = ({ matches }) => setPageTitle(matches, "pages.categories");
 
 export const clientLoader = async () => {
@@ -78,7 +83,7 @@ const Categories = () => {
   const { mutate: deleteCategory } = useDeleteCategory();
   const [isPending, startTransition] = useTransition();
   const { data } = useCategoriesSuspense(searchParams);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = React.useState<number>(0);
 
@@ -139,7 +144,9 @@ const Categories = () => {
         <SortButton<TCategory> column={column}>{t("adminCategoriesView.field.title")}</SortButton>
       ),
       cell: ({ row }) => (
-        <div className="max-w-md truncate">{formatHtmlString(row.original.title)}</div>
+        <div className="max-w-md truncate">
+          {formatHtmlString(getCategoryTitle(row.original.title, i18n.language))}
+        </div>
       ),
     },
     {

@@ -161,6 +161,30 @@ export class EnvService {
     return { enabled };
   }
 
+  async getMercadoPagoPublicKey() {
+    const mercadoPagoPublicKey = await this.getEnv("VITE_MERCADOPAGO_PUBLIC_KEY")
+      .then(({ value }) => value)
+      .catch(() => process.env.VITE_MERCADOPAGO_PUBLIC_KEY ?? null);
+
+    return mercadoPagoPublicKey;
+  }
+
+  async getMercadoPagoConfigured() {
+    const [accessToken, publicKey] = await Promise.all([
+      this.getEnv("MERCADOPAGO_ACCESS_TOKEN")
+        .then(({ value }) => value)
+        .catch(() => process.env.MERCADOPAGO_ACCESS_TOKEN),
+
+      this.getEnv("VITE_MERCADOPAGO_PUBLIC_KEY")
+        .then(({ value }) => value)
+        .catch(() => process.env.VITE_MERCADOPAGO_PUBLIC_KEY),
+    ]);
+
+    const enabled = !!(accessToken && publicKey);
+
+    return { enabled };
+  }
+
   async getEnvSetup(userId: string) {
     const allKeys = Object.values(SERVICE_GROUPS).flat();
 

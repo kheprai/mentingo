@@ -38,6 +38,11 @@ import { useAddCourseForm } from "./hooks/useAddCourseForm";
 
 import type { MetaFunction } from "@remix-run/react";
 
+const getCategoryTitle = (title: string | Record<string, string>, language: string): string => {
+  if (typeof title === "string") return title;
+  return title?.[language] || title?.en || Object.values(title || {})[0] || "";
+};
+
 export const meta: MetaFunction = ({ matches }) => setPageTitle(matches, "pages.createNewCourse");
 
 const AddCourse = () => {
@@ -46,7 +51,7 @@ const AddCourse = () => {
   const [isUploading, setIsUploading] = useState(false);
   const { mutateAsync: uploadFile } = useUploadFile();
   const { isValid: isFormValid } = form.formState;
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [displayThumbnailUrl, setDisplayThumbnailUrl] = useState<string | undefined>(undefined);
@@ -140,15 +145,18 @@ const AddCourse = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem
-                              value={category.id}
-                              key={category.id}
-                              data-testid={`category-option-${category.title}`}
-                            >
-                              {category.title}
-                            </SelectItem>
-                          ))}
+                          {categories.map((category) => {
+                            const categoryTitle = getCategoryTitle(category.title, i18n.language);
+                            return (
+                              <SelectItem
+                                value={category.id}
+                                key={category.id}
+                                data-testid={`category-option-${categoryTitle}`}
+                              >
+                                {categoryTitle}
+                              </SelectItem>
+                            );
+                          })}
                           <InlineCategoryCreationForm
                             onCategoryCreated={(categoryId) => {
                               form.setValue("categoryId", categoryId, { shouldValidate: true });

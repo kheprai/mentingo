@@ -17,10 +17,14 @@ export const createCategoryFactory = (db: DatabasePg) => {
     });
 
     const randomHex = Math.floor(Math.random() * 100000000).toString(16);
+    const departmentName = faker.commerce.department();
 
     return {
       id: faker.string.uuid(),
-      title: faker.commerce.department() + randomHex,
+      title: {
+        en: departmentName + randomHex,
+        es: departmentName + randomHex + " (ES)",
+      },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       archived: false,

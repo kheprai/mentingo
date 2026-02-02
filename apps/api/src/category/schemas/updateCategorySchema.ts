@@ -7,7 +7,7 @@ import type { CategoryInsert } from "./createCategorySchema";
 export const categoryUpdateSchema = Type.Partial(
   Type.Object({
     id: UUIDSchema,
-    title: Type.String(),
+    title: Type.Record(Type.String(), Type.String()),
     archived: Type.Boolean(),
   }),
 );

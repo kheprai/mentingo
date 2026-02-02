@@ -6,7 +6,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { EventBus } from "@nestjs/cqrs";
-import { and, count, eq, ilike, inArray, like } from "drizzle-orm";
+import { and, count, eq, inArray, sql } from "drizzle-orm";
 import { isEqual } from "lodash";
 
 import { DatabasePg } from "src/common";
@@ -14,7 +14,7 @@ import { getSortOptions } from "src/common/helpers/getSortOptions";
 import { addPagination, DEFAULT_PAGE_SIZE } from "src/common/pagination";
 import { CreateCategoryEvent, DeleteCategoryEvent, UpdateCategoryEvent } from "src/events";
 import { LocalizationService } from "src/localization/localization.service";
-import { categories, courses } from "src/storage/schema";
+import { categories } from "src/storage/schema";
 import { USER_ROLES, type UserRole } from "src/user/schemas/userRoles";
 
 import {
@@ -101,12 +101,20 @@ export class CategoryService {
   }
 
   public async createCategory(createCategoryBody: CategoryInsert, currentUser: CurrentUser) {
-    const category = await this.db.query.categories.findFirst({
-      where: ({ title }) => eq(title, createCategoryBody.title),
-    });
+    // Check for duplicate category titles in any language
+    const titleValues = Object.values(createCategoryBody.title);
+    for (const titleValue of titleValues) {
+      const existingCategory = await this.db
+        .select()
+        .from(categories)
+        .where(
+          sql`EXISTS (SELECT 1 FROM jsonb_each_text(${categories.title}) WHERE value ILIKE ${titleValue})`,
+        )
+        .limit(1);
 
-    if (category) {
-      throw new ConflictException("Category already exists");
+      if (existingCategory.length > 0) {
+        throw new ConflictException(`Category with title "${titleValue}" already exists`);
+      }
     }
 
     const [newCategory] = await this.db.insert(categories).values(createCategoryBody).returning();
@@ -161,10 +169,6 @@ export class CategoryService {
     return updatedCategory;
   }
 
-  private createLikeFilter(filter: string) {
-    return like(categories.title, `%${filter.toLowerCase()}%`);
-  }
-
   private getColumnToSortBy(sort: CategorySortField, isAdmin: boolean) {
     if (!isAdmin) return categories.title;
 
@@ -177,45 +181,26 @@ export class CategoryService {
   }
 
   async deleteCategory(id: UUIDType, currentUser: CurrentUser) {
-    try {
-      const [category] = await this.db.select().from(categories).where(eq(categories.id, id));
+    const [category] = await this.db.select().from(categories).where(eq(categories.id, id));
 
-      if (!category) {
-        throw new NotFoundException("Category not found");
-      }
-
-      const coursesWithCategory = await this.db
-        .select({
-          id: courses.id,
-          title: this.localizationService.getLocalizedSqlField(courses.title),
-        })
-        .from(courses)
-        .where(eq(courses.categoryId, id));
-
-      if (coursesWithCategory.length > 0) {
-        throw new UnprocessableEntityException(
-          `Cannot delete category. It is assigned to ${
-            coursesWithCategory.length
-          } course(s): ${coursesWithCategory.map((c) => c.title).join(", ")}`,
-        );
-      }
-      await this.db.delete(categories).where(eq(categories.id, id));
-
-      this.eventBus.publish(
-        new DeleteCategoryEvent({
-          categoryId: category.id,
-          actor: currentUser,
-          categoryTitle: category.title,
-        }),
-      );
-    } catch (error) {
-      console.error(error);
+    if (!category) {
       throw new NotFoundException("Category not found");
     }
+
+    // Delete the category - courses will have their categoryId set to NULL automatically
+    await this.db.delete(categories).where(eq(categories.id, id));
+
+    this.eventBus.publish(
+      new DeleteCategoryEvent({
+        categoryId: category.id,
+        actor: currentUser,
+        categoryTitle: category.title,
+      }),
+    );
   }
 
   async deleteManyCategories(categoryIds: string[], currentUser: CurrentUser): Promise<string> {
-    let deletedCategories: { id: UUIDType; title: string }[] = [];
+    let deletedCategories: { id: UUIDType; title: Record<string, string> }[] = [];
 
     const message = await this.db.transaction(async (tx) => {
       const existingCategories = await tx
@@ -227,26 +212,7 @@ export class CategoryService {
         throw new NotFoundException("No categories found to delete");
       }
 
-      const categoriesWithCourses = await tx
-        .select({
-          categoryId: courses.categoryId,
-          courseTitle: this.localizationService.getLocalizedSqlField(courses.title),
-        })
-        .from(courses)
-        .where(
-          inArray(
-            courses.categoryId,
-            existingCategories.map((cat) => cat.id),
-          ),
-        );
-
-      if (categoriesWithCourses.length > 0) {
-        const courseTitles = [...new Set(categoriesWithCourses.map((c) => c.courseTitle))];
-        throw new UnprocessableEntityException(
-          `Cannot delete categories. Some are assigned to courses: ${courseTitles.join(", ")}`,
-        );
-      }
-
+      // Delete the categories - courses will have their categoryId set to NULL automatically
       await tx.delete(categories).where(
         inArray(
           categories.id,
@@ -256,7 +222,9 @@ export class CategoryService {
 
       deletedCategories = existingCategories.map((cat) => ({ id: cat.id, title: cat.title }));
 
-      const deletedTitles = existingCategories.map((cat) => cat.title);
+      const deletedTitles = existingCategories.map(
+        (cat) => cat.title.en || Object.values(cat.title)[0],
+      );
       return `Successfully deleted categories: ${deletedTitles.join(", ")}`;
     });
 
@@ -275,7 +243,7 @@ export class CategoryService {
 
   private buildCategorySnapshot(category: {
     id: UUIDType;
-    title?: string | null;
+    title?: Record<string, string> | null;
     archived?: boolean | null;
   }): CategoryActivityLogSnapshot {
     return {
@@ -295,7 +263,10 @@ export class CategoryService {
   private getFiltersConditions(filters: CategoryFilterSchema) {
     const conditions = [];
     if (filters.title) {
-      conditions.push(ilike(categories.title, `%${filters.title.toLowerCase()}%`));
+      // Search in any language value of the JSONB title field
+      conditions.push(
+        sql`EXISTS (SELECT 1 FROM jsonb_each_text(${categories.title}) WHERE value ILIKE ${`%${filters.title.toLowerCase()}%`})`,
+      );
     }
 
     if (filters.archived) {

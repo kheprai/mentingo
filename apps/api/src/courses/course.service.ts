@@ -201,7 +201,7 @@ export class CourseService {
         thumbnailUrl: courses.thumbnailS3Key,
         author: sql<string>`CONCAT(${users.firstName} || ' ' || ${users.lastName})`,
         authorAvatarUrl: sql<string>`${users.avatarReference}`,
-        category: sql<string>`${categories.title}`,
+        category: this.localizationService.getFieldByLanguage(categories.title, language),
         enrolledParticipantCount: sql<number>`COALESCE(${coursesSummaryStats.freePurchasedCount} + ${coursesSummaryStats.paidPurchasedCount}, 0)`,
         courseChapterCount: courses.chapterCount,
         priceInCents: courses.priceInCents,
@@ -210,6 +210,7 @@ export class CourseService {
         createdAt: courses.createdAt,
         stripeProductId: courses.stripeProductId,
         stripePriceId: courses.stripePriceId,
+        mercadopagoProductId: courses.mercadopagoProductId,
       })
       .from(courses)
       .leftJoin(categories, eq(courses.categoryId, categories.id))
@@ -307,7 +308,7 @@ export class CourseService {
         .select(this.getSelectField(language))
         .from(studentCourses)
         .innerJoin(courses, eq(studentCourses.courseId, courses.id))
-        .innerJoin(categories, eq(courses.categoryId, categories.id))
+        .leftJoin(categories, eq(courses.categoryId, categories.id))
         .leftJoin(users, eq(courses.authorId, users.id))
         .leftJoin(coursesSummaryStats, eq(courses.id, coursesSummaryStats.courseId))
         .leftJoin(
@@ -349,7 +350,7 @@ export class CourseService {
         .select({ totalItems: countDistinct(courses.id) })
         .from(studentCourses)
         .innerJoin(courses, eq(studentCourses.courseId, courses.id))
-        .innerJoin(categories, eq(courses.categoryId, categories.id))
+        .leftJoin(categories, eq(courses.categoryId, categories.id))
         .leftJoin(users, eq(courses.authorId, users.id))
         .where(and(...conditions));
 
@@ -563,7 +564,7 @@ export class CourseService {
           author: sql<string>`CONCAT(${users.firstName} || ' ' || ${users.lastName})`,
           authorEmail: sql<string>`${users.email}`,
           authorAvatarUrl: sql<string>`${users.avatarReference}`,
-          category: sql<string>`${categories.title}`,
+          category: this.localizationService.getFieldByLanguage(categories.title, language),
           enrolled: sql<boolean>`FALSE`,
           enrolledParticipantCount: sql<number>`COALESCE(${coursesSummaryStats.freePurchasedCount} + ${coursesSummaryStats.paidPurchasedCount}, 0)`,
           courseChapterCount: courses.chapterCount,
@@ -693,7 +694,8 @@ export class CourseService {
         id: courses.id,
         title: this.localizationService.getLocalizedSqlField(courses.title, language),
         thumbnailS3Key: sql<string>`${courses.thumbnailS3Key}`,
-        category: sql<string>`${categories.title}`,
+        category: this.localizationService.getFieldByLanguage(categories.title, language),
+        categoryId: courses.categoryId,
         description: this.localizationService.getLocalizedSqlField(courses.description, language),
         courseChapterCount: courses.chapterCount,
         completedChapterCount: sql<number>`CASE WHEN ${studentCourses.status} = ${COURSE_ENROLLMENT.ENROLLED} THEN COALESCE(${studentCourses.finishedChapterCount}, 0) ELSE 0 END`,
@@ -713,6 +715,7 @@ export class CourseService {
           )`,
         stripeProductId: courses.stripeProductId,
         stripePriceId: courses.stripePriceId,
+        mercadopagoProductId: courses.mercadopagoProductId,
         availableLocales: sql<SupportedLanguages[]>`${courses.availableLocales}`,
         baseLanguage: sql<SupportedLanguages>`${courses.baseLanguage}`,
         dueDate: sql<string | null>`TO_CHAR(${groupCourses.dueDate}, 'YYYY-MM-DD"T"HH24:MI:SS"Z"')`,
@@ -937,7 +940,7 @@ export class CourseService {
         id: courses.id,
         title: this.localizationService.getFieldByLanguage(courses.title, language),
         thumbnailS3Key: sql<string>`COALESCE(${courses.thumbnailS3Key}, '')`,
-        category: categories.title,
+        category: this.localizationService.getFieldByLanguage(categories.title, language),
         categoryId: categories.id,
         description: this.localizationService.getFieldByLanguage(courses.description, language),
         courseChapterCount: courses.chapterCount,
@@ -950,7 +953,7 @@ export class CourseService {
         baseLanguage: sql<SupportedLanguages>`${courses.baseLanguage}`,
       })
       .from(courses)
-      .innerJoin(categories, eq(courses.categoryId, categories.id))
+      .leftJoin(categories, eq(courses.categoryId, categories.id))
       .where(and(eq(courses.id, id)));
 
     if (!course) throw new NotFoundException("Course not found");
@@ -1124,7 +1127,7 @@ export class CourseService {
         author: sql<string>`CONCAT(${users.firstName} || ' ' || ${users.lastName})`,
         authorEmail: sql<string>`${users.email}`,
         authorAvatarUrl: sql<string>`${users.avatarReference}`,
-        category: sql<string>`${categories.title}`,
+        category: this.localizationService.getFieldByLanguage(categories.title, language),
         enrolled: sql<boolean>`CASE WHEN ${studentCourses.status} = ${COURSE_ENROLLMENT.ENROLLED} THEN true ELSE false END`,
         enrolledParticipantCount: sql<number>`0`,
         courseChapterCount: courses.chapterCount,
@@ -2349,7 +2352,7 @@ export class CourseService {
       author: sql<string>`CONCAT(${users.firstName} || ' ' || ${users.lastName})`,
       authorEmail: sql<string>`${users.email}`,
       authorAvatarUrl: sql<string>`${users.avatarReference}`,
-      category: sql<string>`${categories.title}`,
+      category: this.localizationService.getFieldByLanguage(categories.title, language),
       enrolled: sql<boolean>`CASE WHEN ${studentCourses.studentId} IS NOT NULL THEN TRUE ELSE FALSE END`,
       enrolledParticipantCount: sql<number>`COALESCE(${coursesSummaryStats.freePurchasedCount} + ${coursesSummaryStats.paidPurchasedCount}, 0)`,
       courseChapterCount: courses.chapterCount,
@@ -3100,6 +3103,7 @@ export class CourseService {
         settings: courses.settings,
         stripeProductId: courses.stripeProductId,
         stripePriceId: courses.stripePriceId,
+        mercadopagoProductId: courses.mercadopagoProductId,
       })
       .from(courses)
       .where(eq(courses.id, courseId));

@@ -105,9 +105,10 @@ export class LocalizationService {
   }
 
   getFieldByLanguage(fieldColumn: AnyPgColumn, language: SupportedLanguages) {
+    const langExpr = sql`${language}`;
     return sql<string>`
         COALESCE(
-            ${fieldColumn}->>${language}::text,
+            ${fieldColumn}::jsonb ->> ${langExpr}::text,
             ''
         )
     `;

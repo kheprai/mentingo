@@ -4,7 +4,7 @@ import type { CurrentUser } from "src/common/types/current-user.type";
 type DeleteCategoryData = {
   categoryId: UUIDType;
   actor: CurrentUser;
-  categoryTitle?: string | null;
+  categoryTitle?: Record<string, string> | null;
 };
 
 export class DeleteCategoryEvent {

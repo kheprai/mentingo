@@ -13,6 +13,11 @@ import {
 
 import type { GetAllCategoriesResponse } from "~/api/generated-api";
 
+const getCategoryTitle = (title: string | Record<string, string>, language: string): string => {
+  if (typeof title === "string") return title;
+  return title[language] || title.en || Object.values(title)[0] || "";
+};
+
 export type FilterState = {
   searchQuery: string;
   category: string;
@@ -37,7 +42,7 @@ export function CoursesFilterBar({
   isLoading,
   resultsCount,
 }: CoursesFilterBarProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const hasActiveFilters =
     filters.searchQuery !== "" ||
@@ -78,11 +83,14 @@ export function CoursesFilterBar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("landing.courses.filters.allCategories")}</SelectItem>
-            {categories?.map((cat) => (
-              <SelectItem key={cat.id} value={cat.title}>
-                {cat.title}
-              </SelectItem>
-            ))}
+            {categories?.map((cat) => {
+              const categoryTitle = getCategoryTitle(cat.title, i18n.language);
+              return (
+                <SelectItem key={cat.id} value={categoryTitle}>
+                  {categoryTitle}
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
 

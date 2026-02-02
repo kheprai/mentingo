@@ -1054,6 +1054,7 @@ export interface GetAllCoursesResponse {
     hasFreeChapters?: boolean;
     stripeProductId?: string | null;
     stripePriceId?: string | null;
+    mercadopagoProductId?: string | null;
   }[];
   pagination: {
     totalItems: number;
@@ -1085,10 +1086,13 @@ export interface GetStudentCoursesResponse {
     hasFreeChapters?: boolean;
     stripeProductId?: string | null;
     stripePriceId?: string | null;
+    mercadopagoProductId?: string | null;
     completedChapterCount: number;
     enrolled?: boolean;
     dueDate: string | null;
     slug: string;
+    availableLocales: string[];
+    baseLanguage: string;
   }[];
   pagination: {
     totalItems: number;
@@ -1143,10 +1147,13 @@ export interface GetAvailableCoursesResponse {
     hasFreeChapters?: boolean;
     stripeProductId?: string | null;
     stripePriceId?: string | null;
+    mercadopagoProductId?: string | null;
     completedChapterCount: number;
     enrolled?: boolean;
     dueDate: string | null;
     slug: string;
+    availableLocales: string[];
+    baseLanguage: string;
   }[];
   pagination: {
     totalItems: number;
@@ -1178,10 +1185,13 @@ export interface GetContentCreatorCoursesResponse {
     hasFreeChapters?: boolean;
     stripeProductId?: string | null;
     stripePriceId?: string | null;
+    mercadopagoProductId?: string | null;
     completedChapterCount: number;
     enrolled?: boolean;
     dueDate: string | null;
     slug: string;
+    availableLocales: string[];
+    baseLanguage: string;
   }[];
 }
 
@@ -1190,9 +1200,8 @@ export interface GetCourseResponse {
     archived?: boolean;
     /** @format uuid */
     authorId?: string;
-    category: string;
-    /** @format uuid */
-    categoryId?: string;
+    category: string | null;
+    categoryId: string | null;
     chapters: {
       /** @format uuid */
       id: string;
@@ -1245,6 +1254,7 @@ export interface GetCourseResponse {
     slug: string;
     stripeProductId: string | null;
     stripePriceId: string | null;
+    mercadopagoProductId: string | null;
     availableLocales: ("en" | "es")[];
     baseLanguage: "en" | "es";
     dueDate: string | null;
@@ -1263,9 +1273,8 @@ export interface GetBetaCourseByIdResponse {
     archived?: boolean;
     /** @format uuid */
     authorId?: string;
-    category: string;
-    /** @format uuid */
-    categoryId?: string;
+    category: string | null;
+    categoryId: string | null;
     chapters: {
       /** @format uuid */
       id: string;
@@ -2763,7 +2772,7 @@ export interface GetAllCategoriesResponse {
   data: {
     /** @format uuid */
     id: string;
-    title: string;
+    title: string | object;
     archived: boolean | null;
     createdAt: string | null;
   }[];
@@ -2779,14 +2788,14 @@ export interface GetCategoryByIdResponse {
   data: {
     /** @format uuid */
     id: string;
-    title: string;
+    title: string | object;
     archived: boolean | null;
     createdAt: string | null;
   };
 }
 
 export interface CreateCategoryBody {
-  title: string;
+  title: object;
 }
 
 export interface CreateCategoryResponse {
@@ -2800,7 +2809,7 @@ export interface CreateCategoryResponse {
 export interface UpdateCategoryBody {
   /** @format uuid */
   id?: string;
-  title?: string;
+  title?: object;
   archived?: boolean;
 }
 
@@ -2808,7 +2817,7 @@ export interface UpdateCategoryResponse {
   data: {
     /** @format uuid */
     id: string;
-    title: string;
+    title: string | object;
     archived: boolean | null;
     createdAt: string | null;
   };
@@ -2825,6 +2834,133 @@ export type DeleteManyCategoriesBody = string[];
 export interface DeleteManyCategoriesResponse {
   data: {
     message: string;
+  };
+}
+
+export interface ProcessPaymentBody {
+  token: string;
+  amount: number;
+  description: string;
+  /** @default 1 */
+  installments?: number;
+  paymentMethodId: string;
+  /** @format email */
+  email: string;
+  /** @format uuid */
+  courseId: string;
+  /** @format uuid */
+  userId: string;
+  identification?: {
+    type: string;
+    number: string;
+  };
+}
+
+export interface ProcessPaymentResponse {
+  data: {
+    id: number;
+    status: string;
+    statusDetail?: string;
+    externalReference?: string;
+  };
+}
+
+export interface GetPaymentStatusResponse {
+  data: {
+    id: number;
+    status: string;
+    statusDetail?: string;
+    dateApproved?: string;
+    dateCreated: string;
+    paymentMethodId: string;
+    installments: number;
+    transactionAmount: number;
+    currency: string;
+  };
+}
+
+export interface HandleWebhookBody {
+  id?: number | string;
+  live_mode?: boolean;
+  type: string;
+  date_created?: string;
+  user_id?: number | string;
+  api_version?: string;
+  action?: string;
+  data: {
+    id: string | number;
+  };
+}
+
+export interface HandleWebhookResponse {
+  data: {
+    received: boolean;
+  };
+}
+
+export type BulkUpsertEnvBody = {
+  name: string;
+  value: string;
+}[];
+
+export interface GetFrontendSSOEnabledResponse {
+  data: {
+    google?: string;
+    microsoft?: string;
+    slack?: string;
+  };
+}
+
+export interface GetStripePublishableKeyResponse {
+  data: {
+    publishableKey: string | null;
+  };
+}
+
+export interface GetStripeConfiguredResponse {
+  data: {
+    enabled: boolean;
+  };
+}
+
+export interface GetMercadoPagoPublicKeyResponse {
+  data: {
+    publicKey: string | null;
+  };
+}
+
+export interface GetMercadoPagoConfiguredResponse {
+  data: {
+    enabled: boolean;
+  };
+}
+
+export interface GetAIConfiguredResponse {
+  data: {
+    enabled: boolean;
+  };
+}
+
+export interface GetIsConfigSetupResponse {
+  data: {
+    fullyConfigured: string[];
+    partiallyConfigured: {
+      service: string;
+      missingKeys: string[];
+    }[];
+    notConfigured: {
+      service: string;
+      missingKeys: string[];
+    }[];
+    hasIssues: boolean;
+    isWarningDismissed: boolean;
+  };
+}
+
+export interface GetEnvKeyResponse {
+  data: {
+    name: string;
+    value: string;
   };
 }
 
@@ -2948,60 +3084,6 @@ export interface MarkAnnouncementAsReadResponse {
   };
 }
 
-export type BulkUpsertEnvBody = {
-  name: string;
-  value: string;
-}[];
-
-export interface GetFrontendSSOEnabledResponse {
-  data: {
-    google?: string;
-    microsoft?: string;
-    slack?: string;
-  };
-}
-
-export interface GetStripePublishableKeyResponse {
-  data: {
-    publishableKey: string | null;
-  };
-}
-
-export interface GetStripeConfiguredResponse {
-  data: {
-    enabled: boolean;
-  };
-}
-
-export interface GetAIConfiguredResponse {
-  data: {
-    enabled: boolean;
-  };
-}
-
-export interface GetIsConfigSetupResponse {
-  data: {
-    fullyConfigured: string[];
-    partiallyConfigured: {
-      service: string;
-      missingKeys: string[];
-    }[];
-    notConfigured: {
-      service: string;
-      missingKeys: string[];
-    }[];
-    hasIssues: boolean;
-    isWarningDismissed: boolean;
-  };
-}
-
-export interface GetEnvKeyResponse {
-  data: {
-    name: string;
-    value: string;
-  };
-}
-
 export interface GetQAResponse {
   /** @format uuid */
   id: string;
@@ -3049,7 +3131,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3058,7 +3140,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3067,7 +3149,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3076,7 +3158,7 @@ export interface GetDraftNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3128,7 +3210,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3137,7 +3219,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3146,7 +3228,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3155,7 +3237,7 @@ export interface GetNewsResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3186,7 +3268,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3195,7 +3277,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3204,7 +3286,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3213,7 +3295,7 @@ export interface GetNewsListResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3363,7 +3445,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3372,7 +3455,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3381,7 +3465,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3390,7 +3475,8 @@ export type GetDraftArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3438,7 +3524,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3447,7 +3534,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3456,7 +3544,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3465,7 +3554,8 @@ export interface GetArticleResponse {
         /** @format uuid */
         id: string;
         fileUrl: string;
-        contentType: string;
+        contentType: string | null;
+        fileUrlError?: boolean;
         title?: string;
         description?: string;
         fileName?: string;
@@ -3492,7 +3582,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3501,7 +3592,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3510,7 +3602,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -3519,7 +3612,8 @@ export type GetArticlesResponse = {
       /** @format uuid */
       id: string;
       fileUrl: string;
-      contentType: string;
+      contentType: string | null;
+      fileUrlError?: boolean;
       title?: string;
       description?: string;
       fileName?: string;
@@ -7070,6 +7164,179 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name MercadoPagoControllerProcessPayment
+     * @request POST:/api/mercadopago/payment
+     */
+    mercadoPagoControllerProcessPayment: (data: ProcessPaymentBody, params: RequestParams = {}) =>
+      this.request<ProcessPaymentResponse, any>({
+        path: `/api/mercadopago/payment`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name MercadoPagoControllerGetPaymentStatus
+     * @request GET:/api/mercadopago/payment/{id}
+     */
+    mercadoPagoControllerGetPaymentStatus: (id: string, params: RequestParams = {}) =>
+      this.request<GetPaymentStatusResponse, any>({
+        path: `/api/mercadopago/payment/${id}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name MercadoPagoControllerHandleWebhook
+     * @request POST:/api/mercadopago/webhook
+     */
+    mercadoPagoControllerHandleWebhook: (data: HandleWebhookBody, params: RequestParams = {}) =>
+      this.request<HandleWebhookResponse, any>({
+        path: `/api/mercadopago/webhook`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerBulkUpsertEnv
+     * @request POST:/api/env/bulk
+     */
+    envControllerBulkUpsertEnv: (data: BulkUpsertEnvBody, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/env/bulk`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetFrontendSsoEnabled
+     * @request GET:/api/env/frontend/sso
+     */
+    envControllerGetFrontendSsoEnabled: (params: RequestParams = {}) =>
+      this.request<GetFrontendSSOEnabledResponse, any>({
+        path: `/api/env/frontend/sso`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetStripePublishableKey
+     * @request GET:/api/env/stripe/publishable-key
+     */
+    envControllerGetStripePublishableKey: (params: RequestParams = {}) =>
+      this.request<GetStripePublishableKeyResponse, any>({
+        path: `/api/env/stripe/publishable-key`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetStripeConfigured
+     * @request GET:/api/env/frontend/stripe
+     */
+    envControllerGetStripeConfigured: (params: RequestParams = {}) =>
+      this.request<GetStripeConfiguredResponse, any>({
+        path: `/api/env/frontend/stripe`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetMercadoPagoPublicKey
+     * @request GET:/api/env/mercadopago/public-key
+     */
+    envControllerGetMercadoPagoPublicKey: (params: RequestParams = {}) =>
+      this.request<GetMercadoPagoPublicKeyResponse, any>({
+        path: `/api/env/mercadopago/public-key`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetMercadoPagoConfigured
+     * @request GET:/api/env/frontend/mercadopago
+     */
+    envControllerGetMercadoPagoConfigured: (params: RequestParams = {}) =>
+      this.request<GetMercadoPagoConfiguredResponse, any>({
+        path: `/api/env/frontend/mercadopago`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetAiConfigured
+     * @request GET:/api/env/ai
+     */
+    envControllerGetAiConfigured: (params: RequestParams = {}) =>
+      this.request<GetAIConfiguredResponse, any>({
+        path: `/api/env/ai`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetIsConfigSetup
+     * @request GET:/api/env/config/setup
+     */
+    envControllerGetIsConfigSetup: (params: RequestParams = {}) =>
+      this.request<GetIsConfigSetupResponse, any>({
+        path: `/api/env/config/setup`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name EnvControllerGetEnvKey
+     * @request GET:/api/env/{envName}
+     */
+    envControllerGetEnvKey: (envName: string, params: RequestParams = {}) =>
+      this.request<GetEnvKeyResponse, any>({
+        path: `/api/env/${envName}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name ReportControllerDownloadSummaryReport
      * @request GET:/api/report/summary
      */
@@ -7251,105 +7518,6 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name EnvControllerBulkUpsertEnv
-     * @request POST:/api/env/bulk
-     */
-    envControllerBulkUpsertEnv: (data: BulkUpsertEnvBody, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/api/env/bulk`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name EnvControllerGetFrontendSsoEnabled
-     * @request GET:/api/env/frontend/sso
-     */
-    envControllerGetFrontendSsoEnabled: (params: RequestParams = {}) =>
-      this.request<GetFrontendSSOEnabledResponse, any>({
-        path: `/api/env/frontend/sso`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name EnvControllerGetStripePublishableKey
-     * @request GET:/api/env/stripe/publishable-key
-     */
-    envControllerGetStripePublishableKey: (params: RequestParams = {}) =>
-      this.request<GetStripePublishableKeyResponse, any>({
-        path: `/api/env/stripe/publishable-key`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name EnvControllerGetStripeConfigured
-     * @request GET:/api/env/frontend/stripe
-     */
-    envControllerGetStripeConfigured: (params: RequestParams = {}) =>
-      this.request<GetStripeConfiguredResponse, any>({
-        path: `/api/env/frontend/stripe`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name EnvControllerGetAiConfigured
-     * @request GET:/api/env/ai
-     */
-    envControllerGetAiConfigured: (params: RequestParams = {}) =>
-      this.request<GetAIConfiguredResponse, any>({
-        path: `/api/env/ai`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name EnvControllerGetIsConfigSetup
-     * @request GET:/api/env/config/setup
-     */
-    envControllerGetIsConfigSetup: (params: RequestParams = {}) =>
-      this.request<GetIsConfigSetupResponse, any>({
-        path: `/api/env/config/setup`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name EnvControllerGetEnvKey
-     * @request GET:/api/env/{envName}
-     */
-    envControllerGetEnvKey: (envName: string, params: RequestParams = {}) =>
-      this.request<GetEnvKeyResponse, any>({
-        path: `/api/env/${envName}`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @name QaControllerGetQa
      * @request GET:/api/qa/{qaId}
      */
@@ -7524,6 +7692,19 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name NewsControllerGetNewsResource
+     * @request GET:/api/news/news-resource/{resourceId}
+     */
+    newsControllerGetNewsResource: (resourceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/news/news-resource/${resourceId}`,
+        method: "GET",
         ...params,
       }),
 
@@ -7844,6 +8025,19 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "GET",
         query: query,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ArticlesControllerGetArticleResource
+     * @request GET:/api/articles/articles-resource/{resourceId}
+     */
+    articlesControllerGetArticleResource: (resourceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/articles/articles-resource/${resourceId}`,
+        method: "GET",
         ...params,
       }),
 

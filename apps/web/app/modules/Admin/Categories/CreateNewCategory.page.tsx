@@ -40,21 +40,38 @@ export default function CreateNewCategoryPage() {
         />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor="title" className="text-right">
-                    {t("adminCategoryView.field.title")}
-                  </Label>
-                  <FormControl>
-                    <Input id="title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="title_en"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="title_en" className="text-right">
+                      {t("adminCategoryView.field.titleEn", "Title (English)")}
+                    </Label>
+                    <FormControl>
+                      <Input id="title_en" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="title_es"
+                render={({ field }) => (
+                  <FormItem>
+                    <Label htmlFor="title_es" className="text-right">
+                      {t("adminCategoryView.field.titleEs", "Title (Spanish)")}
+                    </Label>
+                    <FormControl>
+                      <Input id="title_es" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <DialogFooter>
               <Button type="submit" disabled={!isFormValid}>
                 {t("adminCategoryView.button.createCategory")}

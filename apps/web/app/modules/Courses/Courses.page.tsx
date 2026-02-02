@@ -30,13 +30,18 @@ import { studentCoursesSteps } from "../Onboarding/routes/student";
 
 import type { MetaFunction } from "@remix-run/react";
 
+const getCategoryTitle = (title: string | Record<string, string>, language: string): string => {
+  if (typeof title === "string") return title;
+  return title[language] || title.en || Object.values(title)[0] || "";
+};
+
 export const meta: MetaFunction = ({ matches }) => setPageTitle(matches, "pages.courses");
 
 const DEFAULT_STATE = { searchTitle: undefined, sort: "title", category: undefined };
 
 export default function CoursesPage() {
   const { isStudent, isAdminLike } = useUserRole();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const { data: currentUser } = useCurrentUser();
@@ -103,10 +108,13 @@ export default function CoursesPage() {
       name: "category",
       type: "select",
       placeholder: t("studentCoursesView.availableCourses.filters.placeholder.categories"),
-      options: categories?.map(({ title }) => ({
-        value: title,
-        label: title,
-      })),
+      options: categories?.map(({ title }) => {
+        const categoryTitle = getCategoryTitle(title, i18n.language);
+        return {
+          value: categoryTitle,
+          label: categoryTitle,
+        };
+      }),
       default: DEFAULT_STATE.category,
     },
     {

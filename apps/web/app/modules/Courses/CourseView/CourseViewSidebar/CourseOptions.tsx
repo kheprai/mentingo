@@ -8,12 +8,17 @@ import { Enroll } from "~/assets/svgs";
 import { CopyUrlButton } from "~/components/CopyUrlButton/CopyUrlButton";
 import { Icon } from "~/components/Icon";
 import { Button } from "~/components/ui/button";
+import { MercadoPagoCheckout } from "~/modules/mercadopago";
 import { PaymentModal } from "~/modules/stripe/PaymentModal";
 
 import type { GetCourseResponse } from "~/api/generated-api";
 
+type CourseWithPayment = GetCourseResponse["data"] & {
+  mercadopagoProductId?: string | null;
+};
+
 type CourseOptionsProps = {
-  course: GetCourseResponse["data"];
+  course: CourseWithPayment;
 };
 
 export const CourseOptions = ({ course }: CourseOptionsProps) => {
@@ -57,15 +62,27 @@ export const CourseOptions = ({ course }: CourseOptionsProps) => {
           <Icon name="Share" className="h-auto w-6 text-primary-800" />
           <span>{t("studentCourseView.sideSection.button.shareCourse")}</span>
         </CopyUrlButton>
-        {course.priceInCents && course.currency && course.stripePriceId ? (
-          <PaymentModal
-            courseCurrency={course.currency}
-            coursePrice={course.priceInCents}
-            courseTitle={course.title}
-            courseDescription={course.description}
-            courseId={course.id}
-            coursePriceId={course.stripePriceId}
-          />
+        {course.priceInCents && course.currency ? (
+          course.mercadopagoProductId ? (
+            <MercadoPagoCheckout
+              courseCurrency={course.currency}
+              coursePrice={course.priceInCents}
+              courseTitle={course.title}
+              courseDescription={course.description}
+              courseId={course.id}
+            />
+          ) : course.stripePriceId ? (
+            <PaymentModal
+              courseCurrency={course.currency}
+              coursePrice={course.priceInCents}
+              courseTitle={course.title}
+              courseDescription={course.description}
+              courseId={course.id}
+              coursePriceId={course.stripePriceId}
+            />
+          ) : (
+            renderEnrollButton()
+          )
         ) : (
           renderEnrollButton()
         )}

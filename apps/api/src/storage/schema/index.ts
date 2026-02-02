@@ -100,7 +100,7 @@ export const credentials = pgTable("credentials", {
 export const categories = pgTable("categories", {
   ...id,
   ...timestamps,
-  title: text("title").notNull().unique(),
+  title: jsonb("title").notNull().$type<Record<string, string>>(),
   archived,
 });
 
@@ -152,11 +152,10 @@ export const courses = pgTable(
     authorId: uuid("author_id")
       .references(() => users.id)
       .notNull(),
-    categoryId: uuid("category_id")
-      .references(() => categories.id)
-      .notNull(),
+    categoryId: uuid("category_id").references(() => categories.id, { onDelete: "set null" }),
     stripeProductId: text("stripe_product_id"),
     stripePriceId: text("stripe_price_id"),
+    mercadopagoProductId: text("mercadopago_product_id"),
     settings: coursesSettings.column.notNull(),
     baseLanguage: text("base_language").notNull().default("en"),
     availableLocales: text("available_locales")
@@ -840,3 +839,33 @@ export const news = pgTable("news", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
 });
+
+export const payments = pgTable(
+  "payments",
+  {
+    ...id,
+    ...timestamps,
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    courseId: uuid("course_id")
+      .references(() => courses.id, { onDelete: "cascade" })
+      .notNull(),
+    provider: varchar("provider", { length: 20 }).notNull(), // 'stripe' | 'mercadopago'
+    providerPaymentId: varchar("provider_payment_id", { length: 100 }).notNull(),
+    amountInCents: integer("amount_in_cents").notNull(),
+    currency: varchar("currency", { length: 10 }).notNull(),
+    status: varchar("status", { length: 30 }).notNull(), // 'pending' | 'approved' | 'rejected' | 'in_process'
+    statusDetail: text("status_detail"),
+    paymentMethod: varchar("payment_method", { length: 50 }),
+    installments: integer("installments").default(1),
+  },
+  (table) => ({
+    providerPaymentUnq: unique().on(table.provider, table.providerPaymentId),
+    userIdx: index("payments_user_idx").on(table.userId),
+    courseIdx: index("payments_course_idx").on(table.courseId),
+    providerIdx: index("payments_provider_idx").on(table.provider),
+    statusIdx: index("payments_status_idx").on(table.status),
+    createdAtIdx: index("payments_created_at_idx").on(table.createdAt),
+  }),
+);

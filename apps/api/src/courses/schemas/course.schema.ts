@@ -28,6 +28,7 @@ export const courseSchema = Type.Object({
   hasFreeChapters: Type.Optional(Type.Boolean()),
   stripeProductId: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   stripePriceId: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  mercadopagoProductId: Type.Optional(Type.Union([Type.String(), Type.Null()])),
 });
 
 export const studentCourseSchema = Type.Object({

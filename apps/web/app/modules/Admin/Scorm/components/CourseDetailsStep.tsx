@@ -17,6 +17,11 @@ import { Textarea } from "~/components/ui/textarea";
 
 import type { CourseFormData, StepComponentProps } from "../types/scorm.types";
 
+const getCategoryTitle = (title: string | Record<string, string>, language: string): string => {
+  if (typeof title === "string") return title;
+  return title?.[language] || title?.en || Object.values(title || {})[0] || "";
+};
+
 export function CourseDetailsStep({ handleBack, handleNext }: StepComponentProps) {
   const { data: categories } = useCategoriesSuspense();
   const {
@@ -27,7 +32,7 @@ export function CourseDetailsStep({ handleBack, handleNext }: StepComponentProps
     control,
   } = useFormContext<CourseFormData>();
   const courseDescription = watch("details.description");
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <div className="space-y-6">
@@ -57,7 +62,7 @@ export function CourseDetailsStep({ handleBack, handleNext }: StepComponentProps
                 <SelectContent>
                   {categories.map((category) => (
                     <SelectItem value={category.id} key={category.id}>
-                      {category.title}
+                      {getCategoryTitle(category.title, i18n.language)}
                     </SelectItem>
                   ))}
                 </SelectContent>

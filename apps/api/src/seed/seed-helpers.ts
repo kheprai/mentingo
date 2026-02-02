@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { ConfigService } from "@nestjs/config";
-import { eq, sql } from "drizzle-orm/sql";
+import { sql } from "drizzle-orm/sql";
 
 import { EnvRepository } from "src/env/repositories/env.repository";
 import { EnvService } from "src/env/services/env.service";
@@ -35,7 +35,7 @@ export async function createNiceCourses(
       .insert(categories)
       .values({
         id: crypto.randomUUID(),
-        title: courseData.category,
+        title: { en: courseData.category },
         archived: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -45,7 +45,7 @@ export async function createNiceCourses(
     const [category] = await db
       .select()
       .from(categories)
-      .where(eq(categories.title, courseData.category));
+      .where(sql`${categories.title}->>'en' = ${courseData.category}`);
 
     const createdAt = faker.date.past({ years: 1, refDate: new Date() }).toISOString();
 

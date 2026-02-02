@@ -66,6 +66,15 @@ import type { CourseParams, CourseStatus } from "~/api/queries/useCourses";
 
 type TCourse = GetAllCoursesResponse["data"][number];
 
+const getCategoryTitle = (
+  category: string | Record<string, string> | null | undefined,
+  language: string,
+): string => {
+  if (!category) return "";
+  if (typeof category === "string") return category;
+  return category[language] || category.en || Object.values(category)[0] || "";
+};
+
 export const meta: MetaFunction = ({ matches }) => setPageTitle(matches, "pages.courses");
 
 export const clientLoader = async (_: ClientLoaderFunctionArgs) => {
@@ -87,7 +96,7 @@ const Courses = () => {
   const { data } = useCoursesSuspense(searchParams);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = React.useState<number>(0);
 
   const filterConfig: FilterConfig[] = [
@@ -100,10 +109,13 @@ const Courses = () => {
       name: "category",
       type: "select",
       placeholder: t("adminCoursesView.filters.placeholder.categories"),
-      options: categories?.map(({ title }) => ({
-        value: title,
-        label: title,
-      })),
+      options: categories?.map(({ title }) => {
+        const categoryTitle = getCategoryTitle(title, i18n.language);
+        return {
+          value: categoryTitle,
+          label: categoryTitle,
+        };
+      }),
     },
     {
       name: "state",
@@ -180,6 +192,11 @@ const Courses = () => {
       accessorKey: "category",
       header: ({ column }) => (
         <SortButton<TCourse> column={column}>{t("adminCoursesView.field.category")}</SortButton>
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-md truncate">
+          {getCategoryTitle(row.original.category, i18n.language)}
+        </div>
       ),
     },
     {

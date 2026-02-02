@@ -4,7 +4,7 @@ import { UUIDSchema } from "src/common";
 
 export const categorySchema = Type.Object({
   id: UUIDSchema,
-  title: Type.String(),
+  title: Type.Union([Type.String(), Type.Record(Type.String(), Type.String())]),
   archived: Type.Union([Type.Boolean(), Type.Null()]),
   createdAt: Type.Union([Type.String(), Type.Null()]),
 });

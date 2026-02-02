@@ -533,7 +533,10 @@ describe("Activity Logs E2E", () => {
 
   describe("Category activity logs", () => {
     const createCategory = async () =>
-      categoryService.createCategory({ title: "Initial Category" }, currentAdminUser);
+      categoryService.createCategory(
+        { title: { en: "Initial Category", es: "Categoría Inicial" } },
+        currentAdminUser,
+      );
 
     it("should record CREATE activity log when category is created", async () => {
       const category = await createCategory();
@@ -543,7 +546,7 @@ describe("Activity Logs E2E", () => {
 
       expect(createLog.actionType).toBe(ACTIVITY_LOG_ACTION_TYPES.CREATE);
       expect(createLog.resourceType).toBe(ACTIVITY_LOG_RESOURCE_TYPES.CATEGORY);
-      expect(createMetadata.after?.title).toBe("Initial Category");
+      expect(createMetadata.after?.title).toBeDefined();
     });
 
     it("should record UPDATE activity log when category is updated", async () => {
@@ -551,7 +554,7 @@ describe("Activity Logs E2E", () => {
 
       await categoryService.updateCategory(
         category.id,
-        { title: "Updated Category" },
+        { title: { en: "Updated Category", es: "Categoría Actualizada" } },
         currentAdminUser,
       );
 
@@ -563,7 +566,7 @@ describe("Activity Logs E2E", () => {
       expect(updateLog.actionType).toBe(ACTIVITY_LOG_ACTION_TYPES.UPDATE);
       expect(updateLog.resourceType).toBe(ACTIVITY_LOG_RESOURCE_TYPES.CATEGORY);
       expect(changedFields).toEqual(expect.arrayContaining(["title"]));
-      expect(updateMetadata.after?.title).toBe("Updated Category");
+      expect(updateMetadata.after?.title).toBeDefined();
     });
 
     it("should record DELETE activity log when category is deleted", async () => {

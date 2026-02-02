@@ -1877,11 +1877,25 @@
     "toast": {
       "successful": "Pago exitoso",
       "failed": "Error al crear la intención de pago",
-      "somethingWentWrong": "Algo salió mal"
+      "somethingWentWrong": "Algo salió mal",
+      "paymentApproved": "¡Pago aprobado! Ya estás inscrito en el curso.",
+      "paymentPending": "Tu pago está siendo procesado. Te inscribiremos una vez confirmado.",
+      "paymentRejected": "El pago fue rechazado. Por favor, intenta nuevamente."
     },
     "other": {
       "buyFor": "Comprar por",
       "enrollCourse": "Inscribirse al curso"
+    },
+    "success": {
+      "paymentApproved": "¡Pago aprobado! Ya estás inscrito en el curso."
+    },
+    "pending": {
+      "paymentPending": "Tu pago está siendo procesado. Te notificaremos una vez confirmado."
+    },
+    "error": {
+      "notLoggedIn": "Debes iniciar sesión para realizar una compra.",
+      "paymentFailed": "El pago falló. Por favor, intenta nuevamente.",
+      "cardError": "Hubo un error al procesar tu tarjeta. Por favor, verifica los datos e intenta nuevamente."
     }
   },
   "platformLogo": {

@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     ssr: {
-      noExternal: ["posthog-js", "posthog-js/react", "react-easy-crop"],
+      noExternal: ["posthog-js", "posthog-js/react", "react-easy-crop", "@mercadopago/sdk-react"],
     },
     // https://github.com/remix-run/remix/issues/10156
     server: {
@@ -102,11 +102,22 @@ export default defineConfig(({ mode }) => {
       },
       commonjsOptions: {
         transformMixedEsModules: true,
-        include: [/node_modules\/posthog-js/, /node_modules\/posthog-js\/react/, /node_modules/],
+        include: [
+          /node_modules\/posthog-js/,
+          /node_modules\/posthog-js\/react/,
+          /node_modules\/@mercadopago\/sdk-react/,
+          /node_modules/,
+        ],
       },
     },
     optimizeDeps: {
-      include: ["@remix-run/react", "crypto-js", "posthog-js", "posthog-js/react"],
+      include: [
+        "@remix-run/react",
+        "crypto-js",
+        "posthog-js",
+        "posthog-js/react",
+        "@mercadopago/sdk-react",
+      ],
       exclude: ["fsevents"],
     },
   };

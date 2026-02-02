@@ -42,11 +42,12 @@ const ensureUser = async (
 };
 
 const ensureCategory = async (db: DatabasePg): Promise<UUIDType> => {
+  const categoryName = faker.commerce.department() + faker.string.nanoid(8);
   const [category] = await db
     .insert(categories)
     .values({
       id: faker.string.uuid(),
-      title: faker.commerce.department(),
+      title: { en: categoryName, es: categoryName + " (ES)" },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     })

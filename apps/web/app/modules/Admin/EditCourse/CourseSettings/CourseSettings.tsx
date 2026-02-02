@@ -34,6 +34,14 @@ import { useCourseSettingsForm } from "./hooks/useCourseSettingsForm";
 
 import type { SupportedLanguages } from "@repo/shared";
 
+const getCategoryTitle = (
+  title: string | Record<string, string>,
+  language: SupportedLanguages,
+): string => {
+  if (typeof title === "string") return title;
+  return title?.[language] || title?.en || Object.values(title || {})[0] || "";
+};
+
 type CourseSettingsProps = {
   courseId: string;
   authorId: string;
@@ -90,8 +98,12 @@ const CourseSettings = ({
     MAX_COURSE_DESCRIPTION_LENGTH - strippedDescriptionTextLength;
 
   const categoryName = useMemo(() => {
-    return categories.find((category) => category.id === watchedCategoryId)?.title;
-  }, [categories, watchedCategoryId]);
+    const category = categories.find((category) => category.id === watchedCategoryId);
+    if (!category) return undefined;
+    const title = category.title as string | Record<string, string>;
+    if (typeof title === "string") return title;
+    return title?.[courseLanguage] || title?.en || Object.values(title || {})[0];
+  }, [categories, watchedCategoryId, courseLanguage]);
 
   const handleImageUpload = useCallback(
     async (file: File) => {
@@ -163,7 +175,7 @@ const CourseSettings = ({
                           <SelectContent>
                             {categories.map((category) => (
                               <SelectItem value={category.id} key={category.id}>
-                                {category.title}
+                                {getCategoryTitle(category.title, courseLanguage)}
                               </SelectItem>
                             ))}
                             <InlineCategoryCreationForm

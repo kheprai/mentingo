@@ -12,11 +12,11 @@ import { createSettingsFactory } from "../../../test/factory/settings.factory";
 import { createUserFactory } from "../../../test/factory/user.factory";
 import { cookieFor, truncateAllTables, truncateTables } from "../../../test/helpers/test-helpers";
 
-import type { INestApesication } from "@nestjs/common";
+import type { INestApplication } from "@nestjs/common";
 import type { DatabasePg } from "src/common";
 
 describe("QAController (e2e)", () => {
-  let app: INestApesication;
+  let app: INestApplication;
   let db: DatabasePg;
   let qaFactory: ReturnType<typeof createQAFactory>;
   let userFactory: ReturnType<typeof createUserFactory>;

@@ -98,6 +98,7 @@
     "katex": "^0.16.25",
     "lodash-es": "4.17.21",
     "lucide-react": "0.408.0",
+    "@mercadopago/sdk-react": "0.0.19",
     "morgan": "1.10.0",
     "motion": "12.23.22",
     "posthog-js": "1.273.0",

@@ -44,6 +44,7 @@ import { HealthModule } from "./health/health.module";
 import { IngestionModule } from "./ingestion/ingestion.module";
 import { LessonModule } from "./lesson/lesson.module";
 import { LocalizationModule } from "./localization/localization.module";
+import { MercadoPagoModule } from "./mercadopago/mercadopago.module";
 import { NewsModule } from "./news/news.module";
 import { QuestionsModule } from "./questions/question.module";
 import { ReportModule } from "./report/report.module";
@@ -120,6 +121,7 @@ import { UserModule } from "./user/user.module";
     S3Module,
     BunnyStreamModule,
     StripeModule,
+    MercadoPagoModule,
     EventsModule,
     StatisticsModule,
     ReportModule,

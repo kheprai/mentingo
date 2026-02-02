@@ -1017,11 +1017,25 @@
     "toast": {
       "successful": "Payment successful",
       "failed": "Failed to create payment intent",
-      "somethingWentWrong": "Something went wrong"
+      "somethingWentWrong": "Something went wrong",
+      "paymentApproved": "Payment approved! You are now enrolled in the course.",
+      "paymentPending": "Your payment is being processed. You will be enrolled once confirmed.",
+      "paymentRejected": "Payment was rejected. Please try again."
     },
     "other": {
       "buyFor": "Buy for",
       "enrollCourse": "Enroll to the course"
+    },
+    "success": {
+      "paymentApproved": "Payment approved! You are now enrolled in the course."
+    },
+    "pending": {
+      "paymentPending": "Your payment is being processed. We will notify you once it's confirmed."
+    },
+    "error": {
+      "notLoggedIn": "You must be logged in to make a purchase.",
+      "paymentFailed": "Payment failed. Please try again.",
+      "cardError": "There was an error processing your card. Please check your details and try again."
     }
   },
   "adminCourseView": {

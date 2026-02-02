@@ -43,35 +43,61 @@ export const InlineCategoryCreationForm = ({
           }}
           className="flex flex-col gap-2 px-2 py-2"
         >
-          <FormField
-            control={createCategoryForm.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <Label
-                  htmlFor="create-category-title"
-                  className="text-xs font-medium text-neutral-700"
-                >
-                  {t("adminCategoryView.field.newCategoryName")}
-                </Label>
-                <div className="flex gap-2">
+          <Label className="text-xs font-medium text-neutral-700">
+            {t("adminCategoryView.field.newCategoryName")}
+          </Label>
+          <div className="flex flex-col gap-2">
+            <FormField
+              control={createCategoryForm.control}
+              name="title_en"
+              render={({ field }) => (
+                <FormItem className="w-full">
                   <FormControl>
                     <Input
-                      id="create-category-title"
+                      id="create-category-title-en"
                       {...field}
                       onKeyDown={(e) => e.stopPropagation()}
                       className="h-full flex-1 text-sm"
-                      placeholder={t("adminCategoryView.placeholder.categoryName")}
+                      placeholder={t(
+                        "adminCategoryView.placeholder.categoryNameEn",
+                        "English name",
+                      )}
                     />
                   </FormControl>
-                  <Button type="submit" disabled={!createCategoryIsFormValid} size="sm">
-                    {t("adminCategoryView.button.createCategory")}
-                  </Button>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={createCategoryForm.control}
+              name="title_es"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Input
+                      id="create-category-title-es"
+                      {...field}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      className="h-full flex-1 text-sm"
+                      placeholder={t(
+                        "adminCategoryView.placeholder.categoryNameEs",
+                        "Spanish name",
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={!createCategoryIsFormValid}
+            size="sm"
+            className="self-end"
+          >
+            {t("adminCategoryView.button.createCategory")}
+          </Button>
         </form>
       </Form>
     </>

@@ -14,6 +14,15 @@ import { useScormFormStore } from "./store/scormForm.store";
 
 import type { CourseCardProps } from "~/modules/Dashboard/Courses/CourseCard";
 
+const getCategoryTitle = (
+  title: string | Record<string, string> | undefined,
+  language: string,
+): string => {
+  if (!title) return "";
+  if (typeof title === "string") return title;
+  return title[language] || title.en || Object.values(title)[0] || "";
+};
+
 type SideComponentProps =
   | {
       className?: string;
@@ -45,7 +54,7 @@ export const SCORM_CONFIG = [
       } = useScormFormStore.getState();
 
       const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-      const { t } = useTranslation();
+      const { t, i18n } = useTranslation();
 
       useEffect(() => {
         if (thumbnail) {
@@ -55,7 +64,8 @@ export const SCORM_CONFIG = [
         }
       }, [thumbnail]);
 
-      const categoryName = categories.find((category) => category.id === categoryId)?.title;
+      const category = categories.find((cat) => cat.id === categoryId);
+      const categoryName = getCategoryTitle(category?.title, i18n.language);
 
       return (
         <CourseCard

@@ -45,4 +45,5 @@ yarn-error.log*
 
 # Code
 .vscode
-.cursor
+.cursorCLAUDE.md
+**/CLAUDE.md

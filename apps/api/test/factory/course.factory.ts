@@ -12,14 +12,15 @@ import type { DatabasePg, UUIDType } from "src/common";
 
 export type CourseTest = InferSelectModel<typeof courses>;
 
-const ensureCategory = async (db: DatabasePg, categoryId?: UUIDType): Promise<UUIDType> => {
+const ensureCategory = async (db: DatabasePg, categoryId?: UUIDType | null): Promise<UUIDType> => {
   if (categoryId) return categoryId;
 
+  const categoryName = faker.commerce.department() + faker.string.nanoid(8);
   const [category] = await db
     .insert(categories)
     .values({
       id: faker.string.uuid(),
-      title: faker.commerce.department(),
+      title: { en: categoryName, es: categoryName + " (ES)" },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     })
@@ -90,6 +91,7 @@ export const createCourseFactory = (db: DatabasePg) => {
       isScorm: false,
       stripeProductId: null,
       stripePriceId: null,
+      mercadopagoProductId: null,
       baseLanguage: "en",
       availableLocales: ["en"],
       settings: {

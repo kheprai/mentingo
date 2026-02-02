@@ -13,8 +13,10 @@ import {
   bulkUpsertEnvSchema,
   frontendSSOEnabledResponseSchema,
   frontendStripeConfiguredResponseSchema,
+  frontendMercadoPagoConfiguredResponseSchema,
   getEnvResponseSchema,
   stripePublishableKeyResponseSchema,
+  mercadoPagoPublicKeyResponseSchema,
   isEnvSetupResponseSchema,
   aiConfiguredResponseSchema,
 } from "src/env/env.schema";
@@ -65,6 +67,24 @@ export class EnvController {
   })
   async getStripeConfigured() {
     return new BaseResponse(await this.envService.getStripeConfigured());
+  }
+
+  @Public()
+  @Get("mercadopago/public-key")
+  @Validate({
+    response: baseResponse(mercadoPagoPublicKeyResponseSchema),
+  })
+  async getMercadoPagoPublicKey() {
+    const publicKey = await this.envService.getMercadoPagoPublicKey();
+    return new BaseResponse({ publicKey });
+  }
+
+  @Get("frontend/mercadopago")
+  @Validate({
+    response: baseResponse(frontendMercadoPagoConfiguredResponseSchema),
+  })
+  async getMercadoPagoConfigured() {
+    return new BaseResponse(await this.envService.getMercadoPagoConfigured());
   }
 
   @Get("ai")

@@ -62,14 +62,15 @@ export class CategoryActivityHandler implements IEventHandler<CategoryEventType>
   }
 
   private async handleDelete(event: DeleteCategoryEvent) {
+    const categoryTitle = event.deleteCategoryData.categoryTitle;
+    const categoryName = categoryTitle ? categoryTitle.en || Object.values(categoryTitle)[0] : null;
+
     await this.activityLogsService.recordActivity({
       actor: event.deleteCategoryData.actor,
       operation: ACTIVITY_LOG_ACTION_TYPES.DELETE,
       resourceType: ACTIVITY_LOG_RESOURCE_TYPES.CATEGORY,
       resourceId: event.deleteCategoryData.categoryId,
-      context: event.deleteCategoryData.categoryTitle
-        ? { categoryName: event.deleteCategoryData.categoryTitle }
-        : null,
+      context: categoryName ? { categoryName } : null,
     });
   }
 }

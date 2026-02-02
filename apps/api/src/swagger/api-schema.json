@@ -6051,6 +6051,252 @@
         }
       }
     },
+    "/api/mercadopago/payment": {
+      "post": {
+        "operationId": "MercadoPagoController_processPayment",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessPaymentBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessPaymentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mercadopago/payment/{id}": {
+      "get": {
+        "operationId": "MercadoPagoController_getPaymentStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mercadopago/webhook": {
+      "post": {
+        "operationId": "MercadoPagoController_handleWebhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandleWebhookBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandleWebhookResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/bulk": {
+      "post": {
+        "operationId": "EnvController_bulkUpsertEnv",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/bulkUpsertEnvBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/env/frontend/sso": {
+      "get": {
+        "operationId": "EnvController_getFrontendSSOEnabled",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFrontendSSOEnabledResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/stripe/publishable-key": {
+      "get": {
+        "operationId": "EnvController_getStripePublishableKey",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStripePublishableKeyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/frontend/stripe": {
+      "get": {
+        "operationId": "EnvController_getStripeConfigured",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStripeConfiguredResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/mercadopago/public-key": {
+      "get": {
+        "operationId": "EnvController_getMercadoPagoPublicKey",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMercadoPagoPublicKeyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/frontend/mercadopago": {
+      "get": {
+        "operationId": "EnvController_getMercadoPagoConfigured",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMercadoPagoConfiguredResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/ai": {
+      "get": {
+        "operationId": "EnvController_getAIConfigured",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAIConfiguredResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/config/setup": {
+      "get": {
+        "operationId": "EnvController_getIsConfigSetup",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetIsConfigSetupResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/env/{envName}": {
+      "get": {
+        "operationId": "EnvController_getEnvKey",
+        "parameters": [
+          {
+            "name": "envName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetEnvKeyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/report/summary": {
       "get": {
         "operationId": "ReportController_downloadSummaryReport",
@@ -6335,138 +6581,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MarkAnnouncementAsReadResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/env/bulk": {
-      "post": {
-        "operationId": "EnvController_bulkUpsertEnv",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/bulkUpsertEnvBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/env/frontend/sso": {
-      "get": {
-        "operationId": "EnvController_getFrontendSSOEnabled",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetFrontendSSOEnabledResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/env/stripe/publishable-key": {
-      "get": {
-        "operationId": "EnvController_getStripePublishableKey",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetStripePublishableKeyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/env/frontend/stripe": {
-      "get": {
-        "operationId": "EnvController_getStripeConfigured",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetStripeConfiguredResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/env/ai": {
-      "get": {
-        "operationId": "EnvController_getAIConfigured",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAIConfiguredResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/env/config/setup": {
-      "get": {
-        "operationId": "EnvController_getIsConfigSetup",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetIsConfigSetupResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/env/{envName}": {
-      "get": {
-        "operationId": "EnvController_getEnvKey",
-        "parameters": [
-          {
-            "name": "envName",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetEnvKeyResponse"
                 }
               }
             }
@@ -12342,6 +12456,16 @@
                       "type": "null"
                     }
                   ]
+                },
+                "mercadopagoProductId": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -12486,6 +12610,16 @@
                   ]
                 },
                 "stripePriceId": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "mercadopagoProductId": {
                   "anyOf": [
                     {
                       "type": "string"
@@ -12776,6 +12910,16 @@
                     }
                   ]
                 },
+                "mercadopagoProductId": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "completedChapterCount": {
                   "type": "number"
                 },
@@ -12961,6 +13105,16 @@
                     }
                   ]
                 },
+                "mercadopagoProductId": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "completedChapterCount": {
                   "type": "number"
                 },
@@ -13031,11 +13185,25 @@
                 "type": "string"
               },
               "category": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "categoryId": {
-                "format": "uuid",
-                "type": "string"
+                "anyOf": [
+                  {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "chapters": {
                 "type": "array",
@@ -13296,6 +13464,16 @@
                   }
                 ]
               },
+              "mercadopagoProductId": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
               "availableLocales": {
                 "type": "array",
                 "items": {
@@ -13336,6 +13514,7 @@
             },
             "required": [
               "category",
+              "categoryId",
               "chapters",
               "courseChapterCount",
               "currency",
@@ -13347,6 +13526,7 @@
               "slug",
               "stripeProductId",
               "stripePriceId",
+              "mercadopagoProductId",
               "availableLocales",
               "baseLanguage",
               "dueDate"
@@ -13402,11 +13582,25 @@
                 "type": "string"
               },
               "category": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "categoryId": {
-                "format": "uuid",
-                "type": "string"
+                "anyOf": [
+                  {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "chapters": {
                 "type": "array",
@@ -13899,6 +14093,7 @@
             },
             "required": [
               "category",
+              "categoryId",
               "chapters",
               "courseChapterCount",
               "currency",
@@ -20456,7 +20651,19 @@
                   "type": "string"
                 },
                 "title": {
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "patternProperties": {
+                        "^(.*)$": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
                 },
                 "archived": {
                   "anyOf": [
@@ -20529,7 +20736,19 @@
                 "type": "string"
               },
               "title": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
               },
               "archived": {
                 "anyOf": [
@@ -20568,7 +20787,12 @@
         "type": "object",
         "properties": {
           "title": {
-            "type": "string"
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {
+                "type": "string"
+              }
+            }
           }
         },
         "required": [
@@ -20607,7 +20831,12 @@
             "type": "string"
           },
           "title": {
-            "type": "string"
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {
+                "type": "string"
+              }
+            }
           },
           "archived": {
             "type": "boolean"
@@ -20625,7 +20854,19 @@
                 "type": "string"
               },
               "title": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
               },
               "archived": {
                 "anyOf": [
@@ -20698,6 +20939,468 @@
             },
             "required": [
               "message"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ProcessPaymentBody": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "installments": {
+            "default": 1,
+            "type": "number"
+          },
+          "paymentMethodId": {
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "courseId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "userId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "identification": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "number": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "number"
+            ]
+          }
+        },
+        "required": [
+          "token",
+          "amount",
+          "description",
+          "paymentMethodId",
+          "email",
+          "courseId",
+          "userId"
+        ]
+      },
+      "ProcessPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string"
+              },
+              "statusDetail": {
+                "type": "string"
+              },
+              "externalReference": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetPaymentStatusResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string"
+              },
+              "statusDetail": {
+                "type": "string"
+              },
+              "dateApproved": {
+                "type": "string"
+              },
+              "dateCreated": {
+                "type": "string"
+              },
+              "paymentMethodId": {
+                "type": "string"
+              },
+              "installments": {
+                "type": "number"
+              },
+              "transactionAmount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "dateCreated",
+              "paymentMethodId",
+              "installments",
+              "transactionAmount",
+              "currency"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "HandleWebhookBody": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "live_mode": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "date_created": {
+            "type": "string"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "api_version": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
+      },
+      "HandleWebhookResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "received": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "received"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "bulkUpsertEnvBody": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "value"
+          ]
+        }
+      },
+      "GetFrontendSSOEnabledResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "google": {
+                "type": "string"
+              },
+              "microsoft": {
+                "type": "string"
+              },
+              "slack": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetStripePublishableKeyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "publishableKey": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "publishableKey"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetStripeConfiguredResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetMercadoPagoPublicKeyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "publicKey": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "publicKey"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetMercadoPagoConfiguredResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetAIConfiguredResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "enabled"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetIsConfigSetupResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "fullyConfigured": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "partiallyConfigured": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "type": "string"
+                    },
+                    "missingKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "missingKeys"
+                  ]
+                }
+              },
+              "notConfigured": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "type": "string"
+                    },
+                    "missingKeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "missingKeys"
+                  ]
+                }
+              },
+              "hasIssues": {
+                "type": "boolean"
+              },
+              "isWarningDismissed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "fullyConfigured",
+              "partiallyConfigured",
+              "notConfigured",
+              "hasIssues",
+              "isWarningDismissed"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetEnvKeyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
             ]
           }
         },
@@ -21139,207 +21842,6 @@
               "announcementId",
               "isRead",
               "readAt"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "bulkUpsertEnvBody": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "value": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "value"
-          ]
-        }
-      },
-      "GetFrontendSSOEnabledResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "google": {
-                "type": "string"
-              },
-              "microsoft": {
-                "type": "string"
-              },
-              "slack": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetStripePublishableKeyResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "publishableKey": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "publishableKey"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetStripeConfiguredResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "enabled": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "enabled"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetAIConfiguredResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "enabled": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "enabled"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetIsConfigSetupResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "fullyConfigured": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "partiallyConfigured": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "service": {
-                      "type": "string"
-                    },
-                    "missingKeys": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "required": [
-                    "service",
-                    "missingKeys"
-                  ]
-                }
-              },
-              "notConfigured": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "service": {
-                      "type": "string"
-                    },
-                    "missingKeys": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "required": [
-                    "service",
-                    "missingKeys"
-                  ]
-                }
-              },
-              "hasIssues": {
-                "type": "boolean"
-              },
-              "isWarningDismissed": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "fullyConfigured",
-              "partiallyConfigured",
-              "notConfigured",
-              "hasIssues",
-              "isWarningDismissed"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetEnvKeyResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "name",
-              "value"
             ]
           }
         },
