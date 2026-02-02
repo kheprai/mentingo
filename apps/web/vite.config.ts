@@ -40,8 +40,8 @@ export default defineConfig(({ mode }) => {
             dest: "locales/en",
           },
           {
-            src: "app/locales/pl/translation.json",
-            dest: "locales/pl",
+            src: "app/locales/es/translation.json",
+            dest: "locales/es",
           },
           ...(process.env.NODE_ENV === "production"
             ? [

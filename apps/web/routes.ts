@@ -5,6 +5,18 @@ export const routes: (
 ) => RouteManifest | Promise<RouteManifest> = (defineRoutes) => {
   return defineRoutes((route) => {
     route("", "modules/layout.tsx", () => {
+      // Landing pages (public) - with explicit paths
+      route("", "modules/Landing/Landing.layout.tsx", { id: "landing-layout" }, () => {
+        route("", "modules/Landing/pages/Home.page.tsx", { index: true, id: "landing-home" });
+        route("workshops", "modules/Landing/pages/Workshops.page.tsx", { id: "landing-workshops" });
+        route("consulting", "modules/Landing/pages/Consulting.page.tsx", {
+          id: "landing-consulting",
+        });
+        route("tools", "modules/Landing/pages/Tools.page.tsx", { id: "landing-tools" });
+        route("about", "modules/Landing/pages/About.page.tsx", { id: "landing-about" });
+        route("contact", "modules/Landing/pages/Contact.page.tsx", { id: "landing-contact" });
+      });
+      // Auth routes
       route("auth", "modules/Auth/Auth.layout.tsx", () => {
         route("login", "modules/Auth/Login.page.tsx", { index: true });
         route("register", "modules/Auth/Register.page.tsx");
@@ -12,43 +24,87 @@ export const routes: (
         route("password-recovery", "modules/Auth/PasswordRecovery.page.tsx");
         route("mfa", "modules/Auth/MFA.page.tsx");
       });
-      route("", "modules/Navigation/NavigationWrapper.tsx", () => {
-        route("", "modules/Dashboard/PublicDashboard.layout.tsx", () => {
-          route("courses", "modules/Courses/Courses.page.tsx");
-          route("course/:id", "modules/Courses/CourseView/CourseView.page.tsx");
-          route("qa", "modules/QA/QA.page.tsx");
-          route("qa/new", "modules/QA/CreateQA.page.tsx");
-          route("qa/:id", "modules/QA/EditQA.page.tsx");
-          route("articles", "modules/Articles/Articles.page.tsx");
-          route("articles/:articleId", "modules/Articles/ArticleDetails.page.tsx", {
-            id: "article-details",
+      // App routes (with navigation) - these routes stay at root level
+      route(
+        "courses",
+        "modules/Navigation/NavigationWrapper.tsx",
+        { id: "courses-wrapper" },
+        () => {
+          route(
+            "",
+            "modules/Dashboard/PublicDashboard.layout.tsx",
+            { id: "courses-public" },
+            () => {
+              route("", "modules/Courses/Courses.page.tsx", { index: true });
+            },
+          );
+        },
+      );
+      route("course", "modules/Navigation/NavigationWrapper.tsx", { id: "course-wrapper" }, () => {
+        route("", "modules/Dashboard/PublicDashboard.layout.tsx", { id: "course-public" }, () => {
+          route(":id", "modules/Courses/CourseView/CourseView.page.tsx");
+        });
+        route(":courseId/lesson", "modules/Courses/Lesson/Lesson.layout.tsx", () => {
+          route(":lessonId", "modules/Courses/Lesson/Lesson.page.tsx");
+        });
+      });
+      route("qa", "modules/Navigation/NavigationWrapper.tsx", { id: "qa-wrapper" }, () => {
+        route("", "modules/Dashboard/PublicDashboard.layout.tsx", { id: "qa-public" }, () => {
+          route("", "modules/QA/QA.page.tsx", { index: true });
+          route("new", "modules/QA/CreateQA.page.tsx");
+          route(":id", "modules/QA/EditQA.page.tsx");
+        });
+      });
+      route(
+        "articles",
+        "modules/Navigation/NavigationWrapper.tsx",
+        { id: "articles-wrapper" },
+        () => {
+          route(
+            "",
+            "modules/Dashboard/PublicDashboard.layout.tsx",
+            { id: "articles-public" },
+            () => {
+              route("", "modules/Articles/Articles.page.tsx", { index: true });
+              route(":articleId", "modules/Articles/ArticleDetails.page.tsx", {
+                id: "article-details",
+              });
+            },
+          );
+          route("", "modules/Dashboard/UserDashboard.layout.tsx", { id: "articles-user" }, () => {
+            route(":articleId/edit", "modules/Articles/ArticleForm.page.tsx", {
+              id: "edit-article",
+            });
           });
-          route("news/:newsId/edit", "modules/News/NewsForm.page.tsx", {
-            id: "edit-news",
-          });
-          route("news/add", "modules/News/NewsForm.page.tsx", {
-            id: "add-news",
-          });
-          route("news", "modules/News/News.page.tsx");
-          route("news/:newsId", "modules/News/NewsDetails.page.tsx", {
+        },
+      );
+      route("news", "modules/Navigation/NavigationWrapper.tsx", { id: "news-wrapper" }, () => {
+        route("", "modules/Dashboard/PublicDashboard.layout.tsx", { id: "news-public" }, () => {
+          route("", "modules/News/News.page.tsx", { index: true });
+          route(":newsId", "modules/News/NewsDetails.page.tsx", {
             id: "news-details",
           });
+          route(":newsId/edit", "modules/News/NewsForm.page.tsx", {
+            id: "edit-news",
+          });
+          route("add", "modules/News/NewsForm.page.tsx", {
+            id: "add-news",
+          });
         });
-        route("", "modules/Dashboard/UserDashboard.layout.tsx", () => {
-          route("", "modules/Dashboard/IndexRedirect.page.tsx", { index: true });
+      });
+      // User dashboard routes
+      route("", "modules/Navigation/NavigationWrapper.tsx", { id: "user-wrapper" }, () => {
+        route("", "modules/Dashboard/UserDashboard.layout.tsx", { id: "user-dashboard" }, () => {
           route("progress", "modules/Statistics/Statistics.page.tsx");
           route("settings", "modules/Dashboard/Settings/Settings.page.tsx");
           route("provider-information", "modules/ProviderInformation/ProviderInformation.page.tsx");
           route("announcements", "modules/Announcements/Announcements.page.tsx");
-          route("articles/:articleId/edit", "modules/Articles/ArticleForm.page.tsx", {
-            id: "edit-article",
-          });
           route("profile/:id", "modules/Profile/Profile.page.tsx");
         });
-        route("course/:courseId/lesson", "modules/Courses/Lesson/Lesson.layout.tsx", () => {
-          route(":lessonId", "modules/Courses/Lesson/Lesson.page.tsx");
-        });
-        route("admin", "modules/Admin/Admin.layout.tsx", () => {
+      });
+      // Admin routes
+      route("admin", "modules/Navigation/NavigationWrapper.tsx", { id: "admin-wrapper" }, () => {
+        route("", "modules/Admin/Admin.layout.tsx", () => {
           route("courses", "modules/Admin/Courses/Courses.page.tsx", {
             index: true,
           });
@@ -75,6 +131,9 @@ export const routes: (
           );
         });
       });
+
+      // Catch-all 404 - MUST BE LAST
+      route("*", "modules/Error/NotFound.page.tsx");
     });
   });
 };

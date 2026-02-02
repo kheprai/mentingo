@@ -11,7 +11,7 @@ interface CertificateToPDFProps {
   completionDate?: string;
   platformLogo?: string | null;
   backgroundImageUrl?: string | null;
-  lang: "pl" | "en";
+  lang: "es" | "en";
 }
 
 const useCertificatePDF = () => {

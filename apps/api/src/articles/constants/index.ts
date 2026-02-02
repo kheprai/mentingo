@@ -1,9 +1,9 @@
 export const baseArticleTitle = {
   en: "Untitled Article",
-  pl: "Artykuł bez tytułu",
+  es: "Artículo sin título",
 };
 
 export const baseArticleSectionTitle = {
   en: "Untitled section",
-  pl: "Sekcja bez tytułu",
+  es: "Sección sin título",
 };

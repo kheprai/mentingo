@@ -20,13 +20,13 @@ export const REPORT_HEADERS: Record<SupportedLanguages, ReportHeaders> = {
     progressPercentage: "Progress (%)",
     quizResults: "Latest Quiz Attempt Results (%)",
   },
-  pl: {
-    studentName: "Imię i nazwisko",
-    groupName: "Grupy",
-    courseName: "Nazwa kursu",
-    lessonCount: "Liczba lekcji",
-    completedLessons: "Ukończone lekcje",
-    progressPercentage: "Progres (%)",
-    quizResults: "Wyniki z ostatnich podejść do quizów (%)",
+  es: {
+    studentName: "Nombre",
+    groupName: "Grupos",
+    courseName: "Nombre del curso",
+    lessonCount: "Cantidad de lecciones",
+    completedLessons: "Lecciones completadas",
+    progressPercentage: "Progreso (%)",
+    quizResults: "Resultados del último intento de quiz (%)",
   },
 };

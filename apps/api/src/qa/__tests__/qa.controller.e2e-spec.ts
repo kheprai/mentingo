@@ -12,11 +12,11 @@ import { createSettingsFactory } from "../../../test/factory/settings.factory";
 import { createUserFactory } from "../../../test/factory/user.factory";
 import { cookieFor, truncateAllTables, truncateTables } from "../../../test/helpers/test-helpers";
 
-import type { INestApplication } from "@nestjs/common";
+import type { INestApesication } from "@nestjs/common";
 import type { DatabasePg } from "src/common";
 
 describe("QAController (e2e)", () => {
-  let app: INestApplication;
+  let app: INestApesication;
   let db: DatabasePg;
   let qaFactory: ReturnType<typeof createQAFactory>;
   let userFactory: ReturnType<typeof createUserFactory>;
@@ -200,11 +200,11 @@ describe("QAController (e2e)", () => {
       const qa = await qaFactory.create({ baseLanguage: "en", availableLocales: ["en"] });
 
       const response = await request(app.getHttpServer())
-        .post(`/api/qa/create-language/${qa.id}?language=pl`)
+        .post(`/api/qa/create-language/${qa.id}?language=es`)
         .set("Cookie", cookie)
         .expect(201);
 
-      expect(response.body.availableLocales).toEqual(expect.arrayContaining(["en", "pl"]));
+      expect(response.body.availableLocales).toEqual(expect.arrayContaining(["en", "es"]));
     });
 
     it("returns 400 if language already exists", async () => {
@@ -226,7 +226,7 @@ describe("QAController (e2e)", () => {
       const randomId = faker.string.uuid();
 
       await request(app.getHttpServer())
-        .post(`/api/qa/create-language/${randomId}?language=pl`)
+        .post(`/api/qa/create-language/${randomId}?language=es`)
         .set("Cookie", cookie)
         .expect(404);
     });
@@ -236,7 +236,7 @@ describe("QAController (e2e)", () => {
     it("updates QA for given language", async () => {
       await seedGlobalSettings({ QAEnabled: true });
       const { cookie } = await createAdminWithCookie();
-      const qa = await qaFactory.create({ baseLanguage: "en", availableLocales: ["en", "pl"] });
+      const qa = await qaFactory.create({ baseLanguage: "en", availableLocales: ["en", "es"] });
 
       const response = await request(app.getHttpServer())
         .patch(`/api/qa/${qa.id}?language=en`)
@@ -267,7 +267,7 @@ describe("QAController (e2e)", () => {
       const qa = await qaFactory.create({ baseLanguage: "en", availableLocales: ["en"] });
 
       const response = await request(app.getHttpServer())
-        .patch(`/api/qa/${qa.id}?language=pl`)
+        .patch(`/api/qa/${qa.id}?language=es`)
         .set("Cookie", cookie)
         .send({ title: "Will fail" })
         .expect(400);
@@ -302,11 +302,11 @@ describe("QAController (e2e)", () => {
       const { cookie } = await createAdminWithCookie();
       const qa = await qaFactory.create({
         baseLanguage: "en",
-        availableLocales: ["en", "pl"],
+        availableLocales: ["en", "es"],
       });
 
       const response = await request(app.getHttpServer())
-        .delete(`/api/qa/language/${qa.id}?language=pl`)
+        .delete(`/api/qa/language/${qa.id}?language=es`)
         .set("Cookie", cookie)
         .expect(200);
 
@@ -316,7 +316,7 @@ describe("QAController (e2e)", () => {
     it("returns 400 when trying to remove base language", async () => {
       await seedGlobalSettings({ QAEnabled: true });
       const { cookie } = await createAdminWithCookie();
-      const qa = await qaFactory.create({ baseLanguage: "en", availableLocales: ["en", "pl"] });
+      const qa = await qaFactory.create({ baseLanguage: "en", availableLocales: ["en", "es"] });
 
       const response = await request(app.getHttpServer())
         .delete(`/api/qa/language/${qa.id}?language=en`)

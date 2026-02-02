@@ -1,4 +1,4 @@
-export type Language = "en" | "pl";
+export type Language = "en" | "es";
 
 export type DefaultEmailSettings = {
   primaryColor: string;

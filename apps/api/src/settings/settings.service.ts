@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -60,6 +61,8 @@ import type { UserRole } from "src/user/schemas/userRoles";
 
 @Injectable()
 export class SettingsService {
+  private readonly logger = new Logger(SettingsService.name);
+
   constructor(
     @Inject("DB") private readonly db: DatabasePg,
     private readonly fileService: FileService,
@@ -388,6 +391,10 @@ export class SettingsService {
     file: Express.Multer.File | null | undefined,
     actor?: CurrentUser,
   ): Promise<void> {
+    this.logger.log(
+      `uploadPlatformSimpleLogo called - file exists: ${!!file}, file type: ${typeof file}, file size: ${file?.size ?? "N/A"}`,
+    );
+
     const previousRecord = await this.getGlobalSettingsRecord();
 
     let newValue: string | null = null;
@@ -395,6 +402,9 @@ export class SettingsService {
       const resource = "platform-simple-logos";
       const { fileKey } = await this.fileService.uploadFile(file, resource);
       newValue = fileKey;
+      this.logger.log(`Platform simple logo uploaded successfully. Key: ${fileKey}`);
+    } else {
+      this.logger.warn("No file received for platform simple logo upload - will set to null");
     }
 
     await this.db
@@ -412,6 +422,9 @@ export class SettingsService {
       .where(isNull(settings.userId));
 
     const updatedRecord = await this.getGlobalSettingsRecord();
+    this.logger.log(
+      `DB updated. New platformSimpleLogoS3Key: ${updatedRecord?.settings?.platformSimpleLogoS3Key ?? "NULL"}`,
+    );
 
     await this.recordSettingsUpdate({
       actor,

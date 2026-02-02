@@ -124,9 +124,9 @@ export default function LoginPage() {
       <Card className="mx-auto max-w-sm">
         <CardHeader>
           <CardTitle role="heading" className="text-2xl">
-            <div className="mb-6 flex justify-center">
+            <Link to="/" className="mb-6 flex justify-center">
               <PlatformLogo className="h-16 w-auto py-3" alt="Platform Logo" />
-            </div>
+            </Link>
             {t("loginView.header")}
           </CardTitle>
           <CardDescription>

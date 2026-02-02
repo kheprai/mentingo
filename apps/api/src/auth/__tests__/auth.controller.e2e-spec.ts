@@ -132,7 +132,7 @@ describe("AuthController (e2e)", () => {
         firstName: user.firstName,
         lastName: user.lastName,
         password,
-        language: "pl",
+        language: "es",
       });
 
       const loginResponse = await request(app.getHttpServer()).post("/api/auth/login").send({
@@ -160,7 +160,7 @@ describe("AuthController (e2e)", () => {
         .expect(200);
 
       expect(settingsResponse.body.data).toBeDefined();
-      expect(settingsResponse.body.data.language).toBe("pl");
+      expect(settingsResponse.body.data.language).toBe("es");
     });
   });
 
@@ -442,7 +442,7 @@ describe("AuthController (e2e)", () => {
       await authService.createPassword({
         createToken: token,
         password,
-        language: "pl",
+        language: "es",
       });
 
       const loginResponse = await request(app.getHttpServer()).post("/api/auth/login").send({
@@ -470,7 +470,7 @@ describe("AuthController (e2e)", () => {
         .expect(200);
 
       expect(settingsResponse.body.data).toBeDefined();
-      expect(settingsResponse.body.data.language).toBe("pl");
+      expect(settingsResponse.body.data.language).toBe("es");
     });
 
     it("should fallback to 'en' when creating password with unsupported language (e.g., 'ar')", async () => {

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@remix-run/react";
 import { format, startOfDay, subYears } from "date-fns";
-import { enUS, pl } from "date-fns/locale";
+import { enUS, es } from "date-fns/locale";
 import { useEffect, useMemo } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import { useGlobalSettings, useGlobalSettingsSuspense } from "~/api/queries/useG
 import { useSSOEnabled } from "~/api/queries/useSSOEnabled";
 import { Icon } from "~/components/Icon";
 import PasswordValidationDisplay from "~/components/PasswordValidation/PasswordValidationDisplay";
+import { PlatformLogo } from "~/components/PlatformLogo";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -120,7 +121,7 @@ export default function RegisterPage() {
     return today;
   }, [globalSettings?.ageLimit]);
 
-  const calendarLocale = i18n.language.startsWith("pl") ? pl : enUS;
+  const calendarLocale = i18n.language.startsWith("es") ? es : enUS;
 
   return (
     <FormProvider {...methods}>
@@ -136,6 +137,9 @@ export default function RegisterPage() {
       )}
       <Card className="mx-auto max-w-sm">
         <CardHeader>
+          <Link to="/" className="mb-6 flex justify-center">
+            <PlatformLogo className="h-16 w-auto py-3" alt="Platform Logo" />
+          </Link>
           <CardTitle className="text-xl">{t("registerView.header")}</CardTitle>
           <CardDescription>
             {isSSOEnforced ? t("registerView.subHeaderSSO") : t("registerView.subHeader")}

@@ -1,6 +1,6 @@
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { format, isValid, parseISO } from "date-fns";
-import { enUS, pl } from "date-fns/locale";
+import { enUS, es } from "date-fns/locale";
 import { useMemo, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -53,7 +53,7 @@ export const GroupEnrollItem = ({ index, id, name, usersCount, isGroupEnrolled }
     const year = new Date().getFullYear();
 
     const locale = match(language)
-      .with("pl", () => pl)
+      .with("es", () => es)
       .otherwise(() => enUS);
 
     return { currentYear: year, calendarLocale: locale };

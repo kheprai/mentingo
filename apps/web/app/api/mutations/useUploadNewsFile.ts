@@ -5,7 +5,7 @@ import { ApiClient } from "../api-client";
 type UploadNewsFileOptions = {
   id: string;
   file: File;
-  language: "en" | "pl";
+  language: "en" | "es";
   title: string;
   description: string;
 };
@@ -23,7 +23,7 @@ export function useUploadNewsFile() {
         id,
         formData as unknown as {
           file: File;
-          language: "en" | "pl";
+          language: "en" | "es";
           title: string;
           description: string;
         },

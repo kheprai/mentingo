@@ -5,14 +5,14 @@ describe("isSupportedLocale", () => {
     expect(isSupportedLocale("en")).toBe(true);
   });
 
-  it("returns true for 'pl'", () => {
-    expect(isSupportedLocale("pl")).toBe(true);
+  it("returns true for 'es'", () => {
+    expect(isSupportedLocale("es")).toBe(true);
   });
 
   it("returns false for unsupported locale", () => {
     expect(isSupportedLocale("de")).toBe(false);
     expect(isSupportedLocale("fr")).toBe(false);
-    expect(isSupportedLocale("es")).toBe(false);
+    expect(isSupportedLocale("pl")).toBe(false);
   });
 
   it("returns false for null", () => {
@@ -41,7 +41,7 @@ describe("isSupportedLocale", () => {
 
   it("is case sensitive", () => {
     expect(isSupportedLocale("EN")).toBe(false);
-    expect(isSupportedLocale("PL")).toBe(false);
+    expect(isSupportedLocale("ES")).toBe(false);
     expect(isSupportedLocale("En")).toBe(false);
   });
 });

@@ -24,7 +24,7 @@ const CertificatePreview = ({
   const { HiddenCertificate, downloadCertificatePdf } = useCertificatePDF();
   const [toggled, setToggled] = useState<boolean>(false);
 
-  const lang = toggled ? "pl" : "en";
+  const lang = toggled ? "es" : "en";
 
   return (
     <>

@@ -5,7 +5,7 @@ import { detectBrowserLanguage, isSupportedLanguage } from "../../../../utils/br
 
 export const SupportedLanguages = {
   ENGLISH: "en",
-  POLISH: "pl",
+  SPANISH: "es",
 } as const;
 
 export type Language = (typeof SupportedLanguages)[keyof typeof SupportedLanguages];

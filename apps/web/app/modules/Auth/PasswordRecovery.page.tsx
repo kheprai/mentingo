@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { usePasswordRecovery } from "~/api/mutations/useRecoverPassword";
 import { useGlobalSettingsSuspense } from "~/api/queries/useGlobalSettings";
+import { PlatformLogo } from "~/components/PlatformLogo";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -63,6 +64,9 @@ export default function PasswordRecoveryPage() {
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
         <Card className="mx-auto w-full max-w-md">
           <CardHeader>
+            <Link to="/" className="mb-6 flex justify-center">
+              <PlatformLogo className="h-16 w-auto py-3" alt="Platform Logo" />
+            </Link>
             <CardTitle className="mt-6 text-center text-3xl font-bold tracking-tight">
               {t("forgotPasswordView.header")}
             </CardTitle>

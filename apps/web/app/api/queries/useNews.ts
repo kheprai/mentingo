@@ -5,7 +5,7 @@ import { ApiClient } from "../api-client";
 import type { GetNewsResponse } from "../generated-api";
 
 export type NewsQueryParams = {
-  language?: "en" | "pl";
+  language?: "en" | "es";
 };
 
 type QueryOptions = {

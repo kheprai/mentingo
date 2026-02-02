@@ -63,7 +63,7 @@ type NewsFormValues = {
 };
 
 type UpdateNewsPayload = {
-  language: "en" | "pl";
+  language: "en" | "es";
   title?: string;
   summary?: string;
   content?: string;

@@ -258,7 +258,7 @@ describe("ArticlesController (e2e)", () => {
       await request(app.getHttpServer())
         .post(`/api/articles/section/${section.id}/language`)
         .set("Cookie", cookie)
-        .send({ language: "pl" })
+        .send({ language: "es" })
         .expect(201);
 
       const afterAdd = await request(app.getHttpServer())
@@ -266,10 +266,10 @@ describe("ArticlesController (e2e)", () => {
         .set("Cookie", cookie)
         .expect(200);
 
-      expect(afterAdd.body.data.availableLocales).toEqual(expect.arrayContaining(["en", "pl"]));
+      expect(afterAdd.body.data.availableLocales).toEqual(expect.arrayContaining(["en", "es"]));
 
       await request(app.getHttpServer())
-        .delete(`/api/articles/section/${section.id}/language?language=pl`)
+        .delete(`/api/articles/section/${section.id}/language?language=es`)
         .set("Cookie", cookie)
         .expect(200);
 

@@ -3,7 +3,6 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { DEFAULT_TUS_CHUNK_SIZE } from "@repo/shared";
 import * as Sentry from "@sentry/node";
-import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { patchNestJsSwagger, applyFormats } from "nestjs-typebox";
@@ -22,9 +21,10 @@ applyFormats();
 
 async function bootstrap() {
   startInstrumentation();
+
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    integrations: [nodeProfilingIntegration()],
+    integrations: [],
     tracesSampleRate: 1.0,
     profilesSampleRate: 1.0,
     environment: environmentValidation(String(process.env.NODE_ENV)),

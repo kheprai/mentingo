@@ -9,7 +9,7 @@ interface CertificateContentProps {
   isDownload?: boolean;
   backgroundImageUrl?: string | null;
   platformLogo?: string | null;
-  lang?: "pl" | "en";
+  lang?: "es" | "en";
 }
 
 const translations = {

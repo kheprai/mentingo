@@ -32,9 +32,9 @@ export const courseLanguages: {
   translationKey: string;
 }[] = [
   {
-    key: "pl",
-    iconName: "PL",
-    translationKey: "changeUserLanguageView.options.polish",
+    key: "es",
+    iconName: "ES",
+    translationKey: "changeUserLanguageView.options.spanish",
   },
   {
     key: "en",

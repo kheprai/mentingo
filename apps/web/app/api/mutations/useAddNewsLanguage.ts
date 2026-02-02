@@ -9,7 +9,7 @@ import type { AddNewLanguageBody } from "../generated-api";
 type AddNewsLanguageOptions = {
   id: string;
   data: AddNewLanguageBody;
-  language?: "en" | "pl";
+  language?: "en" | "es";
 };
 
 export function useAddNewsLanguage() {

@@ -268,7 +268,7 @@ export class NewsController {
         },
         language: {
           type: "string",
-          enum: ["en", "pl"],
+          enum: ["en", "es"],
         },
         title: {
           type: "string",

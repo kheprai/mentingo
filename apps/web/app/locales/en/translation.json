@@ -34,7 +34,7 @@
     },
     "languages": {
       "en": "English",
-      "pl": "Polish"
+      "es": "Spanish"
     },
     "error": {
       "somethingWentWrong": "Oops! Something went wrong."
@@ -299,7 +299,7 @@
     },
     "options": {
       "english": "English",
-      "polish": "Polish"
+      "spanish": "Spanish"
     }
   },
   "resetOnboarding": {
@@ -2210,7 +2210,15 @@
     "qa": "Q&A",
     "createQA": "Create new Q&A",
     "analytics": "Analytics",
-    "progress": "Progress"
+    "progress": "Progress",
+    "notFound": "Page Not Found"
+  },
+  "error": {
+    "notFound": {
+      "title": "Oops! Looks like you got lost...",
+      "description": "The page you're looking for doesn't exist or has moved to another dimension. Don't worry, even the best explorers get lost sometimes.",
+      "backHome": "Back to home"
+    }
   },
   "lessonPreview": {
     "breadcrumbs": {
@@ -2446,6 +2454,87 @@
     "deleteModal": {
       "title": "Delete knowledge base entry",
       "description": "Are you sure you want to delete this knowledge base entry? This action cannot be undone."
+    }
+  },
+  "landing": {
+    "nav": {
+      "courses": "Courses",
+      "workshops": "Workshops",
+      "consulting": "Consulting",
+      "tools": "AI Tools",
+      "about": "About AcademIA",
+      "contact": "Contact"
+    },
+    "auth": {
+      "login": "Sign In",
+      "register": "Sign Up"
+    },
+    "hero": {
+      "headline": "Learn with AcademIA",
+      "subheadline": "Intelligent learning platform powered by artificial intelligence. Interactive courses, personalized mentoring and recognized certifications.",
+      "viewCourses": "View Courses",
+      "startFree": "Start Free"
+    },
+    "features": {
+      "title": "Everything you need to learn",
+      "subtitle": "Tools and resources designed to maximize your learning",
+      "items": {
+        "courses": {
+          "title": "Interactive Courses",
+          "description": "Multimedia content designed for effective and practical learning."
+        },
+        "ai": {
+          "title": "AI Mentoring",
+          "description": "Intelligent assistant available 24/7 to answer your questions."
+        },
+        "certificates": {
+          "title": "Certificates",
+          "description": "Get recognized certifications upon completing your courses."
+        },
+        "community": {
+          "title": "Community",
+          "description": "Connect with other students and experts in your field."
+        }
+      }
+    },
+    "workshops": {
+      "title": "Workshops",
+      "description": "Coming soon you will find practical workshops and live sessions with industry experts."
+    },
+    "consulting": {
+      "title": "Consulting",
+      "description": "Coming soon we will offer personalized consulting services for companies and professionals."
+    },
+    "tools": {
+      "title": "AI Tools",
+      "description": "Discover the best artificial intelligence tools with exclusive offers for our community.",
+      "viewTool": "View tool",
+      "cta": {
+        "title": "Have an AI tool?",
+        "description": "If you develop AI tools and want to offer promotions to our community, contact us."
+      }
+    },
+    "about": {
+      "title": "About AcademIA",
+      "description": "AcademIA is an initiative dedicated to democratizing access to quality education through technology and artificial intelligence."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "We will soon enable a contact form. For now, explore our available courses."
+    },
+    "placeholder": {
+      "contactUs": "Contact Us"
+    },
+    "footer": {
+      "description": "Learning platform powered by artificial intelligence.",
+      "sections": {
+        "platform": "Platform",
+        "company": "Company",
+        "legal": "Legal"
+      },
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "rights": "All rights reserved."
     }
   }
 }

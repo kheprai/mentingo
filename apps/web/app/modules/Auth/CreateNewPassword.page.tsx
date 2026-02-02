@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate, useSearchParams } from "@remix-run/react";
+import { Link, useNavigate, useSearchParams } from "@remix-run/react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { useCreateNewPassword } from "~/api/mutations/useCreateNewPassword";
 import PasswordValidationDisplay from "~/components/PasswordValidation/PasswordValidationDisplay";
+import { PlatformLogo } from "~/components/PlatformLogo";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
@@ -93,6 +94,9 @@ export default function CreateNewPasswordPage() {
     <FormProvider {...methods}>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
+          <Link to="/" className="mb-6 flex justify-center">
+            <PlatformLogo className="h-16 w-auto py-3" alt="Platform Logo" />
+          </Link>
           <CardTitle className="text-2xl">{t("createPasswordView.header")}</CardTitle>
           <CardDescription>
             {t("createPasswordView.subHeader")} {email}

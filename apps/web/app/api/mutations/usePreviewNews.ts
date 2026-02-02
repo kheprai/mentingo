@@ -4,7 +4,7 @@ import { ApiClient } from "../api-client";
 
 type PreviewNewsPayload = {
   newsId: string;
-  language: "en" | "pl";
+  language: "en" | "es";
   content: string;
 };
 

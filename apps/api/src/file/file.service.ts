@@ -71,7 +71,8 @@ export class FileService {
 
   async getFileUrl(fileKey: string): Promise<string> {
     if (!fileKey) return "https://app.lms.localhost/app/assets/placeholders/card-placeholder.jpg";
-    if (fileKey.startsWith("https://")) return fileKey;
+    // Handle both https:// and http:// URLs (http is used in local dev with MinIO)
+    if (fileKey.startsWith("https://") || fileKey.startsWith("http://")) return fileKey;
     if (fileKey.startsWith("bunny-")) {
       const videoId = fileKey.replace("bunny-", "");
 
@@ -117,29 +118,28 @@ export class FileService {
 
     const isVideo = file.mimetype.startsWith("video/");
 
-    try {
-      if (isVideo) {
-        throw new BadRequestException("Video uploads must use the TUS endpoints");
-      }
-
-      const fileExtension = file.originalname.split(".").pop();
-      const fileKey = `${resource}/${randomUUID()}.${fileExtension}`;
-
-      try {
-        await this.s3Service.uploadFile(file.buffer, fileKey, file.mimetype);
-      } catch (s3Error) {
-        throw new ConflictException("S3 upload failed");
-      }
-
-      const fileUrl = await this.s3Service.getSignedUrl(fileKey);
-
-      return {
-        fileKey,
-        fileUrl,
-      };
-    } catch (error) {
-      throw new ConflictException("Failed to upload file");
+    if (isVideo) {
+      throw new BadRequestException("Video uploads must use the TUS endpoints");
     }
+
+    const fileExtension = file.originalname.split(".").pop();
+    const fileKey = `${resource}/${randomUUID()}.${fileExtension}`;
+
+    try {
+      await this.s3Service.uploadFile(file.buffer, fileKey, file.mimetype);
+    } catch (s3Error) {
+      this.logger.error(`S3 upload failed for ${resource}:`, s3Error);
+      throw new ConflictException(
+        `Failed to upload file: ${s3Error instanceof Error ? s3Error.message : "S3 error"}`,
+      );
+    }
+
+    const fileUrl = await this.s3Service.getSignedUrl(fileKey);
+
+    return {
+      fileKey,
+      fileUrl,
+    };
   }
 
   private async resolveVideoProvider() {

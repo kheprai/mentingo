@@ -6,7 +6,7 @@ import { NEWS_LIST_QUERY_KEY } from "../queries/useNewsList";
 
 type DeleteNewsLanguageOptions = {
   id: string;
-  language: "en" | "pl";
+  language: "en" | "es";
 };
 
 export function useDeleteNewsLanguage() {

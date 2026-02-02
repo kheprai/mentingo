@@ -3188,12 +3188,12 @@ describe("CourseController (e2e)", () => {
 
       await db
         .update(courses)
-        .set({ availableLocales: ["en", "pl"] })
+        .set({ availableLocales: ["en", "es"] })
         .where(eq(courses.id, course.id));
 
       const response = await request(app.getHttpServer())
         .get("/api/course/lookup")
-        .query({ id: course.id, language: "pl" })
+        .query({ id: course.id, language: "es" })
         .set("Cookie", await cookieFor(author, app))
         .expect(200);
 
@@ -3215,12 +3215,12 @@ describe("CourseController (e2e)", () => {
 
       await db
         .update(courses)
-        .set({ availableLocales: ["en", "pl"] })
+        .set({ availableLocales: ["en", "es"] })
         .where(eq(courses.id, course.id));
 
       const firstResponse = await request(app.getHttpServer())
         .get("/api/course/lookup")
-        .query({ id: course.id, language: "pl" })
+        .query({ id: course.id, language: "es" })
         .set("Cookie", await cookieFor(author, app))
         .expect(200);
 
@@ -3230,13 +3230,13 @@ describe("CourseController (e2e)", () => {
       await db
         .update(courses)
         .set({
-          title: { en: course.title as string, pl: "Polski tytuł kursu" },
+          title: { en: course.title as string, es: "Título del curso en español" },
         })
         .where(eq(courses.id, course.id));
 
       const secondResponse = await request(app.getHttpServer())
         .get("/api/course/lookup")
-        .query({ id: course.id, language: "pl" })
+        .query({ id: course.id, language: "es" })
         .set("Cookie", await cookieFor(author, app))
         .expect(200);
 

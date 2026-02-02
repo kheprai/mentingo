@@ -9,7 +9,7 @@ import type { UpdateNewsBody } from "../generated-api";
 type UpdateNewsOptions = {
   id: string;
   data: UpdateNewsBody;
-  language?: "en" | "pl";
+  language?: "en" | "es";
 };
 
 export function useUpdateNews() {

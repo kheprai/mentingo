@@ -26,10 +26,10 @@ import type { SupportedLanguages } from "@repo/shared";
 
 const languageOptions: {
   key: SupportedLanguages;
-  iconName: "GB" | "PL";
+  iconName: "GB" | "ES";
   translationKey: string;
 }[] = [
-  { key: "pl", iconName: "PL", translationKey: "changeUserLanguageView.options.polish" },
+  { key: "es", iconName: "ES", translationKey: "changeUserLanguageView.options.spanish" },
   { key: "en", iconName: "GB", translationKey: "changeUserLanguageView.options.english" },
 ];
 

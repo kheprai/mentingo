@@ -43,7 +43,7 @@ export default function LanguageSelect() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="en">{t("changeUserLanguageView.options.english")}</SelectItem>
-            <SelectItem value="pl">{t("changeUserLanguageView.options.polish")}</SelectItem>
+            <SelectItem value="es">{t("changeUserLanguageView.options.spanish")}</SelectItem>
           </SelectContent>
         </Select>
       </CardContent>

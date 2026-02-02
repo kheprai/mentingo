@@ -3356,15 +3356,14 @@ export class CourseService {
         }
 
         const heading =
-          defaultEmailSettings.language === "pl"
-            ? "Zaległe kursy studentów"
+          defaultEmailSettings.language === "es"
+            ? "Cursos vencidos de estudiantes"
             : "Students with overdue courses";
         const introParagraph =
-          defaultEmailSettings.language === "pl"
-            ? "Niektórzy studenci nie ukończyli kursów w wymaganym terminie:"
+          defaultEmailSettings.language === "es"
+            ? "Algunos estudiantes no completaron sus cursos a tiempo:"
             : "Some students did not finish their courses on time:";
-        const buttonText =
-          defaultEmailSettings.language === "pl" ? "PRZEJDŹ DO KURSÓW" : "VIEW COURSES";
+        const buttonText = defaultEmailSettings.language === "es" ? "VER CURSOS" : "VIEW COURSES";
 
         const { text, html } = new BaseEmailTemplate({
           heading,

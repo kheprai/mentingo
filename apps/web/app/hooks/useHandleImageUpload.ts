@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useToast } from "~/components/ui/use-toast";
 
@@ -16,6 +16,13 @@ export function useHandleImageUpload({
   const { toast } = useToast();
 
   const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl);
+
+  // Sync imageUrl when initialImageUrl changes (e.g., after query refetch)
+  useEffect(() => {
+    if (initialImageUrl && !imageUrl?.startsWith("blob:")) {
+      setImageUrl(initialImageUrl);
+    }
+  }, [initialImageUrl]);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleImageUpload = useCallback(

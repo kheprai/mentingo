@@ -1,6 +1,6 @@
-export type SupportedLanguage = "en" | "pl";
+export type SupportedLanguage = "en" | "es";
 
-export const SUPPORTED_LANGUAGES: SupportedLanguage[] = ["en", "pl"];
+export const SUPPORTED_LANGUAGES: SupportedLanguage[] = ["en", "es"];
 
 export function detectBrowserLanguage(): SupportedLanguage {
   if (typeof navigator === "undefined") {
