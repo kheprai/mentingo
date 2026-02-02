@@ -539,7 +539,9 @@
       },
       "validation": {
         "priceInCents": "El precio debe ser al menos 2.00 o gratuito"
-      }
+      },
+      "paymentMethods": "Métodos de pago disponibles",
+      "noPaymentMethodsWarning": "No hay métodos de pago configurados. Ve a Configuración > Variables de entorno para configurar Stripe o MercadoPago."
     },
     "enrolled": {
       "filters": {
@@ -785,6 +787,18 @@
       },
       "VITE_SLACK_OAUTH_ENABLED": {
         "label": "Vite Slack OAuth habilitado (true/false)"
+      },
+      "MERCADOPAGO_ACCESS_TOKEN": {
+        "label": "Token de acceso de MercadoPago"
+      },
+      "MERCADOPAGO_PUBLIC_KEY": {
+        "label": "Clave pública de MercadoPago"
+      },
+      "VITE_MERCADOPAGO_PUBLIC_KEY": {
+        "label": "Vite clave pública de MercadoPago"
+      },
+      "MERCADOPAGO_WEBHOOK_SECRET": {
+        "label": "Secreto de webhook de MercadoPago"
       },
       "save": "Guardar"
     },

@@ -954,6 +954,18 @@
       "VITE_SLACK_OAUTH_ENABLED": {
         "label": "Vite Slack OAuth Enabled (true/false)"
       },
+      "MERCADOPAGO_ACCESS_TOKEN": {
+        "label": "MercadoPago Access Token"
+      },
+      "MERCADOPAGO_PUBLIC_KEY": {
+        "label": "MercadoPago Public Key"
+      },
+      "VITE_MERCADOPAGO_PUBLIC_KEY": {
+        "label": "Vite MercadoPago Public Key"
+      },
+      "MERCADOPAGO_WEBHOOK_SECRET": {
+        "label": "MercadoPago Webhook Secret"
+      },
       "save": "Save"
     },
     "breadcrumbs": {
@@ -1410,7 +1422,9 @@
       },
       "validation": {
         "priceInCents": "Price must be at least 2.00 or free"
-      }
+      },
+      "paymentMethods": "Payment methods available",
+      "noPaymentMethodsWarning": "No payment methods configured. Go to Settings > Environment Variables to configure Stripe or MercadoPago."
     },
     "enrolled": {
       "filters": {

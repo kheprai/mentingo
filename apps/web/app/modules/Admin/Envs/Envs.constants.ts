@@ -79,4 +79,20 @@ export const SECRET_METADATA = {
     labelKey: "adminEnvsView.form.VITE_SLACK_OAUTH_ENABLED.label",
     placeholderKey: "adminEnvsView.form.placeholder",
   },
+  MERCADOPAGO_ACCESS_TOKEN: {
+    labelKey: "adminEnvsView.form.MERCADOPAGO_ACCESS_TOKEN.label",
+    placeholderKey: "adminEnvsView.form.placeholder",
+  },
+  MERCADOPAGO_PUBLIC_KEY: {
+    labelKey: "adminEnvsView.form.MERCADOPAGO_PUBLIC_KEY.label",
+    placeholderKey: "adminEnvsView.form.placeholder",
+  },
+  VITE_MERCADOPAGO_PUBLIC_KEY: {
+    labelKey: "adminEnvsView.form.VITE_MERCADOPAGO_PUBLIC_KEY.label",
+    placeholderKey: "adminEnvsView.form.placeholder",
+  },
+  MERCADOPAGO_WEBHOOK_SECRET: {
+    labelKey: "adminEnvsView.form.MERCADOPAGO_WEBHOOK_SECRET.label",
+    placeholderKey: "adminEnvsView.form.placeholder",
+  },
 };

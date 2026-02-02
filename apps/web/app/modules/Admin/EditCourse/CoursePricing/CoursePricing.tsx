@@ -1,5 +1,8 @@
+import { CheckCircle, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { useMercadoPagoConfigured } from "~/api/queries/useMercadoPagoConfigured";
+import { useStripeConfigured } from "~/api/queries/useStripeConfigured";
 import { PriceInput } from "~/components/PriceInput/PriceInput";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
@@ -23,6 +26,8 @@ const CoursePricing = ({ courseId, priceInCents, currency, language }: CoursePri
   const { form, onSubmit } = useCoursePricingForm({ courseId, priceInCents, currency, language });
   const { setValue, watch } = form;
   const { t } = useTranslation();
+  const { data: stripeConfigured } = useStripeConfigured();
+  const { data: mercadoPagoConfigured } = useMercadoPagoConfigured();
 
   const isFree = watch("isFree");
   return (
@@ -127,6 +132,48 @@ const CoursePricing = ({ courseId, priceInCents, currency, language }: CoursePri
                       {form.formState.errors.priceInCents && (
                         <p className="text-xs text-error-600">
                           {form.formState.errors.priceInCents.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-4 rounded-md border border-neutral-200 bg-neutral-50 p-4">
+                      <p className="body-sm-md mb-2 text-neutral-700">
+                        {t("adminCourseView.pricing.paymentMethods")}
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          {stripeConfigured?.isConfigured ? (
+                            <CheckCircle className="h-4 w-4 text-success-600" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-neutral-400" />
+                          )}
+                          <span
+                            className={cn("body-sm", {
+                              "text-neutral-950": stripeConfigured?.isConfigured,
+                              "text-neutral-400": !stripeConfigured?.isConfigured,
+                            })}
+                          >
+                            Stripe
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {mercadoPagoConfigured?.isConfigured ? (
+                            <CheckCircle className="h-4 w-4 text-success-600" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-neutral-400" />
+                          )}
+                          <span
+                            className={cn("body-sm", {
+                              "text-neutral-950": mercadoPagoConfigured?.isConfigured,
+                              "text-neutral-400": !mercadoPagoConfigured?.isConfigured,
+                            })}
+                          >
+                            MercadoPago
+                          </span>
+                        </div>
+                      </div>
+                      {!stripeConfigured?.isConfigured && !mercadoPagoConfigured?.isConfigured && (
+                        <p className="body-sm mt-2 text-warning-600">
+                          {t("adminCourseView.pricing.noPaymentMethodsWarning")}
                         </p>
                       )}
                     </div>
