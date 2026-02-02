@@ -93,17 +93,13 @@ export const routeAccessConfig = createRouteConfig({
   "course/:courseId/lesson/:lessonId": ALL_ROLES,
   announcements: ALL_ROLES,
   "articles/:articleId/edit": ADMIN_AND_CONTENT_CREATOR,
-  "news/add": ADMIN_AND_CONTENT_CREATOR,
-  "news/:newsId/edit": ADMIN_AND_CONTENT_CREATOR,
   //Client and public
   "course/:id": ALL_ROLES,
-  courses: ALL_ROLES,
+  library: ALL_ROLES,
   qa: ALL_ROLES,
   "qa/:id": ADMIN_ONLY,
   articles: ALL_ROLES,
   "articles/:articleId": ALL_ROLES,
-  news: ALL_ROLES,
-  "news/:newsId": ALL_ROLES,
 
   // Admin part
   "admin/analytics": ADMIN_AND_CONTENT_CREATOR,
@@ -132,4 +128,8 @@ export const routeAccessConfig = createRouteConfig({
   "admin/promotion-codes/:id": ADMIN_ONLY,
   "admin/envs": ADMIN_ONLY,
   "admin/course/:courseId/lesson/:lessonId/preview": ADMIN_AND_CONTENT_CREATOR,
+  "admin/news": ADMIN_AND_CONTENT_CREATOR,
+  "admin/news/add": ADMIN_AND_CONTENT_CREATOR,
+  "admin/news/:newsId": ADMIN_AND_CONTENT_CREATOR,
+  "admin/news/:newsId/edit": ADMIN_AND_CONTENT_CREATOR,
 });

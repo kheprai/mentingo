@@ -86,7 +86,7 @@ function NewsPage() {
       { language },
       {
         onSuccess: (data) => {
-          navigate("/news/add", {
+          navigate("/admin/news/add", {
             state: {
               createdNewsId: data.data.id,
             },
@@ -142,12 +142,21 @@ function NewsPage() {
 
           {firstNews || moreNews.length ? (
             <>
-              <NewsItem {...firstNews} isBig className="mb-6" />
+              <NewsItem
+                {...firstNews}
+                isBig
+                className="mb-6"
+                href={isAdminLike ? `/admin/news/${firstNews.id}/edit` : undefined}
+              />
 
               {moreNews.length ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                   {moreNews.map((news: (typeof displayedNews)[number]) => (
-                    <NewsItem key={news.id} {...news} />
+                    <NewsItem
+                      key={news.id}
+                      {...news}
+                      href={isAdminLike ? `/admin/news/${news.id}/edit` : undefined}
+                    />
                   ))}
                 </div>
               ) : null}
@@ -164,7 +173,11 @@ function NewsPage() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
         {pageNews?.map((news: (typeof displayedNews)[number]) => (
-          <NewsItem key={news.id} {...news} />
+          <NewsItem
+            key={news.id}
+            {...news}
+            href={isAdminLike ? `/admin/news/${news.id}/edit` : undefined}
+          />
         ))}
       </div>
     );
@@ -192,7 +205,7 @@ function NewsPage() {
           breadcrumbs={[
             {
               title: t("adminUsersView.breadcrumbs.news"),
-              href: "/news",
+              href: "/admin/news",
             },
           ]}
           className="flex flex-col"

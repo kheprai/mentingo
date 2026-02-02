@@ -8,6 +8,10 @@ import { Icon } from "~/components/Icon";
 import { Separator } from "~/components/ui/separator";
 import { USER_ROLE } from "~/config/userRoles";
 import { cn } from "~/lib/utils";
+import {
+  useLanguageStore,
+  type Language,
+} from "~/modules/Dashboard/Settings/Language/LanguageStore";
 
 import {
   DropdownMenu,
@@ -29,6 +33,11 @@ type NavigationFooterProps = {
   isSidebarCollapsed: boolean;
 };
 
+const languages = [
+  { code: "es", label: "Español", flag: "🇦🇷" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+] as const;
+
 export function NavigationFooter({
   setIsMobileNavOpen,
   hasConfigurationIssues,
@@ -37,12 +46,22 @@ export function NavigationFooter({
   isSidebarCollapsed,
 }: NavigationFooterProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
   const { mutate: logout } = useLogoutUser();
   const { data: user } = useCurrentUser();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { language, setLanguage } = useLanguageStore();
 
   const hideLabels = isSidebarCollapsed;
+
+  const currentLang = languages.find((l) => l.code === language) || languages[0];
+
+  const handleLanguageChange = (langCode: string) => {
+    i18n.changeLanguage(langCode);
+    setLanguage(langCode as Language);
+    setIsLangDropdownOpen(false);
+  };
 
   return (
     <menu className="grid w-full grid-cols-4 gap-3 md:grid-cols-8 2xl:flex 2xl:flex-col 2xl:gap-2 2xl:self-end">
@@ -69,6 +88,54 @@ export function NavigationFooter({
         userId={user?.id}
         hasConfigurationIssues={hasConfigurationIssues}
       />
+
+      <li className="col-span-4 md:col-span-8 2xl:block">
+        <DropdownMenu open={isLangDropdownOpen} onOpenChange={setIsLangDropdownOpen}>
+          <DropdownMenuTrigger
+            className={cn(
+              "flex w-full items-center gap-x-3 rounded-lg px-4 py-3.5 hover:outline hover:outline-1 hover:outline-primary-200 2xl:p-2 2xl:hover:bg-primary-50 body-sm-md",
+              {
+                "justify-center": !showNavigationLabels,
+              },
+            )}
+          >
+            <span className="text-xl leading-none">{currentLang.flag}</span>
+            <span
+              className={cn("line-clamp-1 grow text-left truncate whitespace-nowrap", {
+                "sr-only": !showNavigationLabels,
+              })}
+            >
+              {currentLang.label}
+            </span>
+            <ChevronDown
+              className={cn("size-4 shrink-0 text-neutral-500", {
+                hidden: !showNavigationLabels,
+              })}
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            side="right"
+            className={cn("min-w-[140px] p-1", {
+              "absolute bottom-0 left-12": isSidebarCollapsed,
+            })}
+          >
+            {languages.map((lang) => (
+              <DropdownMenuItem
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={cn(
+                  "flex cursor-pointer items-center gap-2 px-3 py-2 text-sm",
+                  language === lang.code ? "bg-primary-50 font-medium" : "",
+                )}
+              >
+                <span className="text-lg leading-none">{lang.flag}</span>
+                {lang.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </li>
 
       <div className="col-span-1 hidden cursor-pointer select-none items-center justify-center md:col-span-2 2xl:flex">
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>

@@ -330,7 +330,7 @@ const Courses = () => {
               {
                 children: <DashboardIcon />,
                 isActive: false,
-                onClick: () => navigate("/courses"),
+                onClick: () => navigate("/library"),
               },
               {
                 children: <HamburgerIcon />,

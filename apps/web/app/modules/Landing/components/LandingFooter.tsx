@@ -9,10 +9,13 @@ const footerLinks = {
     { href: "/workshops", key: "workshops" },
     { href: "/consulting", key: "consulting" },
     { href: "/tools", key: "tools" },
+    { href: "/resources", key: "resources" },
   ],
   company: [
     { href: "/about", key: "about" },
     { href: "/contact", key: "contact" },
+    { href: "/news", key: "news" },
+    { href: "/faq", key: "faq" },
   ],
   legal: [
     { href: "/privacy", key: "privacy" },

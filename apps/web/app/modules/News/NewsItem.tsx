@@ -9,6 +9,7 @@ import type { GetNewsListResponse } from "~/api/generated-api";
 type Props = GetNewsListResponse["data"][number] & {
   isBig?: boolean;
   className?: string;
+  href?: string;
 };
 
 function NewsItem({
@@ -22,6 +23,7 @@ function NewsItem({
   createdAt,
   updatedAt,
   className,
+  href,
 }: Props) {
   const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ function NewsItem({
           "px-10 py-11 min-h-[550px]": isBig,
         },
       )}
-      onClick={() => navigate(`/news/${id}`)}
+      onClick={() => navigate(href ?? `/news/${id}`)}
     >
       <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"

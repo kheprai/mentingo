@@ -13,6 +13,19 @@ export const routes: (
           id: "landing-consulting",
         });
         route("tools", "modules/Landing/pages/Tools.page.tsx", { id: "landing-tools" });
+        route("courses", "modules/Landing/pages/Courses.page.tsx", { id: "landing-courses" });
+        route("courses/:slug", "modules/Landing/pages/CourseDetail.page.tsx", {
+          id: "landing-course-detail",
+        });
+        route("news", "modules/Landing/pages/News.page.tsx", { id: "landing-news" });
+        route("news/:newsId", "modules/Landing/pages/NewsDetail.page.tsx", {
+          id: "landing-news-detail",
+        });
+        route("resources", "modules/Landing/pages/Resources.page.tsx", { id: "landing-resources" });
+        route("resources/:articleId", "modules/Landing/pages/ResourceDetail.page.tsx", {
+          id: "landing-resource-detail",
+        });
+        route("faq", "modules/Landing/pages/FAQ.page.tsx", { id: "landing-faq" });
         route("about", "modules/Landing/pages/About.page.tsx", { id: "landing-about" });
         route("contact", "modules/Landing/pages/Contact.page.tsx", { id: "landing-contact" });
       });
@@ -26,14 +39,14 @@ export const routes: (
       });
       // App routes (with navigation) - these routes stay at root level
       route(
-        "courses",
+        "library",
         "modules/Navigation/NavigationWrapper.tsx",
-        { id: "courses-wrapper" },
+        { id: "library-wrapper" },
         () => {
           route(
             "",
             "modules/Dashboard/PublicDashboard.layout.tsx",
-            { id: "courses-public" },
+            { id: "library-public" },
             () => {
               route("", "modules/Courses/Courses.page.tsx", { index: true });
             },
@@ -78,20 +91,6 @@ export const routes: (
           });
         },
       );
-      route("news", "modules/Navigation/NavigationWrapper.tsx", { id: "news-wrapper" }, () => {
-        route("", "modules/Dashboard/PublicDashboard.layout.tsx", { id: "news-public" }, () => {
-          route("", "modules/News/News.page.tsx", { index: true });
-          route(":newsId", "modules/News/NewsDetails.page.tsx", {
-            id: "news-details",
-          });
-          route(":newsId/edit", "modules/News/NewsForm.page.tsx", {
-            id: "edit-news",
-          });
-          route("add", "modules/News/NewsForm.page.tsx", {
-            id: "add-news",
-          });
-        });
-      });
       // User dashboard routes
       route("", "modules/Navigation/NavigationWrapper.tsx", { id: "user-wrapper" }, () => {
         route("", "modules/Dashboard/UserDashboard.layout.tsx", { id: "user-dashboard" }, () => {
@@ -129,6 +128,10 @@ export const routes: (
             "promotion-codes/:id",
             "modules/Admin/PromotionCodes/PromotionCodeDetails.page.tsx",
           );
+          route("news", "modules/News/News.page.tsx", { id: "admin-news" });
+          route("news/add", "modules/News/NewsForm.page.tsx", { id: "admin-add-news" });
+          route("news/:newsId", "modules/News/NewsDetails.page.tsx", { id: "admin-news-details" });
+          route("news/:newsId/edit", "modules/News/NewsForm.page.tsx", { id: "admin-edit-news" });
         });
       });
 

@@ -10,7 +10,7 @@ export const ARTICLES_TOC_QUERY_KEY = ["articlesToc"];
 export const articlesTocQueryOptions = (language?: SupportedLanguages, isDraftMode?: boolean) =>
   queryOptions({
     enabled: !!language,
-    queryKey: [ARTICLES_TOC_QUERY_KEY, { language, isDraftMode }],
+    queryKey: [ARTICLES_TOC_QUERY_KEY, language, isDraftMode],
     queryFn: async () => {
       const response = await ApiClient.api.articlesControllerGetArticleToc({
         language,

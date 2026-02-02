@@ -8,7 +8,7 @@ export const QA_QUERY_KEY = ["QA"];
 
 export const QAQueryOptions = (id: string, language: SupportedLanguages) =>
   queryOptions({
-    queryKey: [QA_QUERY_KEY, { id }, { language }],
+    queryKey: [QA_QUERY_KEY, id, language],
     queryFn: async () => {
       const response = await ApiClient.api.qaControllerGetQa(id, { language });
 

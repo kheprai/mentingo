@@ -64,7 +64,7 @@ export function StatusStep({ handleBack, handleNext: _ }: StepComponentProps) {
       });
 
       resetForm();
-      navigate("/courses");
+      navigate("/library");
     } catch (error) {
       console.error("Error creating course:", error);
       throw error;

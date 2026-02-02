@@ -542,6 +542,11 @@ export class CourseService {
       const conditions = [eq(courses.status, "published")];
       conditions.push(...(this.getFiltersConditions(filters) as SQL<unknown>[]));
 
+      // Filter courses by available language
+      if (language) {
+        conditions.push(sql`${language} = ANY(${courses.availableLocales})`);
+      }
+
       const orderConditions = this.getOrderConditions(filters);
 
       if (availableCourseIds.length > 0) {
@@ -576,6 +581,8 @@ export class CourseService {
           dueDate: sql<
             string | null
           >`TO_CHAR(${groupCourses.dueDate}, 'YYYY-MM-DD"T"HH24:MI:SS"Z"')`,
+          availableLocales: courses.availableLocales,
+          baseLanguage: courses.baseLanguage,
         })
         .from(courses)
         .leftJoin(categories, eq(courses.categoryId, categories.id))
@@ -1132,6 +1139,8 @@ export class CourseService {
             AND ${chapters.isFreemium} = true
         )`,
         dueDate: sql<string | null>`TO_CHAR(${groupCourses.dueDate}, 'YYYY-MM-DD"T"HH24:MI:SS"Z"')`,
+        availableLocales: courses.availableLocales,
+        baseLanguage: courses.baseLanguage,
       })
       .from(courses)
       .leftJoin(
@@ -2355,6 +2364,8 @@ export class CourseService {
             AND ${chapters.isFreemium} = TRUE
         )`,
       dueDate: sql<string | null>`TO_CHAR(${groupCourses.dueDate}, 'YYYY-MM-DD"T"HH24:MI:SS"Z"')`,
+      availableLocales: courses.availableLocales,
+      baseLanguage: courses.baseLanguage,
     };
   }
 

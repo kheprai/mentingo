@@ -124,7 +124,7 @@ export default function CourseViewPage() {
   const breadcrumbs = [
     {
       title: t("studentCoursesView.breadcrumbs.courses"),
-      href: "/courses",
+      href: "/library",
     },
     { title: course.title, href: `/course/${id}` },
   ];

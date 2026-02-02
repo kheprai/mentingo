@@ -9,7 +9,7 @@ export const COURSE_QUERY_KEY = ["beta-course", "admin"];
 
 export const courseQueryOptions = (id: string, language?: SupportedLanguages) =>
   queryOptions({
-    queryKey: [COURSE_QUERY_KEY, { id, language }],
+    queryKey: [COURSE_QUERY_KEY, id, language],
     queryFn: async () => {
       const response = await ApiClient.api.courseControllerGetBetaCourseById({
         id,

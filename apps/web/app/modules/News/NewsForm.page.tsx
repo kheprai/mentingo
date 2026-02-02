@@ -106,8 +106,8 @@ function NewsFormPage({ defaultValues }: NewsFormPageProps) {
   const [previewContent, setPreviewContent] = useState("");
   const pageTitle = isEdit ? t("newsView.edit") : t("newsView.create");
   const breadcrumbs = [
-    { title: t("navigationSideBar.news"), href: "/news" },
-    { title: pageTitle, href: isEdit && id ? `/news/${id}` : "/news/add" },
+    { title: t("navigationSideBar.news"), href: "/admin/news" },
+    { title: pageTitle, href: isEdit && id ? `/admin/news/${id}` : "/admin/news/add" },
   ];
 
   const schema = useMemo(
@@ -162,7 +162,7 @@ function NewsFormPage({ defaultValues }: NewsFormPageProps) {
       data: formData as unknown as UpdateNewsPayload,
     });
 
-    navigate(`/news/${id}`);
+    navigate(`/admin/news/${id}`);
   };
 
   const handleFileUpload = async (file?: File, editor?: TipTapEditor | null) => {

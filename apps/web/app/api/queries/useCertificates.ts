@@ -20,7 +20,7 @@ type CertificateQueryParams = {
 };
 
 export const certificatesQueryOptions = (params: CertificatesParams) => ({
-  queryKey: ["certificates", params.userId, { language: params.language }],
+  queryKey: ["certificates", params.userId, params.page, params.perPage, params.language],
   queryFn: async () => {
     const response = await ApiClient.api.certificatesControllerGetAllCertificates({
       userId: params.userId,
@@ -35,7 +35,7 @@ export const certificatesQueryOptions = (params: CertificatesParams) => ({
 });
 
 export const certificateQueryOptions = (params: CertificateQueryParams) => ({
-  queryKey: ["certificate", params.userId, params.courseId, { language: params.language }],
+  queryKey: ["certificate", params.userId, params.courseId, params.language],
   enabled: !!params.userId && !!params.courseId,
   queryFn: async () => {
     const response = await ApiClient.api.certificatesControllerGetCertificate({

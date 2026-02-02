@@ -9,7 +9,7 @@ export const ARTICLE_SECTION_QUERY_KEY = ["articleSection"];
 export const articleSectionQueryOptions = (sectionId: string, language?: SupportedLanguages) =>
   queryOptions({
     enabled: !!sectionId && !!language,
-    queryKey: [ARTICLE_SECTION_QUERY_KEY, { sectionId, language }],
+    queryKey: [ARTICLE_SECTION_QUERY_KEY, sectionId, language],
     queryFn: async () => {
       const response = await ApiClient.api.articlesControllerGetArticleSection(sectionId, {
         language,

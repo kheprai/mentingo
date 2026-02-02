@@ -41,7 +41,7 @@ export const ContinueLearningCard = ({ isLoading = false, lesson }: ContinueLear
           </h2>
         </div>
         <Icon name="NoData" />
-        <Link to="/courses" className="w-full md:w-min 2xl:w-full">
+        <Link to="/library" className="w-full md:w-min 2xl:w-full">
           <Button className="w-full">{t("clientStatisticsView.button.searchCourses")}</Button>
         </Link>
       </div>

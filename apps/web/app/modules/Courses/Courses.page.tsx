@@ -139,7 +139,7 @@ export default function CoursesPage() {
         breadcrumbs={[
           {
             title: t("studentCoursesView.breadcrumbs.courses"),
-            href: "/courses",
+            href: "/library",
           },
         ]}
       >
@@ -172,7 +172,7 @@ export default function CoursesPage() {
                       {
                         children: <DashboardIcon />,
                         isActive: true,
-                        onClick: () => navigate("/courses"),
+                        onClick: () => navigate("/library"),
                       },
                       {
                         children: <HamburgerIcon />,

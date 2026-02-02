@@ -6,6 +6,8 @@ import { PROGRESS_STATUSES } from "src/utils/types/progress.type";
 
 import { coursesStatusOptions } from "./courseQuery";
 
+export const supportedLanguagesSchema = Type.Enum(SUPPORTED_LANGUAGES, { default: "en" });
+
 export const courseSchema = Type.Object({
   id: UUIDSchema,
   title: Type.String(),
@@ -34,6 +36,8 @@ export const studentCourseSchema = Type.Object({
   enrolled: Type.Optional(Type.Boolean()),
   dueDate: Type.Union([Type.String(), Type.Null()]),
   slug: Type.String(),
+  availableLocales: Type.Array(Type.String()),
+  baseLanguage: Type.String(),
 });
 
 export const coursesForContentCreatorSchema = Type.Object({
@@ -116,7 +120,6 @@ export const courseStatisticsQuerySchema = Type.Object({
   groupId: Type.Optional(UUIDSchema),
 });
 
-export const supportedLanguagesSchema = Type.Enum(SUPPORTED_LANGUAGES, { default: "en" });
 export const enrolledCourseGroupsPayload = Type.Object({
   groups: Type.Array(
     Type.Object({

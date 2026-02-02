@@ -14,7 +14,13 @@ export const draftNewsListQueryOptions = (
   params?: NewsListParams,
   options: DraftNewsQueryOptions = { enabled: true },
 ) => ({
-  queryKey: [...DRAFT_NEWS_LIST_QUERY_KEY, params],
+  queryKey: [
+    ...DRAFT_NEWS_LIST_QUERY_KEY,
+    params?.language,
+    params?.page,
+    params?.perPage,
+    params?.searchQuery,
+  ],
   queryFn: async () => {
     const response = await ApiClient.api.newsControllerGetDraftNewsList({
       language: params?.language ?? "en",

@@ -12513,6 +12513,15 @@
                 },
                 "slug": {
                   "type": "string"
+                },
+                "availableLocales": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "baseLanguage": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -12529,7 +12538,9 @@
                 "currency",
                 "completedChapterCount",
                 "dueDate",
-                "slug"
+                "slug",
+                "availableLocales",
+                "baseLanguage"
               ]
             }
           },
@@ -12783,6 +12794,15 @@
                 },
                 "slug": {
                   "type": "string"
+                },
+                "availableLocales": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "baseLanguage": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -12799,7 +12819,9 @@
                 "currency",
                 "completedChapterCount",
                 "dueDate",
-                "slug"
+                "slug",
+                "availableLocales",
+                "baseLanguage"
               ]
             }
           },
@@ -12957,6 +12979,15 @@
                 },
                 "slug": {
                   "type": "string"
+                },
+                "availableLocales": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "baseLanguage": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -12975,7 +13006,9 @@
                 "currency",
                 "completedChapterCount",
                 "dueDate",
-                "slug"
+                "slug",
+                "availableLocales",
+                "baseLanguage"
               ]
             }
           }

@@ -77,8 +77,8 @@ export default function NewsDetailsPage() {
     <ContentAccessGuard type={ACCESS_GUARD.UNREGISTERED_NEWS_ACCESS}>
       <PageWrapper
         breadcrumbs={[
-          { title: t("navigationSideBar.news"), href: "/news" },
-          { title: news.title, href: `/news/${news.id}` },
+          { title: t("navigationSideBar.news"), href: "/admin/news" },
+          { title: news.title, href: `/admin/news/${news.id}` },
         ]}
         className="flex flex-col gap-10 bg-neutral-50/80"
         rightSideContent={
@@ -91,7 +91,7 @@ export default function NewsDetailsPage() {
               variant="outline"
               className="w-28 gap-2"
               onClick={() => {
-                navigate(`/news/${news.id}/edit`);
+                navigate(`/admin/news/${news.id}/edit`);
               }}
             >
               <Icon name="Edit" className="size-4" />
@@ -109,7 +109,7 @@ export default function NewsDetailsPage() {
                   { id: newsId },
                   {
                     onSuccess: () => {
-                      navigate("/news");
+                      navigate("/admin/news");
                     },
                   },
                 );
@@ -166,7 +166,7 @@ export default function NewsDetailsPage() {
               variant="ghost"
               className="flex items-center gap-2 select-none disabled:opacity-50"
               onClick={() => {
-                navigate(`/news/${news.previousNews}`);
+                navigate(`/admin/news/${news.previousNews}`);
               }}
               disabled={!news.previousNews}
             >
@@ -179,7 +179,7 @@ export default function NewsDetailsPage() {
               variant="ghost"
               className="flex items-center gap-2 select-none disabled:opacity-50"
               onClick={() => {
-                navigate(`/news/${news.nextNews}`);
+                navigate(`/admin/news/${news.nextNews}`);
               }}
               disabled={!news.nextNews}
             >

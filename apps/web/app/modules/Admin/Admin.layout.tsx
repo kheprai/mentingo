@@ -5,6 +5,8 @@ import { match } from "ts-pattern";
 import { currentUserQueryOptions } from "~/api/queries";
 import { useLatestUnreadAnnouncements } from "~/api/queries/useLatestUnreadNotifications";
 import { queryClient } from "~/api/queryClient";
+import { VideoProvider } from "~/components/VideoPlayer/VideoPlayerContext";
+import { VideoPlayerSingleton } from "~/components/VideoPlayer/VideoPlayerSingleton";
 import { RouteGuard } from "~/Guards/RouteGuard";
 import { useUserRole } from "~/hooks/useUserRole";
 import { cn } from "~/lib/utils";
@@ -68,19 +70,22 @@ const AdminLayout = () => {
   const { pathname } = useLocation();
 
   return (
-    <main
-      className={cn("max-h-dvh flex-1 overflow-y-auto bg-primary-50", {
-        "bg-white p-0": shouldHideTopbarAndSidebar(pathname),
-      })}
-    >
-      <Suspense fallback={<Loader />}>
-        <AdminGuard>
-          <RouteGuard>
-            <Outlet />
-          </RouteGuard>
-        </AdminGuard>
-      </Suspense>
-    </main>
+    <VideoProvider>
+      <main
+        className={cn("max-h-dvh flex-1 overflow-y-auto bg-primary-50", {
+          "bg-white p-0": shouldHideTopbarAndSidebar(pathname),
+        })}
+      >
+        <Suspense fallback={<Loader />}>
+          <AdminGuard>
+            <RouteGuard>
+              <Outlet />
+            </RouteGuard>
+          </AdminGuard>
+        </Suspense>
+      </main>
+      <VideoPlayerSingleton />
+    </VideoProvider>
   );
 };
 

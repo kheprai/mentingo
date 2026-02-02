@@ -14,7 +14,7 @@ export const articleQueryOptions = (
 ) =>
   queryOptions({
     enabled: !!id && !!language,
-    queryKey: [ARTICLE_QUERY_KEY, { id, language, isDraftMode }],
+    queryKey: [ARTICLE_QUERY_KEY, id, language, isDraftMode],
     queryFn: async () => {
       const response = await ApiClient.api.articlesControllerGetArticle(id, {
         language,

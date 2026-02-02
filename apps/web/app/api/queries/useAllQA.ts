@@ -16,7 +16,7 @@ type QueryOptions = {
 
 export const allQAQueryOptions = (language: SupportedLanguages) =>
   queryOptions({
-    queryKey: [QA_QUERY_KEY],
+    queryKey: [QA_QUERY_KEY, language],
     queryFn: async () => {
       const response = await ApiClient.api.qaControllerGetAllQa({ language });
 
@@ -29,7 +29,7 @@ export const qaSearchQueryOptions = (
   options: QueryOptions = { enabled: true },
 ) =>
   queryOptions({
-    queryKey: ["qa-search", params],
+    queryKey: ["qa-search", params.searchQuery, params?.language],
     queryFn: async () => {
       const response = await ApiClient.api.qaControllerGetAllQa({
         language: params?.language ?? "en",

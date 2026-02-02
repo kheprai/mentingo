@@ -20,7 +20,7 @@ export const articlesSearchQueryOptions = (
   options: QueryOptions = { enabled: true },
 ) =>
   queryOptions({
-    queryKey: [...ARTICLES_SEARCH_QUERY_KEY, params],
+    queryKey: [...ARTICLES_SEARCH_QUERY_KEY, params.searchQuery, params?.language],
     queryFn: async () => {
       const response = await ApiClient.api.articlesControllerGetArticles({
         language: params?.language ?? "en",

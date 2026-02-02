@@ -45,8 +45,8 @@ export const getNavigationConfig = (
       isExpandable: false,
       items: [
         {
-          label: t("navigationSideBar.courses"),
-          path: "courses",
+          label: t("navigationSideBar.library"),
+          path: "library",
           iconName: "Course",
         },
         {
@@ -72,7 +72,7 @@ export const getNavigationConfig = (
                 ? ([
                     {
                       label: t("navigationSideBar.news"),
-                      path: `news`,
+                      path: `admin/news`,
                       iconName: "News",
                     },
                   ] as NavigationItem[])

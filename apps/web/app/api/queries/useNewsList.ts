@@ -22,7 +22,13 @@ export const newsListQueryOptions = (
   options: QueryOptions = { enabled: true },
 ) =>
   queryOptions({
-    queryKey: [...NEWS_LIST_QUERY_KEY, params],
+    queryKey: [
+      ...NEWS_LIST_QUERY_KEY,
+      params?.language,
+      params?.page,
+      params?.perPage,
+      params?.searchQuery,
+    ],
     queryFn: async () => {
       const response = await ApiClient.api.newsControllerGetNewsList({
         language: params?.language ?? "en",
@@ -39,7 +45,7 @@ export const newsSearchQueryOptions = (
   options: QueryOptions = { enabled: true },
 ) =>
   queryOptions({
-    queryKey: ["news-search", params],
+    queryKey: ["news-search", params.searchQuery, params?.language],
     queryFn: async () => {
       const response = await ApiClient.api.newsControllerGetNewsList({
         language: params?.language ?? "en",

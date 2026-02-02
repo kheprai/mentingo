@@ -170,6 +170,7 @@
     "progress": "Progress",
     "findInApplication": "Find in application",
     "courses": "Courses",
+    "library": "Library",
     "content": "Content",
     "categories": "Categories",
     "users": "Users",
@@ -2462,12 +2463,17 @@
       "workshops": "Workshops",
       "consulting": "Consulting",
       "tools": "AI Tools",
+      "news": "News",
+      "resources": "Resources",
+      "faq": "FAQ",
       "about": "About AcademIA",
-      "contact": "Contact"
+      "contact": "Contact",
+      "language": "Language"
     },
     "auth": {
       "login": "Sign In",
-      "register": "Sign Up"
+      "register": "Sign Up",
+      "myAcademia": "My AcademIA"
     },
     "hero": {
       "headline": "Learn with AcademIA",
@@ -2522,6 +2528,60 @@
       "title": "Contact",
       "description": "We will soon enable a contact form. For now, explore our available courses."
     },
+    "courses": {
+      "title": "Explore Our Courses",
+      "description": "Discover courses designed to enhance your skills in artificial intelligence and technology.",
+      "startLearning": "Start Learning",
+      "searchPlaceholder": "Search courses...",
+      "filters": {
+        "category": "Category",
+        "allCategories": "All categories",
+        "price": "Price",
+        "allPrices": "All",
+        "free": "Free",
+        "paid": "Paid",
+        "language": "Language",
+        "allLanguages": "All languages",
+        "sort": "Sort by",
+        "sortRelevance": "Relevance",
+        "sortPriceAsc": "Price: low to high",
+        "sortPriceDesc": "Price: high to low",
+        "sortNewest": "Newest",
+        "clearFilters": "Clear filters"
+      },
+      "results": {
+        "showing": "Showing {{count}} courses",
+        "showingOne": "Showing 1 course",
+        "noResults": "No courses found",
+        "noResultsDescription": "Try adjusting your search filters",
+        "loading": "Loading courses..."
+      },
+      "card": {
+        "chapters": "{{count}} chapters",
+        "chapter": "1 chapter",
+        "free": "Free",
+        "freeLessons": "Free lessons",
+        "enrolled": "Enrolled",
+        "viewCourse": "View course",
+        "viewDetails": "View details",
+        "continue": "Continue"
+      }
+    },
+    "userMenu": {
+      "library": "Library",
+      "profile": "Profile",
+      "settings": "Settings",
+      "analytics": "Analytics",
+      "users": "Users",
+      "categories": "Categories",
+      "myCourses": "My Courses",
+      "logout": "Log out",
+      "roles": {
+        "admin": "Administrator",
+        "student": "Student",
+        "content_creator": "Content Creator"
+      }
+    },
     "placeholder": {
       "contactUs": "Contact Us"
     },
@@ -2535,6 +2595,60 @@
       "privacy": "Privacy",
       "terms": "Terms",
       "rights": "All rights reserved."
+    },
+    "courseDetail": {
+      "enroll": "Enroll",
+      "enrollFree": "Enroll for Free",
+      "loginToEnroll": "Sign in to enroll",
+      "chapters": "Course Content",
+      "chaptersCount": "{{count}} chapters",
+      "aboutCourse": "About this course",
+      "instructor": "Instructor",
+      "alreadyEnrolled": "Already enrolled",
+      "continueLearning": "Continue learning",
+      "freeChapters": "Includes free lessons",
+      "backToCourses": "Back to courses",
+      "notFound": "Course not found",
+      "languageNotAvailable": {
+        "title": "Language not available",
+        "description": "The course \"{{course}}\" is not available in {{language}}.",
+        "selectAlternative": "Select one of the available languages:"
+      }
+    },
+    "news": {
+      "title": "News",
+      "description": "Stay up to date with the latest news, articles and updates from AcademIA.",
+      "featured": "Featured",
+      "readMore": "Read more",
+      "publishedOn": "Published on {{date}}",
+      "noNews": "No news available"
+    },
+    "newsDetail": {
+      "backToNews": "Back to news",
+      "notFound": "News not found",
+      "previousNews": "Previous",
+      "nextNews": "Next"
+    },
+    "resources": {
+      "title": "Resources",
+      "description": "Explore our knowledge base with guides, tutorials and documentation.",
+      "searchPlaceholder": "Search resources...",
+      "noResults": "No resources found",
+      "readArticle": "Read article"
+    },
+    "resourceDetail": {
+      "backToResources": "Back to resources",
+      "notFound": "Resource not found",
+      "previousResource": "Previous",
+      "nextResource": "Next"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "description": "Find answers to the most common questions about our platform.",
+      "searchPlaceholder": "Search FAQ...",
+      "noResults": "No questions found",
+      "contactSupport": "Can't find what you're looking for?",
+      "contactUs": "Contact us"
     }
   }
 }

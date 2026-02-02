@@ -10,7 +10,7 @@ export const missingTranslationsQueryOptions = (
   courseId: string,
   language: SupportedLanguages,
 ) => ({
-  queryKey: [COURSE_TRANSLATIONS_QUERY_KEY, { id: courseId, language }],
+  queryKey: [COURSE_TRANSLATIONS_QUERY_KEY, courseId, language],
   queryFn: async () => {
     const { data } = await ApiClient.api.courseControllerHasMissingTranslations({
       id: courseId,

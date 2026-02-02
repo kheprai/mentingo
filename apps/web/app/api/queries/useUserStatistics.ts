@@ -7,7 +7,7 @@ import type { SupportedLanguages } from "@repo/shared";
 
 export const userStatistics = (language: SupportedLanguages) => {
   return {
-    queryKey: ["user-statistics/user-stats", { language }],
+    queryKey: ["user-statistics/user-stats", language],
     queryFn: async () => {
       const response = await ApiClient.api.statisticsControllerGetUserStatistics({ language });
 

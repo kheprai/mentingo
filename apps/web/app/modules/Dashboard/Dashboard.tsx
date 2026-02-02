@@ -48,7 +48,7 @@ const PublicHeader = ({
 }) => (
   <header className="sticky top-0 z-10 w-full">
     <div className="flex w-full items-center justify-between px-4 py-3">
-      <Link to="/courses" aria-label={t("navigationSideBar.ariaLabels.goToAvailableCourses")}>
+      <Link to="/library" aria-label={t("navigationSideBar.ariaLabels.goToAvailableCourses")}>
         <PlatformLogo variant="full" className="h-10 w-full" alt="Go to homepage" />
       </Link>
       <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export const Dashboard = ({ isAuthenticated }: DashboardProps) => {
   if (!isAuthenticated) {
     const publicNavigationLinks = [
       ...(QAAccessible ? [{ to: "/qa", label: t("navigationSideBar.qa") }] : []),
-      ...(coursesAccessible ? [{ to: "/courses", label: t("navigationSideBar.courses") }] : []),
+      ...(coursesAccessible ? [{ to: "/library", label: t("navigationSideBar.library") }] : []),
       ...(articlesAccessibleForPublic
         ? [{ to: "/articles", label: t("navigationSideBar.articles") }]
         : []),
