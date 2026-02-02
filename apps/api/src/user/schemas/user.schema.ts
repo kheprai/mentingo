@@ -7,7 +7,7 @@ import { userOnboarding } from "src/storage/schema";
 import { USER_ROLES } from "src/user/schemas/userRoles";
 
 export const baseUserResponseSchema = Type.Composite([
-  Type.Omit(commonUserSchema, ["avatarReference"]),
+  Type.Omit(commonUserSchema, ["avatarReference", "mercadopagoCustomerId"]),
   Type.Object({
     profilePictureUrl: Type.Union([Type.String(), Type.Null()]),
   }),
@@ -38,7 +38,7 @@ export const allUsersSchema = Type.Array(
 );
 
 export const userSchema = Type.Composite([
-  Type.Omit(commonUserSchema, ["avatarReference"]),
+  Type.Omit(commonUserSchema, ["avatarReference", "mercadopagoCustomerId"]),
   Type.Object({
     profilePictureUrl: Type.Union([Type.String(), Type.Null()]),
     groups: Type.Array(

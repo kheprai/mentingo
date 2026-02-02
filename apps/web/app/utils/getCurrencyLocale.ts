@@ -10,4 +10,5 @@ export const getCurrencyLocale = (currency: string) =>
     .with("USD", () => "en-US")
     .with("EUR", () => "de-DE")
     .with("PLN", () => "pl-PL")
+    .with("ARS", () => "es-AR")
     .otherwise(() => "en-US");

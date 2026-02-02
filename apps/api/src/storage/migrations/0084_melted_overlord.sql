@@ -1,0 +1,1 @@
+ALTER TABLE "courses" ADD COLUMN "mercadopago_price_in_cents" integer DEFAULT 0 NOT NULL;

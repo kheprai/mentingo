@@ -103,6 +103,7 @@ export const createUserFactory = (db: DatabasePg) => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       role: USER_ROLES.STUDENT,
+      mercadopagoCustomerId: null,
       archived: false,
       avatarReference: null,
       deletedAt: null,

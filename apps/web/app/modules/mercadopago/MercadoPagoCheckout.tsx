@@ -1,7 +1,8 @@
 import { Loader } from "lucide-react";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useMercadoPagoCustomer } from "~/api/mutations/useMercadoPagoCustomer";
 import { useProcessMercadoPagoPayment } from "~/api/mutations/useProcessMercadoPagoPayment";
 import { courseQueryOptions } from "~/api/queries/useCourse";
 import { useCurrentUser } from "~/api/queries/useCurrentUser";
@@ -13,10 +14,11 @@ import { getCurrencyLocale } from "~/utils/getCurrencyLocale";
 
 import { useMercadoPagoInit } from "./hooks/useMercadoPagoInit";
 
-// Lazy load the CardPayment component to avoid SSR/ESM issues
-const CardPayment = lazy(() =>
+import type { IPaymentFormData } from "@mercadopago/sdk-react/bricks/payment/type";
+
+const PaymentBrick = lazy(() =>
   import("@mercadopago/sdk-react").then((module) => ({
-    default: module.CardPayment,
+    default: module.Payment,
   })),
 );
 
@@ -28,21 +30,6 @@ type MercadoPagoCheckoutProps = {
   courseId: string;
 };
 
-type CardPaymentFormData = {
-  token: string;
-  issuer_id: string;
-  payment_method_id: string;
-  transaction_amount: number;
-  installments: number;
-  payer: {
-    email: string;
-    identification: {
-      type: string;
-      number: string;
-    };
-  };
-};
-
 export function MercadoPagoCheckout({
   coursePrice,
   courseCurrency,
@@ -52,9 +39,11 @@ export function MercadoPagoCheckout({
   const { data: currentUser } = useCurrentUser();
   const { isInitialized, error: initError } = useMercadoPagoInit();
   const { processPayment, isLoading } = useProcessMercadoPagoPayment();
+  const { getOrCreateCustomer, isLoading: isCreatingCustomer } = useMercadoPagoCustomer();
   const { t } = useTranslation();
 
   const [showCheckout, setShowCheckout] = useState(false);
+  const [customerId, setCustomerId] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "success" | "pending" | "error">(
     "idle",
   );
@@ -63,9 +52,21 @@ export function MercadoPagoCheckout({
   // Convert price from cents to currency units for MercadoPago
   const amountInUnits = coursePrice / 100;
 
+  // Create/get customer when checkout is shown
+  useEffect(() => {
+    if (showCheckout && !customerId && !isCreatingCustomer) {
+      getOrCreateCustomer()
+        .then((id) => setCustomerId(id))
+        .catch(() => {
+          // Customer creation is optional - proceed without saved cards
+          setCustomerId(null);
+        });
+    }
+  }, [showCheckout, customerId, isCreatingCustomer, getOrCreateCustomer]);
+
   const handleShowCheckout = () => setShowCheckout(true);
 
-  const handleSubmit = async (formData: CardPaymentFormData) => {
+  const handleSubmit = async (formData: IPaymentFormData) => {
     if (!currentUser) {
       setErrorMessage(t("paymentView.error.notLoggedIn"));
       return;
@@ -74,21 +75,22 @@ export function MercadoPagoCheckout({
     setErrorMessage(null);
 
     try {
+      const { formData: data } = formData;
+
       const result = await processPayment({
-        token: formData.token,
-        amount: formData.transaction_amount,
+        token: data.token,
+        amount: data.transaction_amount,
         description: `Curso: ${courseTitle}`,
-        installments: formData.installments,
-        paymentMethodId: formData.payment_method_id,
-        email: formData.payer.email,
+        installments: data.installments,
+        paymentMethodId: data.payment_method_id,
+        email: data.payer.email,
         courseId: courseId,
         userId: currentUser.id,
-        identification: formData.payer.identification,
+        identification: data.payer.identification,
       });
 
       if (result.status === "approved") {
         setPaymentStatus("success");
-        // Refresh course data to show enrollment
         queryClient.invalidateQueries(courseQueryOptions(courseId));
       } else if (result.status === "pending" || result.status === "in_process") {
         setPaymentStatus("pending");
@@ -103,7 +105,7 @@ export function MercadoPagoCheckout({
   };
 
   const handleError = (error: unknown) => {
-    console.error("CardPayment error:", error);
+    console.error("Payment Brick error:", error);
     setErrorMessage(t("paymentView.error.cardError"));
   };
 
@@ -143,10 +145,13 @@ export function MercadoPagoCheckout({
     );
   }
 
-  if (!isInitialized) {
+  if (!isInitialized || isCreatingCustomer) {
     return (
-      <div className="flex items-center justify-center p-8">
+      <div className="flex flex-col items-center justify-center gap-2 p-8">
         <Loader className="h-8 w-8 animate-spin text-primary-500" />
+        {isCreatingCustomer && (
+          <span className="text-sm text-neutral-600">{t("paymentView.customer.creating")}</span>
+        )}
       </div>
     );
   }
@@ -166,11 +171,12 @@ export function MercadoPagoCheckout({
           </div>
         }
       >
-        <CardPayment
+        <PaymentBrick
           initialization={{
             amount: amountInUnits,
             payer: {
               email: currentUser?.email || "",
+              ...(customerId ? { customerId } : {}),
             },
           }}
           onSubmit={handleSubmit}
@@ -178,6 +184,8 @@ export function MercadoPagoCheckout({
           customization={{
             paymentMethods: {
               maxInstallments: 12,
+              creditCard: "all",
+              debitCard: "all",
             },
             visual: {
               style: {

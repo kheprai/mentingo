@@ -1,20 +1,24 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useMercadoPagoConfigured } from "~/api/queries/useMercadoPagoConfigured";
 import { useStripeConfigured } from "~/api/queries/useStripeConfigured";
 import { useUserRole } from "~/hooks/useUserRole";
 
 export const useEditCourseTabs = () => {
   const { t } = useTranslation();
   const { data: isStripeConfigured } = useStripeConfigured();
+  const { data: isMercadoPagoConfigured } = useMercadoPagoConfigured();
 
   const { isAdmin } = useUserRole();
+
+  const isPaymentConfigured = isStripeConfigured?.enabled || isMercadoPagoConfigured?.enabled;
 
   const baseTabs = useMemo(
     () => [
       { label: t("adminCourseView.common.settings"), value: "Settings" },
       { label: t("adminCourseView.common.curriculum"), value: "Curriculum" },
-      ...(isStripeConfigured?.enabled
+      ...(isPaymentConfigured
         ? [
             {
               label: t("adminCourseView.common.pricing"),
@@ -24,7 +28,7 @@ export const useEditCourseTabs = () => {
         : []),
       { label: t("adminCourseView.common.status"), value: "Status" },
     ],
-    [isStripeConfigured, t],
+    [isPaymentConfigured, t],
   );
 
   const adminTabs = useMemo(

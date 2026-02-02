@@ -18,12 +18,25 @@ import type { SupportedLanguages } from "@repo/shared";
 type CoursePricingProps = {
   courseId: string;
   priceInCents?: number;
+  mercadopagoPriceInCents?: number;
   currency?: string;
   language: SupportedLanguages;
 };
 
-const CoursePricing = ({ courseId, priceInCents, currency, language }: CoursePricingProps) => {
-  const { form, onSubmit } = useCoursePricingForm({ courseId, priceInCents, currency, language });
+const CoursePricing = ({
+  courseId,
+  priceInCents,
+  mercadopagoPriceInCents,
+  currency,
+  language,
+}: CoursePricingProps) => {
+  const { form, onSubmit } = useCoursePricingForm({
+    courseId,
+    priceInCents,
+    mercadopagoPriceInCents,
+    currency,
+    language,
+  });
   const { setValue, watch } = form;
   const { t } = useTranslation();
   const { data: stripeConfigured } = useStripeConfigured();
@@ -109,16 +122,16 @@ const CoursePricing = ({ courseId, priceInCents, currency, language }: CoursePri
                 {isFree === false && (
                   <>
                     <div className="mb-1 mt-4">
-                      <Label className="text-sm font-medium" htmlFor="price">
+                      <Label className="text-sm font-medium" htmlFor="priceUsd">
                         <span className="text-destructive">*</span>{" "}
-                        {t("adminCourseView.pricing.field.price")}
+                        {t("adminCourseView.pricing.field.priceUsd")}
                       </Label>
                     </div>
                     <div className="mb-2">
                       <PriceInput
                         value={form.getValues("priceInCents")}
                         onChange={(value) => setValue("priceInCents", value)}
-                        currency={currency}
+                        currency="USD"
                         placeholder={t("adminCourseView.pricing.placeholder.amount")}
                         className={cn(
                           "[&::-moz-appearance]:textfield appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
@@ -126,12 +139,39 @@ const CoursePricing = ({ courseId, priceInCents, currency, language }: CoursePri
                             "border-error-600": form.formState.errors.priceInCents,
                           },
                         )}
-                        id="price"
-                        aria-label={t("adminCourseView.pricing.field.price")}
+                        id="priceUsd"
+                        aria-label={t("adminCourseView.pricing.field.priceUsd")}
                       />
                       {form.formState.errors.priceInCents && (
                         <p className="text-xs text-error-600">
                           {form.formState.errors.priceInCents.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mb-1 mt-4">
+                      <Label className="text-sm font-medium" htmlFor="priceArs">
+                        <span className="text-destructive">*</span>{" "}
+                        {t("adminCourseView.pricing.field.priceArs")}
+                      </Label>
+                    </div>
+                    <div className="mb-2">
+                      <PriceInput
+                        value={form.getValues("mercadopagoPriceInCents")}
+                        onChange={(value) => setValue("mercadopagoPriceInCents", value)}
+                        currency="ARS"
+                        placeholder={t("adminCourseView.pricing.placeholder.amount")}
+                        className={cn(
+                          "[&::-moz-appearance]:textfield appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                          {
+                            "border-error-600": form.formState.errors.mercadopagoPriceInCents,
+                          },
+                        )}
+                        id="priceArs"
+                        aria-label={t("adminCourseView.pricing.field.priceArs")}
+                      />
+                      {form.formState.errors.mercadopagoPriceInCents && (
+                        <p className="text-xs text-error-600">
+                          {form.formState.errors.mercadopagoPriceInCents.message}
                         </p>
                       )}
                     </div>
@@ -141,37 +181,37 @@ const CoursePricing = ({ courseId, priceInCents, currency, language }: CoursePri
                       </p>
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          {stripeConfigured?.isConfigured ? (
+                          {stripeConfigured?.enabled ? (
                             <CheckCircle className="h-4 w-4 text-success-600" />
                           ) : (
                             <XCircle className="h-4 w-4 text-neutral-400" />
                           )}
                           <span
                             className={cn("body-sm", {
-                              "text-neutral-950": stripeConfigured?.isConfigured,
-                              "text-neutral-400": !stripeConfigured?.isConfigured,
+                              "text-neutral-950": stripeConfigured?.enabled,
+                              "text-neutral-400": !stripeConfigured?.enabled,
                             })}
                           >
                             Stripe
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          {mercadoPagoConfigured?.isConfigured ? (
+                          {mercadoPagoConfigured?.enabled ? (
                             <CheckCircle className="h-4 w-4 text-success-600" />
                           ) : (
                             <XCircle className="h-4 w-4 text-neutral-400" />
                           )}
                           <span
                             className={cn("body-sm", {
-                              "text-neutral-950": mercadoPagoConfigured?.isConfigured,
-                              "text-neutral-400": !mercadoPagoConfigured?.isConfigured,
+                              "text-neutral-950": mercadoPagoConfigured?.enabled,
+                              "text-neutral-400": !mercadoPagoConfigured?.enabled,
                             })}
                           >
                             MercadoPago
                           </span>
                         </div>
                       </div>
-                      {!stripeConfigured?.isConfigured && !mercadoPagoConfigured?.isConfigured && (
+                      {!stripeConfigured?.enabled && !mercadoPagoConfigured?.enabled && (
                         <p className="body-sm mt-2 text-warning-600">
                           {t("adminCourseView.pricing.noPaymentMethodsWarning")}
                         </p>

@@ -14,6 +14,7 @@ import type { SupportedLanguages } from "@repo/shared";
 type UseCoursePricingFormProps = {
   courseId: string;
   priceInCents?: number;
+  mercadopagoPriceInCents?: number;
   currency?: string;
   language: SupportedLanguages;
 };
@@ -21,6 +22,7 @@ type UseCoursePricingFormProps = {
 export const useCoursePricingForm = ({
   courseId,
   priceInCents,
+  mercadopagoPriceInCents,
   currency,
   language,
 }: UseCoursePricingFormProps) => {
@@ -30,8 +32,11 @@ export const useCoursePricingForm = ({
     resolver: zodResolver(coursePricingFormSchema(t)),
     defaultValues: {
       priceInCents: priceInCents || undefined,
+      mercadopagoPriceInCents: mercadopagoPriceInCents || undefined,
       currency: currency || "",
-      isFree: priceInCents === 0,
+      isFree:
+        priceInCents === 0 &&
+        (mercadopagoPriceInCents === 0 || mercadopagoPriceInCents === undefined),
     },
   });
   const onSubmit = async (data: CoursePricingFormValues) => {

@@ -5,9 +5,8 @@
 
 ### Feb 2, 2026
 
-| ID   | Time    | T   | Title                                                         | Read |
-| ---- | ------- | --- | ------------------------------------------------------------- | ---- |
-| #419 | 2:20 AM | 🔵  | News query hook fetches individual article by ID and language | ~309 |
-| #418 | "       | 🔵  | Article query hook supports draft mode for admin previews     | ~309 |
-
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #419 | 2:20 AM | 🔵 | News query hook fetches individual article by ID and language | ~309 |
+| #418 | " | 🔵 | Article query hook supports draft mode for admin previews | ~309 |
 </claude-mem-context>

@@ -11,6 +11,7 @@ export const updateCourseSchema = Type.Partial(
     thumbnailS3Key: Type.String(),
     status: coursesStatusOptions,
     priceInCents: Type.Integer(),
+    mercadopagoPriceInCents: Type.Integer(),
     currency: Type.String(),
     categoryId: Type.String({ format: "uuid" }),
     chapters: Type.Array(Type.String({ format: "uuid" })),

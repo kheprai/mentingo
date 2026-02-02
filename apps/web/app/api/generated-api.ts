@@ -1048,6 +1048,7 @@ export interface GetAllCoursesResponse {
     courseChapterCount: number;
     enrolledParticipantCount: number;
     priceInCents: number;
+    mercadopagoPriceInCents: number;
     currency: string;
     status?: "draft" | "published" | "private";
     createdAt?: string;
@@ -1080,6 +1081,7 @@ export interface GetStudentCoursesResponse {
     courseChapterCount: number;
     enrolledParticipantCount: number;
     priceInCents: number;
+    mercadopagoPriceInCents: number;
     currency: string;
     status?: "draft" | "published" | "private";
     createdAt?: string;
@@ -1141,6 +1143,7 @@ export interface GetAvailableCoursesResponse {
     courseChapterCount: number;
     enrolledParticipantCount: number;
     priceInCents: number;
+    mercadopagoPriceInCents: number;
     currency: string;
     status?: "draft" | "published" | "private";
     createdAt?: string;
@@ -1179,6 +1182,7 @@ export interface GetContentCreatorCoursesResponse {
     courseChapterCount: number;
     enrolledParticipantCount: number;
     priceInCents: number;
+    mercadopagoPriceInCents: number;
     currency: string;
     status?: "draft" | "published" | "private";
     createdAt?: string;
@@ -1249,6 +1253,7 @@ export interface GetCourseResponse {
     status: "draft" | "published" | "private";
     isScorm?: boolean;
     priceInCents: number;
+    mercadopagoPriceInCents: number;
     thumbnailUrl?: string;
     title: string;
     slug: string;
@@ -1362,6 +1367,7 @@ export interface GetBetaCourseByIdResponse {
     status: "draft" | "published" | "private";
     isScorm?: boolean;
     priceInCents: number;
+    mercadopagoPriceInCents: number;
     thumbnailUrl?: string;
     thumbnailS3Key?: string;
     thumbnailS3SingedUrl?: string | null;
@@ -1383,6 +1389,7 @@ export type CreateCourseBody = {
   status?: "draft" | "published" | "private";
   thumbnailS3Key?: string;
   priceInCents?: number;
+  mercadopagoPriceInCents?: number;
   currency?: string;
   /** @format uuid */
   categoryId: string;
@@ -1408,6 +1415,7 @@ export interface UpdateCourseBody {
   thumbnailS3Key?: string;
   status?: "draft" | "published" | "private";
   priceInCents?: number;
+  mercadopagoPriceInCents?: number;
   currency?: string;
   /** @format uuid */
   categoryId?: string;
@@ -2834,6 +2842,42 @@ export type DeleteManyCategoriesBody = string[];
 export interface DeleteManyCategoriesResponse {
   data: {
     message: string;
+  };
+}
+
+export interface GetOrCreateCustomerResponse {
+  data: {
+    customerId: string;
+  };
+}
+
+export interface GetCustomerCardsResponse {
+  data: {
+    id?: string;
+    firstSixDigits?: string;
+    lastFourDigits?: string;
+    expirationMonth?: number;
+    expirationYear?: number;
+    paymentMethod?: {
+      id?: string;
+      name?: string;
+      paymentTypeId?: string;
+      thumbnail?: string;
+      secureThumbnail?: string;
+    };
+    issuer?: {
+      id?: number;
+      name?: string;
+    };
+    cardholder?: {
+      name?: string;
+    };
+  }[];
+}
+
+export interface DeleteCustomerCardResponse {
+  data: {
+    success: boolean;
   };
 }
 
@@ -7157,6 +7201,48 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: "DELETE",
         body: data,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name MercadoPagoControllerGetOrCreateCustomer
+     * @request POST:/api/mercadopago/customer
+     */
+    mercadoPagoControllerGetOrCreateCustomer: (params: RequestParams = {}) =>
+      this.request<GetOrCreateCustomerResponse, any>({
+        path: `/api/mercadopago/customer`,
+        method: "POST",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name MercadoPagoControllerGetCustomerCards
+     * @request GET:/api/mercadopago/customer/cards
+     */
+    mercadoPagoControllerGetCustomerCards: (params: RequestParams = {}) =>
+      this.request<GetCustomerCardsResponse, any>({
+        path: `/api/mercadopago/customer/cards`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name MercadoPagoControllerDeleteCustomerCard
+     * @request DELETE:/api/mercadopago/customer/cards/{cardId}
+     */
+    mercadoPagoControllerDeleteCustomerCard: (cardId: string, params: RequestParams = {}) =>
+      this.request<DeleteCustomerCardResponse, any>({
+        path: `/api/mercadopago/customer/cards/${cardId}`,
+        method: "DELETE",
         format: "json",
         ...params,
       }),

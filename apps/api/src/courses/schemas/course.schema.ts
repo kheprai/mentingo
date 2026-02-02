@@ -22,6 +22,7 @@ export const courseSchema = Type.Object({
   // completedChapterCount: Type.Number(),
   enrolledParticipantCount: Type.Number(),
   priceInCents: Type.Number(),
+  mercadopagoPriceInCents: Type.Number(),
   currency: Type.String(),
   status: Type.Optional(coursesStatusOptions),
   createdAt: Type.Optional(Type.String()),

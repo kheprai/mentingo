@@ -376,7 +376,8 @@
         "google_authorization": "Google OAuth",
         "microsoft_authorization": "Microsoft OAuth",
         "slack_authorization": "Slack OAuth",
-        "openAI": "OpenAI"
+        "openAI": "OpenAI",
+        "mercadopago": "MercadoPago"
       },
       "serviceDescriptions": {
         "stripe": "Przetwarzanie płatności za kursy i zarządzanie subskrypcjami",
@@ -384,7 +385,8 @@
         "google_authorization": "Umożliwia użytkownikom logowanie przez konto Google",
         "microsoft_authorization": "Umożliwia użytkownikom logowanie przez konto Microsoft",
         "slack_authorization": "Umożliwia użytkownikom logowanie przez konto Slack",
-        "openAI": "Włączenie funkcji AI Mentora"
+        "openAI": "Włączenie funkcji AI Mentora",
+        "mercadopago": "Przetwarzanie płatności za kursy przez MercadoPago"
       }
     }
   },
@@ -1379,13 +1381,17 @@
       "paidCourseHeader": "Płatny kurs",
       "paidCourseBody": "Studenci mogą zakupić kurs i uzyskać dostęp do jego treści. Po wybraniu możesz określić walutę i cenę.",
       "field": {
-        "price": "Cena"
+        "price": "Cena",
+        "priceUsd": "Cena (USD - Stripe)",
+        "priceArs": "Cena (ARS - MercadoPago)"
       },
       "placeholder": {
         "amount": "Kwota"
       },
       "validation": {
-        "priceInCents": "Kurs musi kosztować co najmniej 2.00 lub być darmowy"
+        "priceInCents": "Kurs musi kosztować co najmniej 2.00 lub być darmowy",
+        "priceInCentsUsd": "Cena w USD musi wynosić co najmniej 2.00",
+        "priceInCentsArs": "Cena w ARS musi wynosić co najmniej 2.00"
       }
     },
     "enrolled": {
@@ -1777,6 +1783,11 @@
         "repeatLessons": "Powtórz lekcje",
         "enrollGroups": "Zapisz grupy"
       }
+    },
+    "paymentMethodSelection": {
+      "title": "Wybierz metodę płatności",
+      "stripe": "Zapłać kartą (USD)",
+      "mercadopago": "Zapłać przez MercadoPago (ARS)"
     },
     "breadcrumbs": {
       "availableCourses": "Dostępne kursy",

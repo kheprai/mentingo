@@ -532,13 +532,17 @@
       "paidCourseHeader": "Curso de pago",
       "paidCourseBody": "Los estudiantes pueden comprar y acceder al contenido del curso. Una vez seleccionado, puedes definir la moneda y el precio.",
       "field": {
-        "price": "Precio"
+        "price": "Precio",
+        "priceUsd": "Precio (USD - Stripe)",
+        "priceArs": "Precio (ARS - MercadoPago)"
       },
       "placeholder": {
         "amount": "Monto"
       },
       "validation": {
-        "priceInCents": "El precio debe ser al menos 2.00 o gratuito"
+        "priceInCents": "El precio debe ser al menos 2.00 o gratuito",
+        "priceInCentsUsd": "El precio en USD debe ser al menos 2.00",
+        "priceInCentsArs": "El precio en ARS debe ser al menos 2.00"
       },
       "paymentMethods": "Métodos de pago disponibles",
       "noPaymentMethodsWarning": "No hay métodos de pago configurados. Ve a Configuración > Variables de entorno para configurar Stripe o MercadoPago."
@@ -1524,7 +1528,8 @@
         "google_authorization": "OAuth de Google",
         "microsoft_authorization": "OAuth de Microsoft",
         "slack_authorization": "OAuth de Slack",
-        "openAI": "OpenAI"
+        "openAI": "OpenAI",
+        "mercadopago": "MercadoPago"
       },
       "serviceDescriptions": {
         "stripe": "Procesa pagos de cursos y administra suscripciones",
@@ -1532,7 +1537,8 @@
         "google_authorization": "Permite a los usuarios iniciar sesión con su cuenta de Google",
         "microsoft_authorization": "Permite a los usuarios iniciar sesión con su cuenta de Microsoft",
         "slack_authorization": "Permite a los usuarios iniciar sesión con su cuenta de Slack",
-        "openAI": "Habilita las funciones de AI Mentor"
+        "openAI": "Habilita las funciones de AI Mentor",
+        "mercadopago": "Procesa pagos de cursos a través de MercadoPago"
       }
     }
   },
@@ -1910,6 +1916,16 @@
       "notLoggedIn": "Debes iniciar sesión para realizar una compra.",
       "paymentFailed": "El pago falló. Por favor, intenta nuevamente.",
       "cardError": "Hubo un error al procesar tu tarjeta. Por favor, verifica los datos e intenta nuevamente."
+    },
+    "savedCards": {
+      "title": "Tarjetas guardadas",
+      "deleted": "Tarjeta eliminada correctamente",
+      "deleteError": "Error al eliminar la tarjeta",
+      "deleteConfirm": "¿Estás seguro de que querés eliminar esta tarjeta?",
+      "noCards": "No hay tarjetas guardadas"
+    },
+    "customer": {
+      "creating": "Configurando cuenta de pago..."
     }
   },
   "platformLogo": {
@@ -2262,6 +2278,11 @@
         "repeatLessons": "Repetir lecciones",
         "enrollGroups": "Inscribir grupos"
       }
+    },
+    "paymentMethodSelection": {
+      "title": "Elige un método de pago",
+      "stripe": "Pagar con tarjeta (USD)",
+      "mercadopago": "Pagar con MercadoPago (ARS)"
     },
     "breadcrumbs": {
       "availableCourses": "Cursos disponibles",

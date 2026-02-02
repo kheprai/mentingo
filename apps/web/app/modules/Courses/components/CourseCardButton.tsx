@@ -2,10 +2,8 @@ import { useTranslation } from "react-i18next";
 
 import { Icon } from "~/components/Icon";
 import { Button } from "~/components/ui/button";
-import { formatPrice } from "~/lib/formatters/priceFormatter";
 
 type CourseCardButtonProps = {
-  currency: string;
   enrolled: boolean;
   isAdmin: boolean;
   priceInCents: number;
@@ -13,7 +11,6 @@ type CourseCardButtonProps = {
 };
 
 const CourseCardButton = ({
-  currency,
   enrolled,
   isAdmin,
   priceInCents,
@@ -34,8 +31,7 @@ const CourseCardButton = ({
 
     if (isAdmin) return t("clientStatisticsView.button.view");
 
-    if (priceInCents)
-      return `${t("clientStatisticsView.button.enroll")} - ${formatPrice(priceInCents, currency)}`;
+    if (priceInCents) return t("clientStatisticsView.button.enroll");
 
     return t("clientStatisticsView.button.enroll");
   };

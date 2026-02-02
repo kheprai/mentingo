@@ -400,7 +400,8 @@
         "google_authorization": "Google OAuth",
         "microsoft_authorization": "Microsoft OAuth",
         "slack_authorization": "Slack OAuth",
-        "openAI": "OpenAI"
+        "openAI": "OpenAI",
+        "mercadopago": "MercadoPago"
       },
       "serviceDescriptions": {
         "stripe": "Process course payments and manage subscriptions",
@@ -408,7 +409,8 @@
         "google_authorization": "Allow users to sign in with their Google account",
         "microsoft_authorization": "Allow users to sign in with their Microsoft account",
         "slack_authorization": "Allow users to sign in with their Slack account",
-        "openAI": "Enable AI Mentor features"
+        "openAI": "Enable AI Mentor features",
+        "mercadopago": "Process course payments via MercadoPago"
       }
     }
   },
@@ -1048,6 +1050,16 @@
       "notLoggedIn": "You must be logged in to make a purchase.",
       "paymentFailed": "Payment failed. Please try again.",
       "cardError": "There was an error processing your card. Please check your details and try again."
+    },
+    "savedCards": {
+      "title": "Saved cards",
+      "deleted": "Card deleted successfully",
+      "deleteError": "Error deleting card",
+      "deleteConfirm": "Are you sure you want to delete this card?",
+      "noCards": "No saved cards"
+    },
+    "customer": {
+      "creating": "Setting up payment account..."
     }
   },
   "adminCourseView": {
@@ -1415,13 +1427,17 @@
       "paidCourseHeader": "Paid course",
       "paidCourseBody": "Students can purchase and access the course content. Once selected, you can define currency and price.",
       "field": {
-        "price": "Price"
+        "price": "Price",
+        "priceUsd": "Price (USD - Stripe)",
+        "priceArs": "Price (ARS - MercadoPago)"
       },
       "placeholder": {
         "amount": "Amount"
       },
       "validation": {
-        "priceInCents": "Price must be at least 2.00 or free"
+        "priceInCents": "Price must be at least 2.00 or free",
+        "priceInCentsUsd": "USD price must be at least 2.00",
+        "priceInCentsArs": "ARS price must be at least 2.00"
       },
       "paymentMethods": "Payment methods available",
       "noPaymentMethodsWarning": "No payment methods configured. Go to Settings > Environment Variables to configure Stripe or MercadoPago."
@@ -1809,6 +1825,11 @@
         "repeatLessons": "Repeat lessons",
         "enrollGroups": "Enroll groups"
       }
+    },
+    "paymentMethodSelection": {
+      "title": "Choose payment method",
+      "stripe": "Pay with card (USD)",
+      "mercadopago": "Pay with MercadoPago (ARS)"
     },
     "breadcrumbs": {
       "availableCourses": "Available courses",

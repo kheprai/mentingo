@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import DefaultPhotoCourse from "~/assets/svgs/default-photo-course.svg";
 import { CardBadge } from "~/components/CardBadge";
+import { CoursePriceDisplay } from "~/components/CoursePriceDisplay/CoursePriceDisplay";
 import CourseProgress from "~/components/CourseProgress";
 import { Icon } from "~/components/Icon";
 import { CategoryChip } from "~/components/ui/CategoryChip";
@@ -27,13 +28,15 @@ const CourseCard = ({
   category,
   completedChapterCount,
   courseChapterCount,
-  currency,
   description,
   enrolled = false,
   hasFreeChapters,
   id,
   thumbnailUrl,
   priceInCents,
+  mercadopagoPriceInCents,
+  stripePriceId,
+  mercadopagoProductId,
   title,
   isFirst = false,
   slug,
@@ -111,9 +114,18 @@ const CourseCard = ({
             </span>
           </div>
         </div>
-        <div className="mt-4">
+        {!enrolled && !isAdmin && (priceInCents > 0 || mercadopagoPriceInCents > 0) && (
+          <div className="mt-3 flex justify-end">
+            <CoursePriceDisplay
+              priceInCents={priceInCents}
+              mercadopagoPriceInCents={mercadopagoPriceInCents}
+              stripePriceId={stripePriceId}
+              mercadopagoProductId={mercadopagoProductId}
+            />
+          </div>
+        )}
+        <div className="mt-2">
           <CourseCardButton
-            currency={currency}
             enrolled={enrolled}
             isAdmin={isAdmin}
             priceInCents={priceInCents}

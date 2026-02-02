@@ -1,12 +1,13 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
-import { MercadoPagoConfig, Payment } from "mercadopago";
+import { Customer, MercadoPagoConfig, Payment } from "mercadopago";
 
 import { DatabasePg } from "src/common";
 import { EnvService } from "src/env/services/env.service";
-import { payments } from "src/storage/schema";
+import { payments, users } from "src/storage/schema";
 
 import type { ProcessPaymentBody, GetPaymentStatusResponse } from "./schemas/processPayment.schema";
+import type { CustomerCardResponse } from "mercadopago/dist/clients/customerCard/commonTypes";
 
 @Injectable()
 export class MercadoPagoService {
@@ -36,9 +37,114 @@ export class MercadoPagoService {
     return new MercadoPagoConfig({ accessToken });
   }
 
+  async getOrCreateCustomer(userId: string, email: string): Promise<string> {
+    // Check if user already has a stored customer ID
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId));
+
+    if (user?.mercadopagoCustomerId) {
+      return user.mercadopagoCustomerId;
+    }
+
+    const client = await this.getClient();
+    const customerClient = new Customer(client);
+
+    try {
+      // Search for existing customer by email
+      const searchResult = await customerClient.search({ options: { email } });
+
+      if (searchResult.results && searchResult.results.length > 0) {
+        const existingCustomerId = searchResult.results[0].id!;
+
+        // Store the customer ID in our DB
+        await this.db
+          .update(users)
+          .set({ mercadopagoCustomerId: existingCustomerId })
+          .where(eq(users.id, userId));
+
+        return existingCustomerId;
+      }
+
+      // Create new customer using name from our DB
+      const newCustomer = await customerClient.create({
+        body: {
+          email,
+          first_name: user?.firstName ?? "",
+          last_name: user?.lastName ?? "",
+        },
+      });
+
+      const newCustomerId = newCustomer.id!;
+
+      // Store the customer ID in our DB
+      await this.db
+        .update(users)
+        .set({ mercadopagoCustomerId: newCustomerId })
+        .where(eq(users.id, userId));
+
+      this.logger.log(`Created MercadoPago customer ${newCustomerId} for user ${userId}`);
+
+      return newCustomerId;
+    } catch (error) {
+      this.logger.error("Error creating MercadoPago customer:", error);
+      throw new InternalServerErrorException("Error creating payment customer");
+    }
+  }
+
+  async getCustomerCards(userId: string): Promise<CustomerCardResponse[]> {
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId));
+
+    if (!user?.mercadopagoCustomerId) {
+      return [];
+    }
+
+    const client = await this.getClient();
+    const customerClient = new Customer(client);
+
+    try {
+      const cards = await customerClient.listCards({
+        customerId: user.mercadopagoCustomerId,
+      });
+
+      return cards;
+    } catch (error) {
+      this.logger.error("Error fetching customer cards:", error);
+      return [];
+    }
+  }
+
+  async deleteCustomerCard(userId: string, cardId: string): Promise<void> {
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId));
+
+    if (!user?.mercadopagoCustomerId) {
+      throw new InternalServerErrorException("Customer not found");
+    }
+
+    const client = await this.getClient();
+    const customerClient = new Customer(client);
+
+    try {
+      await customerClient.removeCard({
+        customerId: user.mercadopagoCustomerId,
+        cardId,
+      });
+
+      this.logger.log(`Deleted card ${cardId} for customer ${user.mercadopagoCustomerId}`);
+    } catch (error) {
+      this.logger.error("Error deleting customer card:", error);
+      throw new InternalServerErrorException("Error deleting card");
+    }
+  }
+
   async processPayment(data: ProcessPaymentBody) {
     const client = await this.getClient();
     const paymentClient = new Payment(client);
+
+    // Look up customer ID if userId is provided
+    let payerCustomerId: string | undefined;
+    if (data.userId) {
+      const [user] = await this.db.select().from(users).where(eq(users.id, data.userId));
+      payerCustomerId = user?.mercadopagoCustomerId ?? undefined;
+    }
 
     try {
       const paymentResponse = await paymentClient.create({
@@ -50,6 +156,7 @@ export class MercadoPagoService {
           payment_method_id: data.paymentMethodId,
           payer: {
             email: data.email,
+            ...(payerCustomerId ? { id: payerCustomerId } : {}),
             identification: data.identification
               ? {
                   type: data.identification.type,

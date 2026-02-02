@@ -47,10 +47,10 @@ export class GroupController {
   @Roles(USER_ROLES.ADMIN)
   @Validate({
     request: [
-      { type: "query", name: "keyword", schema: Type.String() },
-      { type: "query", name: "page", schema: Type.Number({ minimum: 1 }) },
-      { type: "query", name: "perPage", schema: Type.Number() },
-      { type: "query", name: "sort", schema: Type.String() },
+      { type: "query", name: "keyword", schema: Type.Optional(Type.String()) },
+      { type: "query", name: "page", schema: Type.Optional(Type.Number({ minimum: 1 })) },
+      { type: "query", name: "perPage", schema: Type.Optional(Type.Number()) },
+      { type: "query", name: "sort", schema: Type.Optional(Type.String()) },
     ],
     response: paginatedResponse(allGroupsSchema),
   })
@@ -85,10 +85,10 @@ export class GroupController {
   @Validate({
     request: [
       { type: "param", name: "userId", schema: UUIDSchema },
-      { type: "query", name: "keyword", schema: Type.String() },
-      { type: "query", name: "page", schema: Type.Number({ minimum: 1 }) },
-      { type: "query", name: "perPage", schema: Type.Number() },
-      { type: "query", name: "sort", schema: Type.String() },
+      { type: "query", name: "keyword", schema: Type.Optional(Type.String()) },
+      { type: "query", name: "page", schema: Type.Optional(Type.Number({ minimum: 1 })) },
+      { type: "query", name: "perPage", schema: Type.Optional(Type.Number()) },
+      { type: "query", name: "sort", schema: Type.Optional(Type.String()) },
     ],
     response: paginatedResponse(allGroupsSchema),
   })

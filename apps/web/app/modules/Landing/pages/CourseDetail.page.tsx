@@ -1,6 +1,7 @@
 import { Link, redirect, useNavigate, useParams } from "@remix-run/react";
 import { SUPPORTED_LANGUAGES } from "@repo/shared";
 import { ArrowLeft, BookOpen, Gift, Globe, PlayCircle } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ApiClient } from "~/api/api-client";
@@ -10,6 +11,7 @@ import { useUserDetails } from "~/api/queries/useUserDetails";
 import { queryClient } from "~/api/queryClient";
 import { Enroll } from "~/assets/svgs";
 import DefaultPhotoCourse from "~/assets/svgs/default-photo-course.svg";
+import { CoursePriceDisplay } from "~/components/CoursePriceDisplay/CoursePriceDisplay";
 import Viewer from "~/components/RichText/Viever";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -22,6 +24,7 @@ import {
   useLanguageStore,
   type Language,
 } from "~/modules/Dashboard/Settings/Language/LanguageStore";
+import { MercadoPagoCheckout } from "~/modules/mercadopago";
 import { PaymentModal } from "~/modules/stripe/PaymentModal";
 import { isSupportedLanguage } from "~/utils/browser-language";
 import { getCurrencyLocale } from "~/utils/getCurrencyLocale";
@@ -245,13 +248,12 @@ export default function CourseDetailPage() {
     );
   }
 
-  const priceFormatted =
-    course.priceInCents === 0
-      ? t("landing.courses.card.free")
-      : formatPrice(course.priceInCents ?? 0, course.currency, getCurrencyLocale(course.currency));
-
   const chapterCount = course.chapters?.length ?? 0;
   const hasFreeChapters = course.chapters?.some((ch) => ch.isFreemium) ?? false;
+
+  const hasStripe = !!course.stripePriceId && course.priceInCents > 0;
+  const hasMercadoPago = !!course.mercadopagoProductId && (course.mercadopagoPriceInCents ?? 0) > 0;
+  const isPaid = hasStripe || hasMercadoPago;
 
   const renderEnrollmentButton = () => {
     if (isEnrolled) {
@@ -274,25 +276,14 @@ export default function CourseDetailPage() {
       );
     }
 
-    if (course.priceInCents && course.currency && course.stripePriceId) {
-      return (
-        <PaymentModal
-          courseCurrency={course.currency}
-          coursePrice={course.priceInCents}
-          courseTitle={course.title}
-          courseDescription={course.description}
-          courseId={course.id}
-          coursePriceId={course.stripePriceId}
-        />
-      );
+    if (isPaid) {
+      return <CourseDetailPaymentSelector course={course} />;
     }
 
     return (
       <Button size="lg" onClick={handleEnroll} disabled={isEnrolling}>
         <Enroll className="mr-2" />
-        {course.priceInCents === 0
-          ? t("landing.courseDetail.enrollFree")
-          : t("landing.courseDetail.enroll")}
+        {t("landing.courseDetail.enrollFree")}
       </Button>
     );
   };
@@ -431,14 +422,13 @@ export default function CourseDetailPage() {
             <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
               {/* Price */}
               <div className="mb-6">
-                <p
-                  className={cn(
-                    "text-3xl font-bold",
-                    course.priceInCents === 0 ? "text-success-700" : "text-primary-700",
-                  )}
-                >
-                  {priceFormatted}
-                </p>
+                <CoursePriceDisplay
+                  priceInCents={course.priceInCents}
+                  mercadopagoPriceInCents={course.mercadopagoPriceInCents}
+                  stripePriceId={course.stripePriceId}
+                  mercadopagoProductId={course.mercadopagoProductId}
+                  variant="detail"
+                />
               </div>
 
               {/* CTA Button */}
@@ -468,6 +458,71 @@ export default function CourseDetailPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+function CourseDetailPaymentSelector({
+  course,
+}: {
+  course: NonNullable<ReturnType<typeof useCourse>["data"]>;
+}) {
+  const { t } = useTranslation();
+  const [selectedMethod, setSelectedMethod] = useState<"stripe" | "mercadopago" | null>(null);
+
+  const hasStripe = !!course.stripePriceId && course.priceInCents > 0;
+  const hasMercadoPago = !!course.mercadopagoProductId && (course.mercadopagoPriceInCents ?? 0) > 0;
+
+  return (
+    <div className="flex flex-col gap-y-3">
+      <p className="body-sm-md text-neutral-700">
+        {t("studentCourseView.paymentMethodSelection.title")}
+      </p>
+      <div className="flex flex-col gap-y-2">
+        {hasStripe && (
+          <Button
+            variant={selectedMethod === "stripe" ? "primary" : "outline"}
+            className="w-full justify-start gap-x-2"
+            onClick={() => setSelectedMethod("stripe")}
+          >
+            <span>
+              {t("studentCourseView.paymentMethodSelection.stripe")} -{" "}
+              {formatPrice(course.priceInCents, "USD", getCurrencyLocale("USD"))}
+            </span>
+          </Button>
+        )}
+        {hasMercadoPago && (
+          <Button
+            variant={selectedMethod === "mercadopago" ? "primary" : "outline"}
+            className="w-full justify-start gap-x-2"
+            onClick={() => setSelectedMethod("mercadopago")}
+          >
+            <span>
+              {t("studentCourseView.paymentMethodSelection.mercadopago")} -{" "}
+              {formatPrice(course.mercadopagoPriceInCents ?? 0, "ARS", getCurrencyLocale("ARS"))}
+            </span>
+          </Button>
+        )}
+      </div>
+      {selectedMethod === "stripe" && course.stripePriceId && (
+        <PaymentModal
+          courseCurrency="usd"
+          coursePrice={course.priceInCents}
+          courseTitle={course.title}
+          courseDescription={course.description}
+          courseId={course.id}
+          coursePriceId={course.stripePriceId}
+        />
+      )}
+      {selectedMethod === "mercadopago" && (
+        <MercadoPagoCheckout
+          courseCurrency="ars"
+          coursePrice={course.mercadopagoPriceInCents ?? 0}
+          courseTitle={course.title}
+          courseDescription={course.description}
+          courseId={course.id}
+        />
+      )}
+    </div>
   );
 }
 

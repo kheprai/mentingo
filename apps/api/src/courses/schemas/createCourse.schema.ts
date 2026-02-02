@@ -10,6 +10,7 @@ export const baseCourseSchema = Type.Object({
   status: Type.Optional(coursesStatusOptions),
   thumbnailS3Key: Type.Optional(Type.String()),
   priceInCents: Type.Optional(Type.Integer()),
+  mercadopagoPriceInCents: Type.Optional(Type.Integer()),
   currency: Type.Optional(Type.String()),
   categoryId: Type.String({ format: "uuid" }),
   isScorm: Type.Optional(Type.Boolean()),

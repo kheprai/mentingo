@@ -6,6 +6,7 @@ import useGenerateMissingTranslations from "~/api/mutations/admin/useGenerateMis
 import { useBetaCourseById } from "~/api/queries/admin/useBetaCourse";
 import { useMissingTranslations } from "~/api/queries/admin/useHasMissingTranslations";
 import { useAIConfigured } from "~/api/queries/useAIConfigured";
+import { useMercadoPagoConfigured } from "~/api/queries/useMercadoPagoConfigured";
 import { useStripeConfigured } from "~/api/queries/useStripeConfigured";
 import { Icon } from "~/components/Icon";
 import { PageWrapper } from "~/components/PageWrapper";
@@ -47,7 +48,10 @@ const EditCourse = () => {
   const { id } = useParams();
 
   const { data: isStripeConfigured } = useStripeConfigured();
+  const { data: isMercadoPagoConfigured } = useMercadoPagoConfigured();
   const { data: isAIConfigured } = useAIConfigured();
+
+  const isPaymentConfigured = isStripeConfigured?.enabled || isMercadoPagoConfigured?.enabled;
 
   const { language } = useLanguageStore();
 
@@ -262,12 +266,13 @@ const EditCourse = () => {
             />
           </LeaveModalProvider>
         </TabsContent>
-        {isStripeConfigured?.enabled && (
+        {isPaymentConfigured && (
           <TabsContent value="Pricing">
             <CoursePricing
               courseId={course?.id || ""}
               currency={course?.currency}
               priceInCents={course?.priceInCents}
+              mercadopagoPriceInCents={course?.mercadopagoPriceInCents}
               language={language}
             />
           </TabsContent>

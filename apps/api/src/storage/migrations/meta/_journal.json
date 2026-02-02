@@ -575,6 +575,27 @@
       "when": 1769862000000,
       "tag": "0081_allow_null_category_on_courses",
       "breakpoints": true
+    },
+    {
+      "idx": 82,
+      "version": "7",
+      "when": 1769948400000,
+      "tag": "0082_add_mercadopago_and_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 83,
+      "version": "7",
+      "when": 1770034800000,
+      "tag": "0083_mercadopago_customers",
+      "breakpoints": true
+    },
+    {
+      "idx": 84,
+      "version": "7",
+      "when": 1770055062247,
+      "tag": "0084_melted_overlord",
+      "breakpoints": true
     }
   ]
 }

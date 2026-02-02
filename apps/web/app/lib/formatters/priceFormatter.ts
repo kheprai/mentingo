@@ -45,6 +45,7 @@ const conversionRates: Record<CurrencyCode, number> = {
   KRW: 1,
   BHD: 1000,
   PLN: 100,
+  ARS: 100,
 };
 
 function convertToMajorUnits(amount: number, currency: CurrencyCode): number {

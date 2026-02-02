@@ -6051,6 +6051,66 @@
         }
       }
     },
+    "/api/mercadopago/customer": {
+      "post": {
+        "operationId": "MercadoPagoController_getOrCreateCustomer",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOrCreateCustomerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mercadopago/customer/cards": {
+      "get": {
+        "operationId": "MercadoPagoController_getCustomerCards",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCustomerCardsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mercadopago/customer/cards/{cardId}": {
+      "delete": {
+        "operationId": "MercadoPagoController_deleteCustomerCard",
+        "parameters": [
+          {
+            "name": "cardId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteCustomerCardResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/mercadopago/payment": {
       "post": {
         "operationId": "MercadoPagoController_processPayment",
@@ -12412,6 +12472,9 @@
                 "priceInCents": {
                   "type": "number"
                 },
+                "mercadopagoPriceInCents": {
+                  "type": "number"
+                },
                 "currency": {
                   "type": "string"
                 },
@@ -12479,6 +12542,7 @@
                 "courseChapterCount",
                 "enrolledParticipantCount",
                 "priceInCents",
+                "mercadopagoPriceInCents",
                 "currency"
               ]
             }
@@ -12572,6 +12636,9 @@
                   "type": "number"
                 },
                 "priceInCents": {
+                  "type": "number"
+                },
+                "mercadopagoPriceInCents": {
                   "type": "number"
                 },
                 "currency": {
@@ -12669,6 +12736,7 @@
                 "courseChapterCount",
                 "enrolledParticipantCount",
                 "priceInCents",
+                "mercadopagoPriceInCents",
                 "currency",
                 "completedChapterCount",
                 "dueDate",
@@ -12865,6 +12933,9 @@
                 "priceInCents": {
                   "type": "number"
                 },
+                "mercadopagoPriceInCents": {
+                  "type": "number"
+                },
                 "currency": {
                   "type": "string"
                 },
@@ -12960,6 +13031,7 @@
                 "courseChapterCount",
                 "enrolledParticipantCount",
                 "priceInCents",
+                "mercadopagoPriceInCents",
                 "currency",
                 "completedChapterCount",
                 "dueDate",
@@ -13060,6 +13132,9 @@
                 "priceInCents": {
                   "type": "number"
                 },
+                "mercadopagoPriceInCents": {
+                  "type": "number"
+                },
                 "currency": {
                   "type": "string"
                 },
@@ -13157,6 +13232,7 @@
                 "courseChapterCount",
                 "enrolledParticipantCount",
                 "priceInCents",
+                "mercadopagoPriceInCents",
                 "currency",
                 "completedChapterCount",
                 "dueDate",
@@ -13435,6 +13511,9 @@
               "priceInCents": {
                 "type": "number"
               },
+              "mercadopagoPriceInCents": {
+                "type": "number"
+              },
               "thumbnailUrl": {
                 "type": "string"
               },
@@ -13522,6 +13601,7 @@
               "id",
               "status",
               "priceInCents",
+              "mercadopagoPriceInCents",
               "title",
               "slug",
               "stripeProductId",
@@ -14044,6 +14124,9 @@
               "priceInCents": {
                 "type": "number"
               },
+              "mercadopagoPriceInCents": {
+                "type": "number"
+              },
               "thumbnailUrl": {
                 "type": "string"
               },
@@ -14101,6 +14184,7 @@
               "id",
               "status",
               "priceInCents",
+              "mercadopagoPriceInCents",
               "title",
               "availableLocales",
               "baseLanguage"
@@ -14162,6 +14246,9 @@
                 "type": "string"
               },
               "priceInCents": {
+                "type": "integer"
+              },
+              "mercadopagoPriceInCents": {
                 "type": "integer"
               },
               "currency": {
@@ -14265,6 +14352,9 @@
             ]
           },
           "priceInCents": {
+            "type": "integer"
+          },
+          "mercadopagoPriceInCents": {
             "type": "integer"
           },
           "currency": {
@@ -20939,6 +21029,114 @@
             },
             "required": [
               "message"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetOrCreateCustomerResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "customerId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "customerId"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetCustomerCardsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "firstSixDigits": {
+                  "type": "string"
+                },
+                "lastFourDigits": {
+                  "type": "string"
+                },
+                "expirationMonth": {
+                  "type": "number"
+                },
+                "expirationYear": {
+                  "type": "number"
+                },
+                "paymentMethod": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "paymentTypeId": {
+                      "type": "string"
+                    },
+                    "thumbnail": {
+                      "type": "string"
+                    },
+                    "secureThumbnail": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "issuer": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "cardholder": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "DeleteCustomerCardResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
             ]
           }
         },

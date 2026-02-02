@@ -205,6 +205,7 @@ export class CourseService {
         enrolledParticipantCount: sql<number>`COALESCE(${coursesSummaryStats.freePurchasedCount} + ${coursesSummaryStats.paidPurchasedCount}, 0)`,
         courseChapterCount: courses.chapterCount,
         priceInCents: courses.priceInCents,
+        mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
         currency: courses.currency,
         status: courses.status,
         createdAt: courses.createdAt,
@@ -227,6 +228,7 @@ export class CourseService {
         users.avatarReference,
         categories.title,
         courses.priceInCents,
+        courses.mercadopagoPriceInCents,
         courses.currency,
         courses.status,
         coursesSummaryStats.freePurchasedCount,
@@ -570,7 +572,10 @@ export class CourseService {
           courseChapterCount: courses.chapterCount,
           completedChapterCount: sql<number>`0`,
           priceInCents: courses.priceInCents,
+          mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
           currency: courses.currency,
+          stripePriceId: courses.stripePriceId,
+          mercadopagoProductId: courses.mercadopagoProductId,
           hasFreeChapters: sql<boolean>`
             EXISTS (
               SELECT 1
@@ -703,6 +708,7 @@ export class CourseService {
         status: courses.status,
         isScorm: courses.isScorm,
         priceInCents: courses.priceInCents,
+        mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
         currency: courses.currency,
         authorId: courses.authorId,
         hasCertificate: courses.hasCertificate,
@@ -946,7 +952,10 @@ export class CourseService {
         courseChapterCount: courses.chapterCount,
         status: courses.status,
         priceInCents: courses.priceInCents,
+        mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
         currency: courses.currency,
+        stripePriceId: courses.stripePriceId,
+        mercadopagoProductId: courses.mercadopagoProductId,
         authorId: courses.authorId,
         hasCertificate: courses.hasCertificate,
         availableLocales: sql<SupportedLanguages[]>`${courses.availableLocales}`,
@@ -1133,7 +1142,10 @@ export class CourseService {
         courseChapterCount: courses.chapterCount,
         completedChapterCount: sql<number>`0`,
         priceInCents: courses.priceInCents,
+        mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
         currency: courses.currency,
+        stripePriceId: courses.stripePriceId,
+        mercadopagoProductId: courses.mercadopagoProductId,
         hasFreeChapters: sql<boolean>`
         EXISTS (
           SELECT 1
@@ -1367,6 +1379,7 @@ export class CourseService {
           thumbnailS3Key: createCourseBody.thumbnailS3Key,
           status: createCourseBody.status,
           priceInCents: createCourseBody.priceInCents,
+          mercadopagoPriceInCents: createCourseBody.mercadopagoPriceInCents ?? 0,
           currency: finalCurrency,
           isScorm: createCourseBody.isScorm,
           authorId: currentUser.userId,
@@ -1418,6 +1431,8 @@ export class CourseService {
         const [existingCourse] = await trx.select().from(courses).where(eq(courses.id, id));
 
         const { enabled: isStripeConfigured } = await this.envService.getStripeConfigured();
+        const { enabled: isMercadoPagoConfigured } =
+          await this.envService.getMercadoPagoConfigured();
 
         if (!updateCourseBody.language) {
           throw new BadRequestException("adminCourseView.toast.updateCourseMissingLanguage");
@@ -1467,13 +1482,22 @@ export class CourseService {
           }
         }
 
-        const { priceInCents, currency, title, description, language, ...rest } = updateCourseBody;
+        const {
+          priceInCents,
+          mercadopagoPriceInCents,
+          currency,
+          title,
+          description,
+          language,
+          ...rest
+        } = updateCourseBody;
 
         const updateData = {
           ...rest,
           title: setJsonbField(courses.title, language, title),
           description: setJsonbField(courses.description, language, description),
-          ...(isStripeConfigured ? { priceInCents, currency } : {}),
+          ...(isStripeConfigured || isMercadoPagoConfigured ? { priceInCents, currency } : {}),
+          ...(isMercadoPagoConfigured ? { mercadopagoPriceInCents } : {}),
           ...(imageKey && { imageUrl: imageKey.fileUrl }),
         };
 
@@ -1549,6 +1573,16 @@ export class CourseService {
                   .where(eq(courses.id, id));
               }
             }
+          }
+        }
+
+        if (!isPlaywrightTest && isMercadoPagoConfigured) {
+          if (!updatedCourse.mercadopagoProductId && updatedCourse.mercadopagoPriceInCents > 0) {
+            const mpProductId = `mp_${id}`;
+            await trx
+              .update(courses)
+              .set({ mercadopagoProductId: mpProductId })
+              .where(eq(courses.id, id));
           }
         }
 
@@ -2358,7 +2392,10 @@ export class CourseService {
       courseChapterCount: courses.chapterCount,
       completedChapterCount: sql<number>`COALESCE(${studentCourses.finishedChapterCount}, 0)`,
       priceInCents: courses.priceInCents,
+      mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
       currency: courses.currency,
+      stripePriceId: courses.stripePriceId,
+      mercadopagoProductId: courses.mercadopagoProductId,
       hasFreeChapter: sql<boolean>`
         EXISTS (
           SELECT 1
@@ -3094,6 +3131,7 @@ export class CourseService {
         ),
         status: courses.status,
         priceInCents: courses.priceInCents,
+        mercadopagoPriceInCents: courses.mercadopagoPriceInCents,
         currency: courses.currency,
         hasCertificate: courses.hasCertificate,
         isScorm: courses.isScorm,

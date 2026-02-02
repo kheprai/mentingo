@@ -35,6 +35,7 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   avatarReference: varchar("avatar_reference", { length: 200 }),
   role: text("role").notNull().default(USER_ROLES.STUDENT),
+  mercadopagoCustomerId: text("mercadopago_customer_id"),
   archived,
   deletedAt: timestamp("deleted_at", {
     mode: "string",
@@ -156,6 +157,7 @@ export const courses = pgTable(
     stripeProductId: text("stripe_product_id"),
     stripePriceId: text("stripe_price_id"),
     mercadopagoProductId: text("mercadopago_product_id"),
+    mercadopagoPriceInCents: integer("mercadopago_price_in_cents").notNull().default(0),
     settings: coursesSettings.column.notNull(),
     baseLanguage: text("base_language").notNull().default("en"),
     availableLocales: text("available_locales")

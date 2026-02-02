@@ -92,6 +92,7 @@ export const createCourseFactory = (db: DatabasePg) => {
       stripeProductId: null,
       stripePriceId: null,
       mercadopagoProductId: null,
+      mercadopagoPriceInCents: 0,
       baseLanguage: "en",
       availableLocales: ["en"],
       settings: {

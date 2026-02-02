@@ -2,13 +2,12 @@ import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 
 import DefaultPhotoCourse from "~/assets/svgs/default-photo-course.svg";
+import { CoursePriceDisplay } from "~/components/CoursePriceDisplay/CoursePriceDisplay";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { CategoryChip } from "~/components/ui/CategoryChip";
 import { UserAvatar } from "~/components/UserProfile/UserAvatar";
-import { formatPrice } from "~/lib/formatters/priceFormatter";
 import { cn } from "~/lib/utils";
-import { getCurrencyLocale } from "~/utils/getCurrencyLocale";
 
 import type { GetAvailableCoursesResponse } from "~/api/generated-api";
 import type { Language } from "~/modules/Dashboard/Settings/Language/LanguageStore";
@@ -39,10 +38,12 @@ export function PublicCourseCard({ course, isEnrolled, isLoggedIn }: PublicCours
     availableLocales,
     category,
     courseChapterCount,
-    currency,
     description,
     hasFreeChapters,
     priceInCents,
+    mercadopagoPriceInCents,
+    stripePriceId,
+    mercadopagoProductId,
     slug,
     thumbnailUrl,
     title,
@@ -57,11 +58,6 @@ export function PublicCourseCard({ course, isEnrolled, isLoggedIn }: PublicCours
     }
     return t("landing.courses.card.viewCourse");
   };
-
-  const formattedPrice =
-    priceInCents === 0
-      ? t("landing.courses.card.free")
-      : formatPrice(priceInCents, currency, getCurrencyLocale(currency));
 
   const chapterCountText =
     courseChapterCount === 1
@@ -144,14 +140,12 @@ export function PublicCourseCard({ course, isEnrolled, isLoggedIn }: PublicCours
         {/* Footer */}
         <div className="mt-auto flex items-center justify-between gap-2 pt-4">
           <span className="text-sm text-neutral-500">{chapterCountText}</span>
-          <span
-            className={cn("font-semibold", {
-              "text-success-700": priceInCents === 0,
-              "text-primary-700": priceInCents > 0,
-            })}
-          >
-            {formattedPrice}
-          </span>
+          <CoursePriceDisplay
+            priceInCents={priceInCents}
+            mercadopagoPriceInCents={mercadopagoPriceInCents}
+            stripePriceId={stripePriceId}
+            mercadopagoProductId={mercadopagoProductId}
+          />
         </div>
 
         {/* CTA Button */}
