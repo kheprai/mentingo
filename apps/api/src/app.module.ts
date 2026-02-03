@@ -58,6 +58,12 @@ import { StripeModule } from "./stripe/stripe.module";
 import { StudentLessonProgressModule } from "./studentLessonProgress/studentLessonProgress.module";
 import { TestConfigModule } from "./test-config/test-config.module";
 import { UserModule } from "./user/user.module";
+import { WhatsAppModule } from "./whatsapp/whatsapp.module";
+
+// Cart/Checkout/Order modules imported AFTER Course/User to avoid circular dependency at file level
+import { CartModule } from "./cart/cart.module";
+import { CheckoutModule } from "./checkout/checkout.module";
+import { OrderModule } from "./order/order.module";
 
 @Module({
   imports: [
@@ -122,6 +128,9 @@ import { UserModule } from "./user/user.module";
     BunnyStreamModule,
     StripeModule,
     MercadoPagoModule,
+    CartModule,
+    CheckoutModule,
+    OrderModule,
     EventsModule,
     StatisticsModule,
     ReportModule,
@@ -142,6 +151,7 @@ import { UserModule } from "./user/user.module";
     NewsModule,
     ArticlesModule,
     AnalyticsModule,
+    WhatsAppModule,
   ],
   controllers: [],
   providers: [

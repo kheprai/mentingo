@@ -1,9 +1,9 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { ConflictException, Inject, Injectable, Logger } from "@nestjs/common";
 import { and, eq, isNull } from "drizzle-orm";
 
 import { DatabasePg } from "src/common";
 import { CourseService } from "src/courses/course.service";
-import { courses, users } from "src/storage/schema";
+import { courses, orderItems, orders, users } from "src/storage/schema";
 
 import { MercadoPagoService } from "./mercadopago.service";
 
@@ -38,14 +38,12 @@ export class MercadoPagoWebhookHandler {
         `Payment ${paymentId} status: ${paymentInfo.status} - ${paymentInfo.statusDetail}`,
       );
 
-      // Update payment status in our database
       await this.mercadopagoService.updatePaymentStatus(
         paymentId,
         paymentInfo.status,
         paymentInfo.statusDetail,
       );
 
-      // Get the payment record to access metadata
       const paymentRecord = await this.mercadopagoService.getPaymentByProviderId(paymentId);
 
       if (!paymentRecord) {
@@ -54,12 +52,42 @@ export class MercadoPagoWebhookHandler {
       }
 
       if (paymentInfo.status === "approved") {
-        return this.enrollUserInCourse(paymentRecord.userId, paymentRecord.courseId, paymentId);
+        if (paymentRecord.orderId) {
+          return this.handleCartCheckoutApproval(paymentRecord.orderId, paymentRecord.userId);
+        }
+
+        if (paymentRecord.courseId) {
+          return this.enrollUserInCourse(
+            paymentRecord.userId,
+            paymentRecord.courseId,
+            paymentId,
+          );
+        }
       }
 
       return true;
     } catch (error) {
       this.logger.error(`Error handling payment notification ${paymentId}:`, error);
+      return false;
+    }
+  }
+
+  private async handleCartCheckoutApproval(
+    orderId: string,
+    userId: string,
+  ): Promise<boolean> {
+    try {
+      await this.db
+        .update(orders)
+        .set({ status: "completed" })
+        .where(eq(orders.id, orderId));
+
+      await this.enrollOrderCourses(orderId, userId);
+
+      this.logger.log(`Cart checkout completed for order ${orderId}, user ${userId}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Error completing cart checkout for order ${orderId}:`, error);
       return false;
     }
   }
@@ -70,7 +98,6 @@ export class MercadoPagoWebhookHandler {
     paymentId: string,
   ): Promise<boolean> {
     try {
-      // Verify user exists
       const [user] = await this.db
         .select()
         .from(users)
@@ -81,7 +108,6 @@ export class MercadoPagoWebhookHandler {
         return false;
       }
 
-      // Verify course exists
       const [course] = await this.db.select().from(courses).where(eq(courses.id, courseId));
 
       if (!course) {
@@ -89,7 +115,6 @@ export class MercadoPagoWebhookHandler {
         return false;
       }
 
-      // Enroll the user
       await this.courseService.enrollCourse(courseId, userId, undefined, paymentId);
 
       this.logger.log(
@@ -101,5 +126,28 @@ export class MercadoPagoWebhookHandler {
       this.logger.error(`Error enrolling user ${userId} in course ${courseId}:`, error);
       return false;
     }
+  }
+
+  private async enrollOrderCourses(orderId: string, userId: string): Promise<void> {
+    const items = await this.db
+      .select({ courseId: orderItems.courseId })
+      .from(orderItems)
+      .where(eq(orderItems.orderId, orderId));
+
+    for (const item of items) {
+      try {
+        await this.courseService.enrollCourse(item.courseId, userId);
+      } catch (error) {
+        if (error instanceof ConflictException) {
+          this.logger.log(`User ${userId} already enrolled in course ${item.courseId}, skipping`);
+          continue;
+        }
+        this.logger.error(
+          `Failed to enroll user ${userId} in course ${item.courseId}: ${error}`,
+        );
+      }
+    }
+
+    this.logger.log(`Enrolled user ${userId} in ${items.length} courses for order ${orderId}`);
   }
 }

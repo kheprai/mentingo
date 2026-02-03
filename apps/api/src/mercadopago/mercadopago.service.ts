@@ -1,6 +1,6 @@
 import { Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
-import { Customer, MercadoPagoConfig, Payment } from "mercadopago";
+import { Customer, MercadoPagoConfig, Payment, Preference } from "mercadopago";
 
 import { DatabasePg } from "src/common";
 import { EnvService } from "src/env/services/env.service";
@@ -247,5 +247,123 @@ export class MercadoPagoService {
       .where(eq(payments.providerPaymentId, providerPaymentId));
 
     return payment ?? null;
+  }
+
+  async createPaymentPreference(data: {
+    items: Array<{ title: string; quantity: number; unitPrice: number }>;
+    userId: string;
+    orderId: string;
+    backUrls?: { success: string; failure: string; pending: string };
+  }): Promise<{ preferenceId: string; initPoint: string }> {
+    const client = await this.getClient();
+    const preference = new Preference(client);
+
+    const appUrl = process.env.CORS_ORIGIN || "https://app.lms.localhost";
+
+    try {
+      const result = await preference.create({
+        body: {
+          items: data.items.map((i) => ({
+            title: i.title,
+            quantity: i.quantity,
+            unit_price: i.unitPrice,
+            currency_id: "ARS",
+            id: data.orderId,
+          })),
+          back_urls: data.backUrls ?? {
+            success: `${appUrl}/orders/${data.orderId}`,
+            failure: `${appUrl}/orders/${data.orderId}`,
+            pending: `${appUrl}/orders/${data.orderId}`,
+          },
+          external_reference: data.orderId,
+          metadata: { user_id: data.userId, order_id: data.orderId },
+          auto_return: "approved",
+        },
+      });
+
+      this.logger.log(`MercadoPago preference created: ${result.id} for order ${data.orderId}`);
+
+      return {
+        preferenceId: result.id!,
+        initPoint: result.init_point!,
+      };
+    } catch (error) {
+      this.logger.error("Error creating MercadoPago preference:", error);
+      throw new InternalServerErrorException("Error creating payment preference");
+    }
+  }
+
+  async processPaymentForOrder(data: {
+    token: string;
+    amount: number;
+    description: string;
+    installments: number;
+    paymentMethodId: string;
+    email: string;
+    userId: string;
+    orderId: string;
+    identification?: { type: string; number: string };
+  }) {
+    const client = await this.getClient();
+    const paymentClient = new Payment(client);
+
+    let payerCustomerId: string | undefined;
+    const [user] = await this.db.select().from(users).where(eq(users.id, data.userId));
+    payerCustomerId = user?.mercadopagoCustomerId ?? undefined;
+
+    try {
+      const paymentResponse = await paymentClient.create({
+        body: {
+          transaction_amount: data.amount,
+          token: data.token,
+          description: data.description,
+          installments: data.installments,
+          payment_method_id: data.paymentMethodId,
+          payer: {
+            email: data.email,
+            ...(payerCustomerId ? { id: payerCustomerId } : {}),
+            identification: data.identification
+              ? {
+                  type: data.identification.type,
+                  number: data.identification.number,
+                }
+              : undefined,
+          },
+          metadata: {
+            order_id: data.orderId,
+            user_id: data.userId,
+            type: "cart_checkout",
+          },
+        },
+      });
+
+      await this.db.insert(payments).values({
+        userId: data.userId,
+        orderId: data.orderId,
+        provider: "mercadopago",
+        providerPaymentId: String(paymentResponse.id),
+        amountInCents: Math.round(data.amount * 100),
+        currency: paymentResponse.currency_id ?? "ARS",
+        status: paymentResponse.status ?? "pending",
+        statusDetail: paymentResponse.status_detail ?? undefined,
+        paymentMethod: paymentResponse.payment_method_id ?? undefined,
+        installments: paymentResponse.installments ?? 1,
+      });
+
+      this.logger.log(
+        `Order payment created: ${paymentResponse.id} - Status: ${paymentResponse.status} - Order: ${data.orderId}`,
+      );
+
+      return {
+        id: paymentResponse.id!,
+        status: paymentResponse.status!,
+        statusDetail: paymentResponse.status_detail ?? undefined,
+      };
+    } catch (error) {
+      this.logger.error("Error processing MercadoPago order payment:", error);
+      throw new InternalServerErrorException(
+        error instanceof Error ? error.message : "Error processing payment",
+      );
+    }
   }
 }

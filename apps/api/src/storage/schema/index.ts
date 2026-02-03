@@ -30,7 +30,8 @@ import type { ActivityHistory, AllSettings } from "src/common/types";
 export const users = pgTable("users", {
   ...id,
   ...timestamps,
-  email: text("email").notNull().unique(),
+  email: text("email").unique(),
+  phone: text("phone").unique(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   avatarReference: varchar("avatar_reference", { length: 200 }),
@@ -842,8 +843,8 @@ export const news = pgTable("news", {
     .notNull(),
 });
 
-export const payments = pgTable(
-  "payments",
+export const cartItems = pgTable(
+  "cart_items",
   {
     ...id,
     ...timestamps,
@@ -853,6 +854,71 @@ export const payments = pgTable(
     courseId: uuid("course_id")
       .references(() => courses.id, { onDelete: "cascade" })
       .notNull(),
+  },
+  (table) => ({
+    userCourseUnq: unique().on(table.userId, table.courseId),
+    userIdx: index("cart_items_user_idx").on(table.userId),
+  }),
+);
+
+export const orders = pgTable(
+  "orders",
+  {
+    ...id,
+    ...timestamps,
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    status: varchar("status", { length: 30 }).notNull().default("pending"),
+    provider: varchar("provider", { length: 20 }).notNull(),
+    providerPaymentId: varchar("provider_payment_id", { length: 200 }),
+    totalAmountInCents: integer("total_amount_in_cents").notNull(),
+    currency: varchar("currency", { length: 10 }).notNull(),
+    paymentMethod: varchar("payment_method", { length: 50 }),
+    installments: integer("installments").default(1),
+    paymentUrl: text("payment_url"),
+  },
+  (table) => ({
+    userIdx: index("orders_user_idx").on(table.userId),
+    statusIdx: index("orders_status_idx").on(table.status),
+    providerPaymentIdx: index("orders_provider_payment_idx").on(
+      table.provider,
+      table.providerPaymentId,
+    ),
+    createdAtIdx: index("orders_created_at_idx").on(table.createdAt),
+  }),
+);
+
+export const orderItems = pgTable(
+  "order_items",
+  {
+    ...id,
+    ...timestamps,
+    orderId: uuid("order_id")
+      .references(() => orders.id, { onDelete: "cascade" })
+      .notNull(),
+    courseId: uuid("course_id")
+      .references(() => courses.id, { onDelete: "restrict" })
+      .notNull(),
+    priceInCents: integer("price_in_cents").notNull(),
+    currency: varchar("currency", { length: 10 }).notNull(),
+  },
+  (table) => ({
+    orderCourseUnq: unique().on(table.orderId, table.courseId),
+    orderIdx: index("order_items_order_idx").on(table.orderId),
+  }),
+);
+
+export const payments = pgTable(
+  "payments",
+  {
+    ...id,
+    ...timestamps,
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    courseId: uuid("course_id").references(() => courses.id, { onDelete: "cascade" }),
+    orderId: uuid("order_id").references(() => orders.id, { onDelete: "cascade" }),
     provider: varchar("provider", { length: 20 }).notNull(), // 'stripe' | 'mercadopago'
     providerPaymentId: varchar("provider_payment_id", { length: 100 }).notNull(),
     amountInCents: integer("amount_in_cents").notNull(),
@@ -866,6 +932,7 @@ export const payments = pgTable(
     providerPaymentUnq: unique().on(table.provider, table.providerPaymentId),
     userIdx: index("payments_user_idx").on(table.userId),
     courseIdx: index("payments_course_idx").on(table.courseId),
+    orderIdx: index("payments_order_idx").on(table.orderId),
     providerIdx: index("payments_provider_idx").on(table.provider),
     statusIdx: index("payments_status_idx").on(table.status),
     createdAtIdx: index("payments_created_at_idx").on(table.createdAt),

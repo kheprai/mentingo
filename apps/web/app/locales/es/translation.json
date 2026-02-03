@@ -2699,5 +2699,72 @@
       "contactSupport": "¿No encuentras lo que buscas?",
       "contactUs": "Contáctanos"
     }
+  },
+  "cart": {
+    "sidebar": {
+      "title": "Carrito de Compras",
+      "empty": "Tu carrito está vacío",
+      "viewCart": "Ver Carrito",
+      "checkout": "Ir a Pagar",
+      "subtotal": "Subtotal",
+      "itemCount": "{{count}} curso(s)"
+    },
+    "page": {
+      "title": "Carrito de Compras",
+      "continueShopping": "Seguir Comprando",
+      "proceedToCheckout": "Proceder al Pago",
+      "removeItem": "Eliminar",
+      "clearCart": "Vaciar Carrito"
+    },
+    "checkout": {
+      "title": "Pago",
+      "selectPaymentMethod": "Seleccionar Método de Pago",
+      "orderSummary": "Resumen del Pedido",
+      "total": "Total",
+      "payNow": "Pagar Ahora",
+      "loginRequired": "Inicia sesión o regístrate para completar tu compra",
+      "paymentApproved": "¡Pago aprobado! Ya estás inscrito.",
+      "paymentPending": "El pago está siendo procesado. Serás inscrito una vez confirmado.",
+      "freeEnrollment": "Inscripción Gratuita",
+      "freeEnrollmentDesc": "Estos cursos son gratuitos. Hacé clic abajo para inscribirte al instante.",
+      "freeEnrollmentSuccess": "¡Te inscribiste en los cursos gratuitos!",
+      "mixedCartNote": "Los cursos gratuitos se inscribirán automáticamente al completar el pago."
+    },
+    "confirmation": {
+      "title": "¡Pedido Confirmado!",
+      "subtitle": "Tu pago fue exitoso y ya estás inscrito en los cursos.",
+      "orderId": "ID de Pedido",
+      "enrolledCourses": "Cursos Inscriptos",
+      "goToCourse": "Ir al Curso",
+      "browseMore": "Ver Más Cursos",
+      "notFound": "Pedido no encontrado"
+    },
+    "button": {
+      "addToCart": "Agregar al Carrito",
+      "inCart": "En el Carrito",
+      "goToCart": "Ir al Carrito",
+      "enroll": "Inscribirse",
+      "addToCartShort": "+ Carrito",
+      "removeFromCart": "Quitar del Carrito",
+      "viewCart": "Ver Carrito",
+      "goToCheckout": "Ir al Checkout",
+      "enrollFree": "Inscribirse Gratis"
+    },
+    "currency": {
+      "toggle": "Moneda"
+    },
+    "toast": {
+      "added": "Curso agregado al carrito",
+      "removed": "Curso eliminado del carrito",
+      "alreadyEnrolled": "Ya estás inscrito en este curso",
+      "mergeConflict": "Algunos cursos ya estaban en tu carrito"
+    },
+    "errors": {
+      "checkoutFailed": "Error en el pago. Por favor intentá de nuevo.",
+      "paymentFailed": "El pago falló. Por favor intentá de nuevo.",
+      "syncFailed": "Error al sincronizar el carrito",
+      "addFailed": "Error al agregar al carrito",
+      "removeFailed": "Error al eliminar del carrito"
+    }
   }
 }

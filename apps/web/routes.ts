@@ -28,14 +28,16 @@ export const routes: (
         route("faq", "modules/Landing/pages/FAQ.page.tsx", { id: "landing-faq" });
         route("about", "modules/Landing/pages/About.page.tsx", { id: "landing-about" });
         route("contact", "modules/Landing/pages/Contact.page.tsx", { id: "landing-contact" });
+        route("cart", "modules/Cart/Cart.page.tsx", { id: "cart" });
+        route("checkout", "modules/Cart/Checkout.page.tsx", { id: "checkout" });
+        route("orders/:orderId", "modules/Cart/OrderConfirmation.page.tsx", {
+          id: "order-confirmation",
+        });
       });
       // Auth routes
       route("auth", "modules/Auth/Auth.layout.tsx", () => {
         route("login", "modules/Auth/Login.page.tsx", { index: true });
         route("register", "modules/Auth/Register.page.tsx");
-        route("create-new-password", "modules/Auth/CreateNewPassword.page.tsx");
-        route("password-recovery", "modules/Auth/PasswordRecovery.page.tsx");
-        route("mfa", "modules/Auth/MFA.page.tsx");
       });
       // App routes (with navigation) - these routes stay at root level
       route(

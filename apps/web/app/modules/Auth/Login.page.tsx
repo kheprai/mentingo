@@ -1,16 +1,14 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useSearchParams } from "@remix-run/react";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
 
 import { version } from "~/../version.json";
-import { useLoginUser } from "~/api/mutations/useLoginUser";
+import { useSendOTP } from "~/api/mutations/useSendOTP";
+import { useVerifyOTP } from "~/api/mutations/useVerifyOTP";
 import { useGlobalSettingsSuspense } from "~/api/queries/useGlobalSettings";
 import useLoginPageFiles from "~/api/queries/useLoginPageFiles";
 import { useSSOEnabled } from "~/api/queries/useSSOEnabled";
-import { FormCheckbox } from "~/components/Form/FormCheckbox";
+import { OTPInput } from "~/components/ui/OTPInput";
 import { PlatformLogo } from "~/components/PlatformLogo";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -26,16 +24,10 @@ import { SocialLogin } from "./components";
 
 import type { LoginPageResource } from "../Dashboard/Settings/components/admin/UploadFilesToLoginPageItem";
 import type { MetaFunction } from "@remix-run/react";
-import type { LoginBody } from "~/api/generated-api";
 
 export const meta: MetaFunction = ({ matches }) => setPageTitle(matches, "pages.login");
 
-const loginSchema = (t: (key: string) => string) =>
-  z.object({
-    email: z.string().email({ message: t("loginView.validation.email") }),
-    password: z.string().min(1, { message: t("loginView.validation.password") }),
-    rememberMe: z.boolean().optional(),
-  });
+type Step = "phone" | "otp";
 
 export default function LoginPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -60,6 +52,13 @@ export default function LoginPage() {
 
   const { data: ssoEnabled } = useSSOEnabled();
 
+  const [step, setStep] = useState<Step>("phone");
+  const [phone, setPhone] = useState("+54");
+  const [resendTimer, setResendTimer] = useState(0);
+
+  const { mutateAsync: sendOTP, isPending: isSendingOTP } = useSendOTP();
+  const { mutateAsync: verifyOTP, isPending: isVerifying } = useVerifyOTP();
+
   const handlePreviewClick = (resource: LoginPageResource) => {
     setPreviewResource(resource);
     setIsPreviewDialogOpen(true);
@@ -79,22 +78,13 @@ export default function LoginPage() {
   const isSlackOAuthEnabled =
     (ssoEnabled?.data.slack ?? import.meta.env.VITE_SLACK_OAUTH_ENABLED) === "true";
 
-  const { mutateAsync: loginUser } = useLoginUser();
-
   const {
     data: {
       enforceSSO: isSSOEnforced,
-      inviteOnlyRegistration: inviteOnlyRegistration,
+      inviteOnlyRegistration,
       loginBackgroundImageS3Key,
     },
   } = useGlobalSettingsSuspense();
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<LoginBody>({ resolver: zodResolver(loginSchema(t)) });
 
   const isAnyProviderEnabled = useMemo(
     () => isGoogleOAuthEnabled || isMicrosoftOAuthEnabled || isSlackOAuthEnabled,
@@ -103,11 +93,59 @@ export default function LoginPage() {
 
   const loginResources = loginPageFiles?.resources ?? [];
 
-  const onSubmit = (data: LoginBody) => {
-    if (isSSOEnforced && isAnyProviderEnabled) return;
+  // Resend timer countdown
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+    const interval = setInterval(() => {
+      setResendTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
-    loginUser({ data });
-  };
+  const handleSendOTP = useCallback(async () => {
+    if (!phone || phone.length < 8) return;
+
+    try {
+      await sendOTP(phone);
+      setStep("otp");
+      setResendTimer(60);
+    } catch {
+      // Error handled by mutation
+    }
+  }, [phone, sendOTP]);
+
+  const handleVerifyOTP = useCallback(
+    async (code: string) => {
+      try {
+        const result = await verifyOTP({ phone, code });
+
+        if (result?.isNewUser && result?.otpToken) {
+          // Redirect to register with otpToken
+          const params = new URLSearchParams({
+            phone,
+            otpToken: result.otpToken,
+          });
+          window.location.href = `/auth/register?${params.toString()}`;
+        }
+        // If not new user, the mutation handles navigation
+      } catch {
+        // Error handled by mutation
+      }
+    },
+    [phone, verifyOTP],
+  );
+
+  const handleResend = useCallback(async () => {
+    if (resendTimer > 0) return;
+    try {
+      await sendOTP(phone);
+      setResendTimer(60);
+    } catch {
+      // Error handled by mutation
+    }
+  }, [phone, sendOTP, resendTimer]);
+
+  const isValidPhone = phone.match(/^\+[1-9]\d{6,14}$/);
 
   return (
     <>
@@ -130,52 +168,88 @@ export default function LoginPage() {
             {t("loginView.header")}
           </CardTitle>
           <CardDescription>
-            {isSSOEnforced ? t("loginView.subHeaderSSO") : t("loginView.subHeader")}
+            {isSSOEnforced
+              ? t("loginView.subHeaderSSO")
+              : step === "phone"
+                ? t("loginView.subHeaderPhone", "Ingresa tu numero de telefono para continuar")
+                : t("loginView.subHeaderOTP", "Ingresa el codigo que recibiste por WhatsApp")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!isSSOEnforced && (
-            <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-2">
-                <Label htmlFor="email">{t("loginView.field.email")}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="user@example.com"
-                  className={cn({ "border-red-500": errors.email })}
-                  {...register("email")}
-                />
-                {errors.email && <div className="text-sm text-red-500">{errors.email.message}</div>}
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">{t("loginView.field.password")}</Label>
-                  <Link
-                    to="/auth/password-recovery"
-                    className="ml-auto inline-block text-sm underline"
+            <>
+              {step === "phone" && (
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="phone">
+                      {t("loginView.field.phone", "Telefono")}
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+54 11 1234 5678"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className={cn({ "border-red-500": phone && !isValidPhone })}
+                    />
+                    {phone && !isValidPhone && phone.length > 3 && (
+                      <div className="text-sm text-red-500">
+                        {t("loginView.validation.phone", "Ingresa un numero valido con codigo de pais (ej: +54...)")}
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    disabled={!isValidPhone || isSendingOTP}
+                    onClick={handleSendOTP}
                   >
-                    {t("loginView.other.forgotPassword")}
-                  </Link>
+                    {isSendingOTP
+                      ? t("loginView.button.sending", "Enviando...")
+                      : t("loginView.button.sendCode", "Enviar codigo")}
+                  </Button>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  className={cn({ "border-red-500": errors.password })}
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <div className="text-sm text-red-500">{errors.password.message}</div>
-                )}
-              </div>
-              <FormCheckbox
-                control={control}
-                name="rememberMe"
-                label={t("loginView.other.rememberMe")}
-              />
-              <Button type="submit" className="w-full">
-                {t("loginView.button.login")}
-              </Button>
-            </form>
+              )}
+
+              {step === "otp" && (
+                <div className="grid gap-4">
+                  <p className="text-center text-sm text-neutral-600">
+                    {t("loginView.otpSentTo", "Enviamos un codigo a")} <strong>{phone}</strong>
+                  </p>
+                  <OTPInput
+                    onComplete={handleVerifyOTP}
+                    disabled={isVerifying}
+                  />
+                  {isVerifying && (
+                    <p className="text-center text-sm text-neutral-500">
+                      {t("loginView.verifying", "Verificando...")}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between text-sm">
+                    <button
+                      type="button"
+                      onClick={() => setStep("phone")}
+                      className="text-neutral-500 underline"
+                    >
+                      {t("loginView.button.changePhone", "Cambiar numero")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResend}
+                      disabled={resendTimer > 0}
+                      className={cn(
+                        "underline",
+                        resendTimer > 0 ? "text-neutral-400" : "text-primary-600",
+                      )}
+                    >
+                      {resendTimer > 0
+                        ? t("loginView.button.resendIn", "Reenviar en {{seconds}}s", { seconds: resendTimer })
+                        : t("loginView.button.resendCode", "Reenviar codigo")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {isAnyProviderEnabled && (
@@ -206,7 +280,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => handlePreviewClick(resource)}
-                    className="text-sm truncate underline"
+                    className="truncate text-sm underline"
                   >
                     {resource.name}
                   </button>

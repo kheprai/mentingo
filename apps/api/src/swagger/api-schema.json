@@ -1,6 +1,54 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/auth/send-otp": {
+      "post": {
+        "operationId": "AuthController_sendOTP",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendOTPBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/auth/verify-otp": {
+      "post": {
+        "operationId": "AuthController_verifyOTP",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOTPBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyOTPResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/register": {
       "post": {
         "operationId": "AuthController_register",
@@ -21,33 +69,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RegisterResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/login": {
-      "post": {
-        "operationId": "AuthController_login",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
@@ -102,69 +123,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/auth/forgot-password": {
-      "post": {
-        "operationId": "AuthController_forgotPassword",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ForgotPasswordBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/auth/create-password": {
-      "post": {
-        "operationId": "AuthController_createPassword",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePasswordBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/auth/reset-password": {
-      "post": {
-        "operationId": "AuthController_resetPassword",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
           }
         }
       }
@@ -235,16 +193,35 @@
         }
       }
     },
-    "/api/auth/mfa/setup": {
-      "post": {
-        "operationId": "AuthController_MFASetup",
-        "parameters": [],
+    "/api/statistics/user-stats": {
+      "get": {
+        "operationId": "StatisticsController_getUserStatistics",
+        "parameters": [
+          {
+            "name": "language",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "en",
+              "anyOf": [
+                {
+                  "const": "en",
+                  "type": "string"
+                },
+                {
+                  "const": "es",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MFASetupResponse"
+                  "$ref": "#/components/schemas/GetUserStatisticsResponse"
                 }
               }
             }
@@ -252,16 +229,113 @@
         }
       }
     },
-    "/api/auth/mfa/verify": {
+    "/api/statistics/stats": {
+      "get": {
+        "operationId": "StatisticsController_getStats",
+        "parameters": [
+          {
+            "name": "language",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "en",
+              "anyOf": [
+                {
+                  "const": "en",
+                  "type": "string"
+                },
+                {
+                  "const": "es",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/file": {
       "post": {
-        "operationId": "AuthController_MFAVerify",
+        "operationId": "FileController_uploadFile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "resource": {
+                    "type": "string",
+                    "description": "Optional resource type"
+                  },
+                  "lessonId": {
+                    "type": "string",
+                    "description": "Optional lesson ID for existing lessons"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileUploadResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "FileController_deleteFile",
+        "parameters": [
+          {
+            "name": "fileKey",
+            "required": true,
+            "in": "query",
+            "description": "Key of the file to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File deleted successfully"
+          }
+        }
+      }
+    },
+    "/api/file/videos/init": {
+      "post": {
+        "operationId": "FileController_initVideoUpload",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MFAVerifyBody"
+                "$ref": "#/components/schemas/InitVideoUploadBody"
               }
             }
           }
@@ -271,7 +345,672 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MFAVerifyResponse"
+                  "$ref": "#/components/schemas/InitVideoUploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/file/videos/tus": {
+      "options": {
+        "operationId": "FileController_tusOptionsBase",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "operationId": "FileController_createTusUpload",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/file/videos/tus/{id}": {
+      "options": {
+        "operationId": "FileController_tusOptionsUpload",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "head": {
+        "operationId": "FileController_getTusUpload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "patch": {
+        "operationId": "FileController_patchTusUpload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/file/videos/{id}": {
+      "get": {
+        "operationId": "FileController_getVideoUploadStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVideoUploadStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/file/bunny/webhook": {
+      "post": {
+        "operationId": "FileController_handleBunnyWebhook",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandleBunnyWebhookBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/user/all": {
+      "get": {
+        "operationId": "UserController_getUsers",
+        "parameters": [
+          {
+            "name": "keyword",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "anyOf": [
+                {
+                  "const": "admin",
+                  "type": "string"
+                },
+                {
+                  "const": "student",
+                  "type": "string"
+                },
+                {
+                  "const": "content_creator",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "archived",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "perPage",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "anyOf": [
+                {
+                  "const": "firstName",
+                  "type": "string"
+                },
+                {
+                  "const": "lastName",
+                  "type": "string"
+                },
+                {
+                  "const": "email",
+                  "type": "string"
+                },
+                {
+                  "const": "createdAt",
+                  "type": "string"
+                },
+                {
+                  "const": "groupName",
+                  "type": "string"
+                },
+                {
+                  "const": "-firstName",
+                  "type": "string"
+                },
+                {
+                  "const": "-lastName",
+                  "type": "string"
+                },
+                {
+                  "const": "-email",
+                  "type": "string"
+                },
+                {
+                  "const": "-createdAt",
+                  "type": "string"
+                },
+                {
+                  "const": "-groupName",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          {
+            "name": "groups",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "operationId": "UserController_getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserByIdResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "UserController_updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "UserController_deleteBulkUsers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBulkUsersBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBulkUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "UserController_createUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/details": {
+      "get": {
+        "operationId": "UserController_getUserDetails",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserDetailsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "UserController_upsertUserDetails",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertUserDetailsBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpsertUserDetailsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/profile": {
+      "patch": {
+        "operationId": "UserController_updateUserProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "userAvatar": {
+                        "type": "string",
+                        "format": "binary"
+                      },
+                      "data": {
+                        "format": "string",
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/user/admin": {
+      "patch": {
+        "operationId": "UserController_adminUpdateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateUserBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUpdateUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/change-password": {
+      "patch": {
+        "operationId": "UserController_changePassword",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/bulk/groups": {
+      "patch": {
+        "operationId": "UserController_bulkAssignUsersToGroup",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkAssignUsersToGroupBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/user/bulk/archive": {
+      "patch": {
+        "operationId": "UserController_archiveBulkUsers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchiveBulkUsersBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchiveBulkUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/bulk/roles": {
+      "patch": {
+        "operationId": "UserController_bulkUpdateUsersRoles",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkUpdateUsersRolesBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/user/import": {
+      "post": {
+        "operationId": "UserController_importUsers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "usersFile": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/onboarding-status/reset": {
+      "patch": {
+        "operationId": "UserController_resetOnboardingStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetOnboardingStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/onboarding-status/{page}": {
+      "patch": {
+        "operationId": "UserController_markOnboardingComplete",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkOnboardingCompleteResponse"
                 }
               }
             }
@@ -929,831 +1668,6 @@
         "responses": {
           "200": {
             "description": ""
-          }
-        }
-      }
-    },
-    "/api/file": {
-      "post": {
-        "operationId": "FileController_uploadFile",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "resource": {
-                    "type": "string",
-                    "description": "Optional resource type"
-                  },
-                  "lessonId": {
-                    "type": "string",
-                    "description": "Optional lesson ID for existing lessons"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "File uploaded successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FileUploadResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "FileController_deleteFile",
-        "parameters": [
-          {
-            "name": "fileKey",
-            "required": true,
-            "in": "query",
-            "description": "Key of the file to delete",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "File deleted successfully"
-          }
-        }
-      }
-    },
-    "/api/file/videos/init": {
-      "post": {
-        "operationId": "FileController_initVideoUpload",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/InitVideoUploadBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InitVideoUploadResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/file/videos/tus": {
-      "options": {
-        "operationId": "FileController_tusOptionsBase",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      },
-      "post": {
-        "operationId": "FileController_createTusUpload",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/file/videos/tus/{id}": {
-      "options": {
-        "operationId": "FileController_tusOptionsUpload",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      },
-      "head": {
-        "operationId": "FileController_getTusUpload",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      },
-      "patch": {
-        "operationId": "FileController_patchTusUpload",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/file/videos/{id}": {
-      "get": {
-        "operationId": "FileController_getVideoUploadStatus",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetVideoUploadStatusResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/file/bunny/webhook": {
-      "post": {
-        "operationId": "FileController_handleBunnyWebhook",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/HandleBunnyWebhookBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/statistics/user-stats": {
-      "get": {
-        "operationId": "StatisticsController_getUserStatistics",
-        "parameters": [
-          {
-            "name": "language",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "default": "en",
-              "anyOf": [
-                {
-                  "const": "en",
-                  "type": "string"
-                },
-                {
-                  "const": "es",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUserStatisticsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/statistics/stats": {
-      "get": {
-        "operationId": "StatisticsController_getStats",
-        "parameters": [
-          {
-            "name": "language",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "default": "en",
-              "anyOf": [
-                {
-                  "const": "en",
-                  "type": "string"
-                },
-                {
-                  "const": "es",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetStatsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/all": {
-      "get": {
-        "operationId": "UserController_getUsers",
-        "parameters": [
-          {
-            "name": "keyword",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "role",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "anyOf": [
-                {
-                  "const": "admin",
-                  "type": "string"
-                },
-                {
-                  "const": "student",
-                  "type": "string"
-                },
-                {
-                  "const": "content_creator",
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          {
-            "name": "archived",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "perPage",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "sort",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "anyOf": [
-                {
-                  "const": "firstName",
-                  "type": "string"
-                },
-                {
-                  "const": "lastName",
-                  "type": "string"
-                },
-                {
-                  "const": "email",
-                  "type": "string"
-                },
-                {
-                  "const": "createdAt",
-                  "type": "string"
-                },
-                {
-                  "const": "groupName",
-                  "type": "string"
-                },
-                {
-                  "const": "-firstName",
-                  "type": "string"
-                },
-                {
-                  "const": "-lastName",
-                  "type": "string"
-                },
-                {
-                  "const": "-email",
-                  "type": "string"
-                },
-                {
-                  "const": "-createdAt",
-                  "type": "string"
-                },
-                {
-                  "const": "-groupName",
-                  "type": "string"
-                }
-              ]
-            }
-          },
-          {
-            "name": "groups",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUsersResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user": {
-      "get": {
-        "operationId": "UserController_getUserById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUserByIdResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "operationId": "UserController_updateUser",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateUserBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateUserResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "UserController_deleteBulkUsers",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteBulkUsersBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeleteBulkUsersResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "operationId": "UserController_createUser",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateUserResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/details": {
-      "get": {
-        "operationId": "UserController_getUserDetails",
-        "parameters": [
-          {
-            "name": "userId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUserDetailsResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "operationId": "UserController_upsertUserDetails",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpsertUserDetailsBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpsertUserDetailsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/profile": {
-      "patch": {
-        "operationId": "UserController_updateUserProfile",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "userAvatar": {
-                        "type": "string",
-                        "format": "binary"
-                      },
-                      "data": {
-                        "format": "string",
-                        "type": "string"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/user/admin": {
-      "patch": {
-        "operationId": "UserController_adminUpdateUser",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AdminUpdateUserBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AdminUpdateUserResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/change-password": {
-      "patch": {
-        "operationId": "UserController_changePassword",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChangePasswordBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChangePasswordResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/bulk/groups": {
-      "patch": {
-        "operationId": "UserController_bulkAssignUsersToGroup",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BulkAssignUsersToGroupBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/user/bulk/archive": {
-      "patch": {
-        "operationId": "UserController_archiveBulkUsers",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ArchiveBulkUsersBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ArchiveBulkUsersResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/bulk/roles": {
-      "patch": {
-        "operationId": "UserController_bulkUpdateUsersRoles",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BulkUpdateUsersRolesBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/user/import": {
-      "post": {
-        "operationId": "UserController_importUsers",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "usersFile": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportUsersResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/onboarding-status/reset": {
-      "patch": {
-        "operationId": "UserController_resetOnboardingStatus",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResetOnboardingStatusResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/user/onboarding-status/{page}": {
-      "patch": {
-        "operationId": "UserController_markOnboardingComplete",
-        "parameters": [
-          {
-            "name": "page",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MarkOnboardingCompleteResponse"
-                }
-              }
-            }
           }
         }
       }
@@ -6357,6 +6271,297 @@
         }
       }
     },
+    "/api/cart": {
+      "get": {
+        "operationId": "CartController_getCart",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCartResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "CartController_clearCart",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearCartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/items": {
+      "post": {
+        "operationId": "CartController_addItem",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddItemBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/items/{courseId}": {
+      "delete": {
+        "operationId": "CartController_removeItem",
+        "parameters": [
+          {
+            "name": "courseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/merge": {
+      "post": {
+        "operationId": "CartController_mergeGuestCart",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeGuestCartBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MergeGuestCartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout/request-payment-link": {
+      "post": {
+        "operationId": "CheckoutController_requestPaymentLink",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestPaymentLinkBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestPaymentLinkResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout/orders/{id}/status": {
+      "get": {
+        "operationId": "CheckoutController_getOrderStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOrderStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout/stripe": {
+      "post": {
+        "operationId": "CheckoutController_stripeCheckout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StripeCheckoutBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StripeCheckoutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout/mercadopago": {
+      "post": {
+        "operationId": "CheckoutController_mercadopagoCheckout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MercadopagoCheckoutBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MercadopagoCheckoutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/checkout/free": {
+      "post": {
+        "operationId": "CheckoutController_freeCheckout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FreeCheckoutBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FreeCheckoutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "operationId": "OrderController_listOrders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "operationId": "OrderController_getOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOrderResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/report/summary": {
       "get": {
         "operationId": "ReportController_downloadSummaryReport",
@@ -7962,11 +8167,206 @@
   "servers": [],
   "components": {
     "schemas": {
+      "SendOTPBody": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "pattern": "^\\+[1-9]\\d{6,14}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone"
+        ]
+      },
+      "VerifyOTPBody": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "pattern": "^\\+[1-9]\\d{6,14}$",
+            "type": "string"
+          },
+          "code": {
+            "minLength": 6,
+            "maxLength": 6,
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone",
+          "code"
+        ]
+      },
+      "VerifyOTPResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  },
+                  "updatedAt": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "phone": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  },
+                  "archived": {
+                    "type": "boolean"
+                  },
+                  "deletedAt": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "profilePictureUrl": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "isNewUser": {
+                    "const": false,
+                    "type": "boolean"
+                  },
+                  "onboardingStatus": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "dashboard": {
+                        "type": "boolean"
+                      },
+                      "courses": {
+                        "type": "boolean"
+                      },
+                      "announcements": {
+                        "type": "boolean"
+                      },
+                      "profile": {
+                        "type": "boolean"
+                      },
+                      "settings": {
+                        "type": "boolean"
+                      },
+                      "providerInformation": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "updatedAt",
+                      "userId",
+                      "dashboard",
+                      "courses",
+                      "announcements",
+                      "profile",
+                      "settings",
+                      "providerInformation"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "createdAt",
+                  "updatedAt",
+                  "email",
+                  "phone",
+                  "firstName",
+                  "lastName",
+                  "role",
+                  "archived",
+                  "deletedAt",
+                  "profilePictureUrl",
+                  "isNewUser",
+                  "onboardingStatus"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "verified": {
+                    "const": true,
+                    "type": "boolean"
+                  },
+                  "isNewUser": {
+                    "const": true,
+                    "type": "boolean"
+                  },
+                  "otpToken": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "verified",
+                  "isNewUser",
+                  "otpToken"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
       "RegisterBody": {
         "type": "object",
         "properties": {
-          "email": {
-            "format": "email",
+          "phone": {
+            "pattern": "^\\+[1-9]\\d{6,14}$",
             "type": "string"
           },
           "firstName": {
@@ -7979,59 +8379,15 @@
             "maxLength": 64,
             "type": "string"
           },
-          "password": {
-            "allOf": [
-              {
-                "minLength": 8,
-                "errorMessage": "Password must be at least 8 characters long",
-                "type": "string"
-              },
-              {
-                "maxLength": 64,
-                "errorMessage": "Password cannot be longer than 64 characters",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*[A-Z])",
-                "errorMessage": "Password must contain at least one uppercase letter",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*[a-z])",
-                "errorMessage": "Password must contain at least one lowercase letter",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*\\d)",
-                "errorMessage": "Password must contain at least one digit",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*[!@#$%^&*()_+\\-=[\\]{};:'\",.<>?])",
-                "errorMessage": "Password must contain at least one special character",
-                "type": "string"
-              }
-            ]
-          },
-          "language": {
-            "anyOf": [
-              {
-                "const": "en",
-                "type": "string"
-              },
-              {
-                "const": "es",
-                "type": "string"
-              }
-            ]
+          "otpToken": {
+            "type": "string"
           }
         },
         "required": [
-          "email",
+          "phone",
           "firstName",
           "lastName",
-          "password",
-          "language"
+          "otpToken"
         ]
       },
       "RegisterResponse": {
@@ -8050,7 +8406,24 @@
                 "type": "string"
               },
               "email": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "firstName": {
                 "type": "string"
@@ -8090,154 +8463,13 @@
               "createdAt",
               "updatedAt",
               "email",
+              "phone",
               "firstName",
               "lastName",
               "role",
               "archived",
               "deletedAt",
               "profilePictureUrl"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "LoginBody": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "format": "email",
-            "type": "string"
-          },
-          "password": {
-            "minLength": 8,
-            "maxLength": 64,
-            "type": "string"
-          },
-          "rememberMe": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "email",
-          "password"
-        ]
-      },
-      "LoginResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string"
-              },
-              "firstName": {
-                "type": "string"
-              },
-              "lastName": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string"
-              },
-              "archived": {
-                "type": "boolean"
-              },
-              "deletedAt": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "profilePictureUrl": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "shouldVerifyMFA": {
-                "type": "boolean"
-              },
-              "onboardingStatus": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "createdAt": {
-                    "type": "string"
-                  },
-                  "updatedAt": {
-                    "type": "string"
-                  },
-                  "userId": {
-                    "type": "string"
-                  },
-                  "dashboard": {
-                    "type": "boolean"
-                  },
-                  "courses": {
-                    "type": "boolean"
-                  },
-                  "announcements": {
-                    "type": "boolean"
-                  },
-                  "profile": {
-                    "type": "boolean"
-                  },
-                  "settings": {
-                    "type": "boolean"
-                  },
-                  "providerInformation": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "id",
-                  "createdAt",
-                  "updatedAt",
-                  "userId",
-                  "dashboard",
-                  "courses",
-                  "announcements",
-                  "profile",
-                  "settings",
-                  "providerInformation"
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "createdAt",
-              "updatedAt",
-              "email",
-              "firstName",
-              "lastName",
-              "role",
-              "archived",
-              "deletedAt",
-              "profilePictureUrl",
-              "shouldVerifyMFA",
-              "onboardingStatus"
             ]
           }
         },
@@ -8267,7 +8499,24 @@
                 "type": "string"
               },
               "email": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
               },
               "firstName": {
                 "type": "string"
@@ -8300,9 +8549,6 @@
                     "type": "null"
                   }
                 ]
-              },
-              "shouldVerifyMFA": {
-                "type": "boolean"
               },
               "onboardingStatus": {
                 "type": "object",
@@ -8357,13 +8603,13 @@
               "createdAt",
               "updatedAt",
               "email",
+              "phone",
               "firstName",
               "lastName",
               "role",
               "archived",
               "deletedAt",
               "profilePictureUrl",
-              "shouldVerifyMFA",
               "onboardingStatus"
             ]
           }
@@ -8372,71 +8618,1322 @@
           "data"
         ]
       },
-      "ForgotPasswordBody": {
+      "GetUserStatisticsResponse": {
         "type": "object",
         "properties": {
-          "email": {
-            "format": "email",
-            "minLength": 1,
+          "data": {
+            "type": "object",
+            "properties": {
+              "averageStats": {
+                "type": "object",
+                "properties": {
+                  "lessonStats": {
+                    "type": "object",
+                    "properties": {
+                      "started": {
+                        "type": "number"
+                      },
+                      "completed": {
+                        "type": "number"
+                      },
+                      "completionRate": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "started",
+                      "completed",
+                      "completionRate"
+                    ]
+                  },
+                  "courseStats": {
+                    "type": "object",
+                    "properties": {
+                      "started": {
+                        "type": "number"
+                      },
+                      "completed": {
+                        "type": "number"
+                      },
+                      "completionRate": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "started",
+                      "completed",
+                      "completionRate"
+                    ]
+                  }
+                },
+                "required": [
+                  "lessonStats",
+                  "courseStats"
+                ]
+              },
+              "quizzes": {
+                "type": "object",
+                "properties": {
+                  "totalAttempts": {
+                    "type": "number"
+                  },
+                  "totalCorrectAnswers": {
+                    "type": "number"
+                  },
+                  "totalWrongAnswers": {
+                    "type": "number"
+                  },
+                  "totalQuestions": {
+                    "type": "number"
+                  },
+                  "averageScore": {
+                    "type": "number"
+                  },
+                  "uniqueQuizzesTaken": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "totalAttempts",
+                  "totalCorrectAnswers",
+                  "totalWrongAnswers",
+                  "totalQuestions",
+                  "averageScore",
+                  "uniqueQuizzesTaken"
+                ]
+              },
+              "courses": {
+                "type": "object",
+                "patternProperties": {
+                  "^(.*)$": {
+                    "type": "object",
+                    "properties": {
+                      "started": {
+                        "type": "number"
+                      },
+                      "completed": {
+                        "type": "number"
+                      },
+                      "completionRate": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "started",
+                      "completed",
+                      "completionRate"
+                    ]
+                  }
+                }
+              },
+              "lessons": {
+                "type": "object",
+                "patternProperties": {
+                  "^(.*)$": {
+                    "type": "object",
+                    "properties": {
+                      "started": {
+                        "type": "number"
+                      },
+                      "completed": {
+                        "type": "number"
+                      },
+                      "completionRate": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "started",
+                      "completed",
+                      "completionRate"
+                    ]
+                  }
+                }
+              },
+              "streak": {
+                "type": "object",
+                "properties": {
+                  "current": {
+                    "type": "number"
+                  },
+                  "longest": {
+                    "type": "number"
+                  },
+                  "activityHistory": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^(.*)$": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "current",
+                  "longest",
+                  "activityHistory"
+                ]
+              },
+              "nextLesson": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "courseId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "courseTitle": {
+                        "type": "string"
+                      },
+                      "courseDescription": {
+                        "type": "string"
+                      },
+                      "courseThumbnail": {
+                        "type": "string"
+                      },
+                      "lessonId": {
+                        "format": "uuid",
+                        "type": "string"
+                      },
+                      "chapterTitle": {
+                        "type": "string"
+                      },
+                      "chapterProgress": {
+                        "anyOf": [
+                          {
+                            "const": "not_started",
+                            "type": "string"
+                          },
+                          {
+                            "const": "in_progress",
+                            "type": "string"
+                          },
+                          {
+                            "const": "completed",
+                            "type": "string"
+                          },
+                          {
+                            "const": "blocked",
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "completedLessonCount": {
+                        "type": "number"
+                      },
+                      "lessonCount": {
+                        "type": "number"
+                      },
+                      "chapterDisplayOrder": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "courseId",
+                      "courseTitle",
+                      "courseDescription",
+                      "courseThumbnail",
+                      "lessonId",
+                      "chapterTitle",
+                      "chapterProgress",
+                      "completedLessonCount",
+                      "lessonCount",
+                      "chapterDisplayOrder"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "averageStats",
+              "quizzes",
+              "courses",
+              "lessons",
+              "streak",
+              "nextLesson"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetStatsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "fiveMostPopularCourses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "courseName": {
+                      "type": "string"
+                    },
+                    "studentCount": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "courseName",
+                    "studentCount"
+                  ]
+                }
+              },
+              "totalCoursesCompletionStats": {
+                "type": "object",
+                "properties": {
+                  "completionPercentage": {
+                    "type": "number"
+                  },
+                  "totalCoursesCompletion": {
+                    "type": "number"
+                  },
+                  "totalCourses": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "completionPercentage",
+                  "totalCoursesCompletion",
+                  "totalCourses"
+                ]
+              },
+              "conversionAfterFreemiumLesson": {
+                "type": "object",
+                "properties": {
+                  "conversionPercentage": {
+                    "type": "number"
+                  },
+                  "purchasedCourses": {
+                    "type": "number"
+                  },
+                  "remainedOnFreemium": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "conversionPercentage",
+                  "purchasedCourses",
+                  "remainedOnFreemium"
+                ]
+              },
+              "courseStudentsStats": {
+                "type": "object",
+                "patternProperties": {
+                  "^(.*)$": {
+                    "type": "object",
+                    "properties": {
+                      "newStudentsCount": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "newStudentsCount"
+                    ]
+                  }
+                }
+              },
+              "avgQuizScore": {
+                "type": "object",
+                "properties": {
+                  "correctAnswerCount": {
+                    "type": "number"
+                  },
+                  "wrongAnswerCount": {
+                    "type": "number"
+                  },
+                  "answerCount": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "correctAnswerCount",
+                  "wrongAnswerCount",
+                  "answerCount"
+                ]
+              }
+            },
+            "required": [
+              "fiveMostPopularCourses",
+              "totalCoursesCompletionStats",
+              "conversionAfterFreemiumLesson",
+              "courseStudentsStats",
+              "avgQuizScore"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "FileUploadResponse": {
+        "type": "object",
+        "properties": {
+          "fileKey": {
+            "type": "string"
+          },
+          "fileUrl": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "uploadId": {
             "type": "string"
           }
         },
         "required": [
-          "email"
+          "fileKey"
         ]
       },
-      "CreatePasswordBody": {
+      "InitVideoUploadBody": {
         "type": "object",
         "properties": {
-          "password": {
-            "allOf": [
+          "filename": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "sizeBytes": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "mimeType": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "resource": {
+            "type": "string"
+          },
+          "contextId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "entityId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "entityType": {
+            "anyOf": [
               {
-                "minLength": 8,
-                "errorMessage": "Password must be at least 8 characters long",
+                "const": "course",
                 "type": "string"
               },
               {
-                "maxLength": 64,
-                "errorMessage": "Password cannot be longer than 64 characters",
+                "const": "chapter",
                 "type": "string"
               },
               {
-                "pattern": "(?=.*[A-Z])",
-                "errorMessage": "Password must contain at least one uppercase letter",
+                "const": "lesson",
                 "type": "string"
               },
               {
-                "pattern": "(?=.*[a-z])",
-                "errorMessage": "Password must contain at least one lowercase letter",
+                "const": "question",
                 "type": "string"
               },
               {
-                "pattern": "(?=.*\\d)",
-                "errorMessage": "Password must contain at least one digit",
+                "const": "news",
                 "type": "string"
               },
               {
-                "pattern": "(?=.*[!@#$%^&*()_+\\-=[\\]{};:'\",.<>?])",
-                "errorMessage": "Password must contain at least one special character",
+                "const": "articles",
+                "type": "string"
+              },
+              {
+                "const": "user",
+                "type": "string"
+              },
+              {
+                "const": "category",
+                "type": "string"
+              },
+              {
+                "const": "announcement",
+                "type": "string"
+              },
+              {
+                "const": "global_settings",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "filename",
+          "sizeBytes",
+          "mimeType",
+          "entityType"
+        ]
+      },
+      "InitVideoUploadResponse": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "const": "bunny",
+                "type": "string"
+              },
+              {
+                "const": "s3",
                 "type": "string"
               }
             ]
           },
-          "createToken": {
-            "minLength": 1,
+          "fileKey": {
             "type": "string"
           },
-          "language": {
+          "bunnyGuid": {
+            "type": "string"
+          },
+          "tusEndpoint": {
+            "type": "string"
+          },
+          "tusHeaders": {
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {
+                "type": "string"
+              }
+            }
+          },
+          "expiresAt": {
+            "type": "string"
+          },
+          "multipartUploadId": {
+            "type": "string"
+          },
+          "partSize": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "resourceId": {
+            "format": "uuid",
             "type": "string"
           }
         },
         "required": [
-          "password",
-          "createToken",
-          "language"
+          "uploadId",
+          "provider",
+          "fileKey"
         ]
       },
-      "ResetPasswordBody": {
+      "GetVideoUploadStatusResponse": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "uploadId": {
+                "type": "string"
+              },
+              "placeholderKey": {
+                "type": "string"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "const": "queued",
+                    "type": "string"
+                  },
+                  {
+                    "const": "uploaded",
+                    "type": "string"
+                  },
+                  {
+                    "const": "processed",
+                    "type": "string"
+                  },
+                  {
+                    "const": "failed",
+                    "type": "string"
+                  }
+                ]
+              },
+              "provider": {
+                "anyOf": [
+                  {
+                    "const": "bunny",
+                    "type": "string"
+                  },
+                  {
+                    "const": "s3",
+                    "type": "string"
+                  }
+                ]
+              },
+              "fileKey": {
+                "type": "string"
+              },
+              "fileUrl": {
+                "type": "string"
+              },
+              "bunnyVideoId": {
+                "type": "string"
+              },
+              "multipartUploadId": {
+                "type": "string"
+              },
+              "partSize": {
+                "minimum": 1,
+                "type": "integer"
+              },
+              "fileType": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "uploadId",
+              "placeholderKey",
+              "status"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "HandleBunnyWebhookBody": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "Status": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "videoId": {
+            "type": "string"
+          },
+          "VideoId": {
+            "type": "string"
+          },
+          "videoGuid": {
+            "type": "string"
+          },
+          "VideoGuid": {
+            "type": "string"
+          },
+          "guid": {
+            "type": "string"
+          },
+          "Guid": {
+            "type": "string"
+          }
+        }
+      },
+      "GetUsersResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "phone": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "archived": {
+                      "type": "boolean"
+                    },
+                    "deletedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "profilePictureUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "updatedAt",
+                    "email",
+                    "phone",
+                    "firstName",
+                    "lastName",
+                    "role",
+                    "archived",
+                    "deletedAt",
+                    "profilePictureUrl"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "format": "uuid",
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "groups"
+                  ]
+                }
+              ]
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "totalItems": {
+                "type": "number"
+              },
+              "page": {
+                "type": "number"
+              },
+              "perPage": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "totalItems",
+              "page",
+              "perPage"
+            ]
+          },
+          "appliedFilters": {
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {}
+            }
+          }
+        },
+        "required": [
+          "data",
+          "pagination"
+        ]
+      },
+      "GetUserByIdResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "email": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "archived": {
+                "type": "boolean"
+              },
+              "deletedAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "profilePictureUrl": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "createdAt",
+              "updatedAt",
+              "email",
+              "phone",
+              "firstName",
+              "lastName",
+              "role",
+              "archived",
+              "deletedAt",
+              "profilePictureUrl",
+              "groups"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetUserDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "lastName": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "id": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "contactEmail": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "contactPhone": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "jobTitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "role": {
+                "anyOf": [
+                  {
+                    "const": "admin",
+                    "type": "string"
+                  },
+                  {
+                    "const": "student",
+                    "type": "string"
+                  },
+                  {
+                    "const": "content_creator",
+                    "type": "string"
+                  }
+                ]
+              },
+              "profilePictureUrl": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "firstName",
+              "lastName",
+              "id",
+              "description",
+              "contactEmail",
+              "contactPhone",
+              "jobTitle",
+              "role",
+              "profilePictureUrl"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "UpdateUserBody": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "groups": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "admin",
+                "type": "string"
+              },
+              {
+                "const": "student",
+                "type": "string"
+              },
+              {
+                "const": "content_creator",
+                "type": "string"
+              }
+            ]
+          },
+          "archived": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "email": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "archived": {
+                "type": "boolean"
+              },
+              "deletedAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "profilePictureUrl": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "createdAt",
+              "updatedAt",
+              "email",
+              "phone",
+              "firstName",
+              "lastName",
+              "role",
+              "archived",
+              "deletedAt",
+              "profilePictureUrl"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "UpsertUserDetailsBody": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "contactEmail": {
+            "format": "email",
+            "type": "string"
+          },
+          "contactPhoneNumber": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          }
+        }
+      },
+      "UpsertUserDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "AdminUpdateUserBody": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "groups": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "admin",
+                "type": "string"
+              },
+              {
+                "const": "student",
+                "type": "string"
+              },
+              {
+                "const": "content_creator",
+                "type": "string"
+              }
+            ]
+          },
+          "archived": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AdminUpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "email": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "phone": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              },
+              "archived": {
+                "type": "boolean"
+              },
+              "deletedAt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "profilePictureUrl": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "createdAt",
+              "updatedAt",
+              "email",
+              "phone",
+              "firstName",
+              "lastName",
+              "role",
+              "archived",
+              "deletedAt",
+              "profilePictureUrl"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ChangePasswordBody": {
         "type": "object",
         "properties": {
           "newPassword": {
@@ -8473,32 +9970,91 @@
               }
             ]
           },
-          "resetToken": {
-            "minLength": 1,
+          "oldPassword": {
+            "minLength": 8,
+            "maxLength": 64,
             "type": "string"
           }
         },
         "required": [
           "newPassword",
-          "resetToken"
+          "oldPassword"
         ]
       },
-      "MFASetupResponse": {
+      "ChangePasswordResponse": {
+        "type": "null"
+      },
+      "DeleteBulkUsersBody": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "userIds"
+        ]
+      },
+      "DeleteBulkUsersResponse": {
+        "type": "null"
+      },
+      "BulkAssignUsersToGroupBody": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "groups": {
+              "type": "array",
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "userId",
+            "groups"
+          ]
+        }
+      },
+      "ArchiveBulkUsersBody": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "userIds"
+        ]
+      },
+      "ArchiveBulkUsersResponse": {
         "type": "object",
         "properties": {
           "data": {
             "type": "object",
             "properties": {
-              "secret": {
-                "type": "string"
+              "archivedUsersCount": {
+                "type": "number"
               },
-              "otpauth": {
-                "type": "string"
+              "usersAlreadyArchivedCount": {
+                "type": "number"
               }
             },
             "required": [
-              "secret",
-              "otpauth"
+              "archivedUsersCount",
+              "usersAlreadyArchivedCount"
             ]
           }
         },
@@ -8506,29 +10062,259 @@
           "data"
         ]
       },
-      "MFAVerifyBody": {
+      "BulkUpdateUsersRolesBody": {
         "type": "object",
         "properties": {
-          "token": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "admin",
+                "type": "string"
+              },
+              {
+                "const": "student",
+                "type": "string"
+              },
+              {
+                "const": "content_creator",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "userIds",
+          "role"
+        ]
+      },
+      "CreateUserBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "firstName": {
+            "minLength": 1,
+            "maxLength": 64,
+            "type": "string"
+          },
+          "lastName": {
+            "minLength": 1,
+            "maxLength": 64,
+            "type": "string"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "const": "admin",
+                "type": "string"
+              },
+              {
+                "const": "student",
+                "type": "string"
+              },
+              {
+                "const": "content_creator",
+                "type": "string"
+              }
+            ]
+          },
+          "language": {
             "type": "string"
           }
         },
         "required": [
-          "token"
+          "email",
+          "firstName",
+          "lastName",
+          "role"
         ]
       },
-      "MFAVerifyResponse": {
+      "CreateUserResponse": {
         "type": "object",
         "properties": {
           "data": {
             "type": "object",
             "properties": {
-              "isValid": {
+              "id": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ImportUsersResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "importedUsersAmount": {
+                "type": "number"
+              },
+              "skippedUsersAmount": {
+                "type": "number"
+              },
+              "importedUsersList": {
+                "type": "array",
+                "items": {
+                  "format": "email",
+                  "type": "string"
+                }
+              },
+              "skippedUsersList": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "format": "email",
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email",
+                    "reason"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "importedUsersAmount",
+              "skippedUsersAmount",
+              "importedUsersList",
+              "skippedUsersList"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ResetOnboardingStatusResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "dashboard": {
+                "type": "boolean"
+              },
+              "courses": {
+                "type": "boolean"
+              },
+              "announcements": {
+                "type": "boolean"
+              },
+              "profile": {
+                "type": "boolean"
+              },
+              "settings": {
+                "type": "boolean"
+              },
+              "providerInformation": {
                 "type": "boolean"
               }
             },
             "required": [
-              "isValid"
+              "id",
+              "createdAt",
+              "updatedAt",
+              "userId",
+              "dashboard",
+              "courses",
+              "announcements",
+              "profile",
+              "settings",
+              "providerInformation"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "MarkOnboardingCompleteResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "dashboard": {
+                "type": "boolean"
+              },
+              "courses": {
+                "type": "boolean"
+              },
+              "announcements": {
+                "type": "boolean"
+              },
+              "profile": {
+                "type": "boolean"
+              },
+              "settings": {
+                "type": "boolean"
+              },
+              "providerInformation": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "createdAt",
+              "updatedAt",
+              "userId",
+              "dashboard",
+              "courses",
+              "announcements",
+              "profile",
+              "settings",
+              "providerInformation"
             ]
           }
         },
@@ -10185,1638 +11971,6 @@
           "resources"
         ]
       },
-      "FileUploadResponse": {
-        "type": "object",
-        "properties": {
-          "fileKey": {
-            "type": "string"
-          },
-          "fileUrl": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "uploadId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "fileKey"
-        ]
-      },
-      "InitVideoUploadBody": {
-        "type": "object",
-        "properties": {
-          "filename": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "sizeBytes": {
-            "minimum": 1,
-            "type": "integer"
-          },
-          "mimeType": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "resource": {
-            "type": "string"
-          },
-          "contextId": {
-            "format": "uuid",
-            "type": "string"
-          },
-          "entityId": {
-            "format": "uuid",
-            "type": "string"
-          },
-          "entityType": {
-            "anyOf": [
-              {
-                "const": "course",
-                "type": "string"
-              },
-              {
-                "const": "chapter",
-                "type": "string"
-              },
-              {
-                "const": "lesson",
-                "type": "string"
-              },
-              {
-                "const": "question",
-                "type": "string"
-              },
-              {
-                "const": "news",
-                "type": "string"
-              },
-              {
-                "const": "articles",
-                "type": "string"
-              },
-              {
-                "const": "user",
-                "type": "string"
-              },
-              {
-                "const": "category",
-                "type": "string"
-              },
-              {
-                "const": "announcement",
-                "type": "string"
-              },
-              {
-                "const": "global_settings",
-                "type": "string"
-              }
-            ]
-          }
-        },
-        "required": [
-          "filename",
-          "sizeBytes",
-          "mimeType",
-          "entityType"
-        ]
-      },
-      "InitVideoUploadResponse": {
-        "type": "object",
-        "properties": {
-          "uploadId": {
-            "format": "uuid",
-            "type": "string"
-          },
-          "provider": {
-            "anyOf": [
-              {
-                "const": "bunny",
-                "type": "string"
-              },
-              {
-                "const": "s3",
-                "type": "string"
-              }
-            ]
-          },
-          "fileKey": {
-            "type": "string"
-          },
-          "bunnyGuid": {
-            "type": "string"
-          },
-          "tusEndpoint": {
-            "type": "string"
-          },
-          "tusHeaders": {
-            "type": "object",
-            "patternProperties": {
-              "^(.*)$": {
-                "type": "string"
-              }
-            }
-          },
-          "expiresAt": {
-            "type": "string"
-          },
-          "multipartUploadId": {
-            "type": "string"
-          },
-          "partSize": {
-            "minimum": 1,
-            "type": "integer"
-          },
-          "resourceId": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "uploadId",
-          "provider",
-          "fileKey"
-        ]
-      },
-      "GetVideoUploadStatusResponse": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "uploadId": {
-                "type": "string"
-              },
-              "placeholderKey": {
-                "type": "string"
-              },
-              "status": {
-                "anyOf": [
-                  {
-                    "const": "queued",
-                    "type": "string"
-                  },
-                  {
-                    "const": "uploaded",
-                    "type": "string"
-                  },
-                  {
-                    "const": "processed",
-                    "type": "string"
-                  },
-                  {
-                    "const": "failed",
-                    "type": "string"
-                  }
-                ]
-              },
-              "provider": {
-                "anyOf": [
-                  {
-                    "const": "bunny",
-                    "type": "string"
-                  },
-                  {
-                    "const": "s3",
-                    "type": "string"
-                  }
-                ]
-              },
-              "fileKey": {
-                "type": "string"
-              },
-              "fileUrl": {
-                "type": "string"
-              },
-              "bunnyVideoId": {
-                "type": "string"
-              },
-              "multipartUploadId": {
-                "type": "string"
-              },
-              "partSize": {
-                "minimum": 1,
-                "type": "integer"
-              },
-              "fileType": {
-                "type": "string"
-              },
-              "error": {
-                "type": "string"
-              },
-              "userId": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "uploadId",
-              "placeholderKey",
-              "status"
-            ]
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "HandleBunnyWebhookBody": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "string"
-              }
-            ]
-          },
-          "Status": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "string"
-              }
-            ]
-          },
-          "videoId": {
-            "type": "string"
-          },
-          "VideoId": {
-            "type": "string"
-          },
-          "videoGuid": {
-            "type": "string"
-          },
-          "VideoGuid": {
-            "type": "string"
-          },
-          "guid": {
-            "type": "string"
-          },
-          "Guid": {
-            "type": "string"
-          }
-        }
-      },
-      "GetUserStatisticsResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "averageStats": {
-                "type": "object",
-                "properties": {
-                  "lessonStats": {
-                    "type": "object",
-                    "properties": {
-                      "started": {
-                        "type": "number"
-                      },
-                      "completed": {
-                        "type": "number"
-                      },
-                      "completionRate": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "started",
-                      "completed",
-                      "completionRate"
-                    ]
-                  },
-                  "courseStats": {
-                    "type": "object",
-                    "properties": {
-                      "started": {
-                        "type": "number"
-                      },
-                      "completed": {
-                        "type": "number"
-                      },
-                      "completionRate": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "started",
-                      "completed",
-                      "completionRate"
-                    ]
-                  }
-                },
-                "required": [
-                  "lessonStats",
-                  "courseStats"
-                ]
-              },
-              "quizzes": {
-                "type": "object",
-                "properties": {
-                  "totalAttempts": {
-                    "type": "number"
-                  },
-                  "totalCorrectAnswers": {
-                    "type": "number"
-                  },
-                  "totalWrongAnswers": {
-                    "type": "number"
-                  },
-                  "totalQuestions": {
-                    "type": "number"
-                  },
-                  "averageScore": {
-                    "type": "number"
-                  },
-                  "uniqueQuizzesTaken": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "totalAttempts",
-                  "totalCorrectAnswers",
-                  "totalWrongAnswers",
-                  "totalQuestions",
-                  "averageScore",
-                  "uniqueQuizzesTaken"
-                ]
-              },
-              "courses": {
-                "type": "object",
-                "patternProperties": {
-                  "^(.*)$": {
-                    "type": "object",
-                    "properties": {
-                      "started": {
-                        "type": "number"
-                      },
-                      "completed": {
-                        "type": "number"
-                      },
-                      "completionRate": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "started",
-                      "completed",
-                      "completionRate"
-                    ]
-                  }
-                }
-              },
-              "lessons": {
-                "type": "object",
-                "patternProperties": {
-                  "^(.*)$": {
-                    "type": "object",
-                    "properties": {
-                      "started": {
-                        "type": "number"
-                      },
-                      "completed": {
-                        "type": "number"
-                      },
-                      "completionRate": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "started",
-                      "completed",
-                      "completionRate"
-                    ]
-                  }
-                }
-              },
-              "streak": {
-                "type": "object",
-                "properties": {
-                  "current": {
-                    "type": "number"
-                  },
-                  "longest": {
-                    "type": "number"
-                  },
-                  "activityHistory": {
-                    "type": "object",
-                    "patternProperties": {
-                      "^(.*)$": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "current",
-                  "longest",
-                  "activityHistory"
-                ]
-              },
-              "nextLesson": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "courseId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "courseTitle": {
-                        "type": "string"
-                      },
-                      "courseDescription": {
-                        "type": "string"
-                      },
-                      "courseThumbnail": {
-                        "type": "string"
-                      },
-                      "lessonId": {
-                        "format": "uuid",
-                        "type": "string"
-                      },
-                      "chapterTitle": {
-                        "type": "string"
-                      },
-                      "chapterProgress": {
-                        "anyOf": [
-                          {
-                            "const": "not_started",
-                            "type": "string"
-                          },
-                          {
-                            "const": "in_progress",
-                            "type": "string"
-                          },
-                          {
-                            "const": "completed",
-                            "type": "string"
-                          },
-                          {
-                            "const": "blocked",
-                            "type": "string"
-                          }
-                        ]
-                      },
-                      "completedLessonCount": {
-                        "type": "number"
-                      },
-                      "lessonCount": {
-                        "type": "number"
-                      },
-                      "chapterDisplayOrder": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "courseId",
-                      "courseTitle",
-                      "courseDescription",
-                      "courseThumbnail",
-                      "lessonId",
-                      "chapterTitle",
-                      "chapterProgress",
-                      "completedLessonCount",
-                      "lessonCount",
-                      "chapterDisplayOrder"
-                    ]
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "averageStats",
-              "quizzes",
-              "courses",
-              "lessons",
-              "streak",
-              "nextLesson"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetStatsResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "fiveMostPopularCourses": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "courseName": {
-                      "type": "string"
-                    },
-                    "studentCount": {
-                      "type": "number"
-                    }
-                  },
-                  "required": [
-                    "courseName",
-                    "studentCount"
-                  ]
-                }
-              },
-              "totalCoursesCompletionStats": {
-                "type": "object",
-                "properties": {
-                  "completionPercentage": {
-                    "type": "number"
-                  },
-                  "totalCoursesCompletion": {
-                    "type": "number"
-                  },
-                  "totalCourses": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "completionPercentage",
-                  "totalCoursesCompletion",
-                  "totalCourses"
-                ]
-              },
-              "conversionAfterFreemiumLesson": {
-                "type": "object",
-                "properties": {
-                  "conversionPercentage": {
-                    "type": "number"
-                  },
-                  "purchasedCourses": {
-                    "type": "number"
-                  },
-                  "remainedOnFreemium": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "conversionPercentage",
-                  "purchasedCourses",
-                  "remainedOnFreemium"
-                ]
-              },
-              "courseStudentsStats": {
-                "type": "object",
-                "patternProperties": {
-                  "^(.*)$": {
-                    "type": "object",
-                    "properties": {
-                      "newStudentsCount": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "newStudentsCount"
-                    ]
-                  }
-                }
-              },
-              "avgQuizScore": {
-                "type": "object",
-                "properties": {
-                  "correctAnswerCount": {
-                    "type": "number"
-                  },
-                  "wrongAnswerCount": {
-                    "type": "number"
-                  },
-                  "answerCount": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "correctAnswerCount",
-                  "wrongAnswerCount",
-                  "answerCount"
-                ]
-              }
-            },
-            "required": [
-              "fiveMostPopularCourses",
-              "totalCoursesCompletionStats",
-              "conversionAfterFreemiumLesson",
-              "courseStudentsStats",
-              "avgQuizScore"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetUsersResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "allOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "createdAt": {
-                      "type": "string"
-                    },
-                    "updatedAt": {
-                      "type": "string"
-                    },
-                    "email": {
-                      "type": "string"
-                    },
-                    "firstName": {
-                      "type": "string"
-                    },
-                    "lastName": {
-                      "type": "string"
-                    },
-                    "role": {
-                      "type": "string"
-                    },
-                    "archived": {
-                      "type": "boolean"
-                    },
-                    "deletedAt": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "profilePictureUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "createdAt",
-                    "updatedAt",
-                    "email",
-                    "firstName",
-                    "lastName",
-                    "role",
-                    "archived",
-                    "deletedAt",
-                    "profilePictureUrl"
-                  ]
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "groups": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "format": "uuid",
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
-                      }
-                    }
-                  },
-                  "required": [
-                    "groups"
-                  ]
-                }
-              ]
-            }
-          },
-          "pagination": {
-            "type": "object",
-            "properties": {
-              "totalItems": {
-                "type": "number"
-              },
-              "page": {
-                "type": "number"
-              },
-              "perPage": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "totalItems",
-              "page",
-              "perPage"
-            ]
-          },
-          "appliedFilters": {
-            "type": "object",
-            "patternProperties": {
-              "^(.*)$": {}
-            }
-          }
-        },
-        "required": [
-          "data",
-          "pagination"
-        ]
-      },
-      "GetUserByIdResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string"
-              },
-              "firstName": {
-                "type": "string"
-              },
-              "lastName": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string"
-              },
-              "archived": {
-                "type": "boolean"
-              },
-              "deletedAt": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "profilePictureUrl": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "groups": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "format": "uuid",
-                      "type": "string"
-                    },
-                    "name": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "name"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "id",
-              "createdAt",
-              "updatedAt",
-              "email",
-              "firstName",
-              "lastName",
-              "role",
-              "archived",
-              "deletedAt",
-              "profilePictureUrl",
-              "groups"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "GetUserDetailsResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "firstName": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "lastName": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "id": {
-                "format": "uuid",
-                "type": "string"
-              },
-              "description": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "contactEmail": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "contactPhone": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "jobTitle": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "role": {
-                "anyOf": [
-                  {
-                    "const": "admin",
-                    "type": "string"
-                  },
-                  {
-                    "const": "student",
-                    "type": "string"
-                  },
-                  {
-                    "const": "content_creator",
-                    "type": "string"
-                  }
-                ]
-              },
-              "profilePictureUrl": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "firstName",
-              "lastName",
-              "id",
-              "description",
-              "contactEmail",
-              "contactPhone",
-              "jobTitle",
-              "role",
-              "profilePictureUrl"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "UpdateUserBody": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "groups": {
-            "anyOf": [
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "email": {
-            "format": "email",
-            "type": "string"
-          },
-          "role": {
-            "anyOf": [
-              {
-                "const": "admin",
-                "type": "string"
-              },
-              {
-                "const": "student",
-                "type": "string"
-              },
-              {
-                "const": "content_creator",
-                "type": "string"
-              }
-            ]
-          },
-          "archived": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UpdateUserResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string"
-              },
-              "firstName": {
-                "type": "string"
-              },
-              "lastName": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string"
-              },
-              "archived": {
-                "type": "boolean"
-              },
-              "deletedAt": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "profilePictureUrl": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "createdAt",
-              "updatedAt",
-              "email",
-              "firstName",
-              "lastName",
-              "role",
-              "archived",
-              "deletedAt",
-              "profilePictureUrl"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "UpsertUserDetailsBody": {
-        "type": "object",
-        "properties": {
-          "description": {
-            "type": "string"
-          },
-          "contactEmail": {
-            "format": "email",
-            "type": "string"
-          },
-          "contactPhoneNumber": {
-            "type": "string"
-          },
-          "jobTitle": {
-            "type": "string"
-          }
-        }
-      },
-      "UpsertUserDetailsResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "format": "uuid",
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "message"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "AdminUpdateUserBody": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "groups": {
-            "anyOf": [
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "email": {
-            "format": "email",
-            "type": "string"
-          },
-          "role": {
-            "anyOf": [
-              {
-                "const": "admin",
-                "type": "string"
-              },
-              {
-                "const": "student",
-                "type": "string"
-              },
-              {
-                "const": "content_creator",
-                "type": "string"
-              }
-            ]
-          },
-          "archived": {
-            "type": "boolean"
-          }
-        }
-      },
-      "AdminUpdateUserResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string"
-              },
-              "firstName": {
-                "type": "string"
-              },
-              "lastName": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string"
-              },
-              "archived": {
-                "type": "boolean"
-              },
-              "deletedAt": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "profilePictureUrl": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "createdAt",
-              "updatedAt",
-              "email",
-              "firstName",
-              "lastName",
-              "role",
-              "archived",
-              "deletedAt",
-              "profilePictureUrl"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "ChangePasswordBody": {
-        "type": "object",
-        "properties": {
-          "newPassword": {
-            "allOf": [
-              {
-                "minLength": 8,
-                "errorMessage": "Password must be at least 8 characters long",
-                "type": "string"
-              },
-              {
-                "maxLength": 64,
-                "errorMessage": "Password cannot be longer than 64 characters",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*[A-Z])",
-                "errorMessage": "Password must contain at least one uppercase letter",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*[a-z])",
-                "errorMessage": "Password must contain at least one lowercase letter",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*\\d)",
-                "errorMessage": "Password must contain at least one digit",
-                "type": "string"
-              },
-              {
-                "pattern": "(?=.*[!@#$%^&*()_+\\-=[\\]{};:'\",.<>?])",
-                "errorMessage": "Password must contain at least one special character",
-                "type": "string"
-              }
-            ]
-          },
-          "oldPassword": {
-            "minLength": 8,
-            "maxLength": 64,
-            "type": "string"
-          }
-        },
-        "required": [
-          "newPassword",
-          "oldPassword"
-        ]
-      },
-      "ChangePasswordResponse": {
-        "type": "null"
-      },
-      "DeleteBulkUsersBody": {
-        "type": "object",
-        "properties": {
-          "userIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "userIds"
-        ]
-      },
-      "DeleteBulkUsersResponse": {
-        "type": "null"
-      },
-      "BulkAssignUsersToGroupBody": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "userId": {
-              "format": "uuid",
-              "type": "string"
-            },
-            "groups": {
-              "type": "array",
-              "items": {
-                "format": "uuid",
-                "type": "string"
-              }
-            }
-          },
-          "required": [
-            "userId",
-            "groups"
-          ]
-        }
-      },
-      "ArchiveBulkUsersBody": {
-        "type": "object",
-        "properties": {
-          "userIds": {
-            "type": "array",
-            "items": {
-              "format": "uuid",
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "userIds"
-        ]
-      },
-      "ArchiveBulkUsersResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "archivedUsersCount": {
-                "type": "number"
-              },
-              "usersAlreadyArchivedCount": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "archivedUsersCount",
-              "usersAlreadyArchivedCount"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "BulkUpdateUsersRolesBody": {
-        "type": "object",
-        "properties": {
-          "userIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "role": {
-            "anyOf": [
-              {
-                "const": "admin",
-                "type": "string"
-              },
-              {
-                "const": "student",
-                "type": "string"
-              },
-              {
-                "const": "content_creator",
-                "type": "string"
-              }
-            ]
-          }
-        },
-        "required": [
-          "userIds",
-          "role"
-        ]
-      },
-      "CreateUserBody": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "format": "email",
-            "type": "string"
-          },
-          "firstName": {
-            "minLength": 1,
-            "maxLength": 64,
-            "type": "string"
-          },
-          "lastName": {
-            "minLength": 1,
-            "maxLength": 64,
-            "type": "string"
-          },
-          "role": {
-            "anyOf": [
-              {
-                "const": "admin",
-                "type": "string"
-              },
-              {
-                "const": "student",
-                "type": "string"
-              },
-              {
-                "const": "content_creator",
-                "type": "string"
-              }
-            ]
-          },
-          "language": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "email",
-          "firstName",
-          "lastName",
-          "role"
-        ]
-      },
-      "CreateUserResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "format": "uuid",
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "message"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "ImportUsersResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "importedUsersAmount": {
-                "type": "number"
-              },
-              "skippedUsersAmount": {
-                "type": "number"
-              },
-              "importedUsersList": {
-                "type": "array",
-                "items": {
-                  "format": "email",
-                  "type": "string"
-                }
-              },
-              "skippedUsersList": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "email": {
-                      "format": "email",
-                      "type": "string"
-                    },
-                    "reason": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "email",
-                    "reason"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "importedUsersAmount",
-              "skippedUsersAmount",
-              "importedUsersList",
-              "skippedUsersList"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "ResetOnboardingStatusResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "userId": {
-                "type": "string"
-              },
-              "dashboard": {
-                "type": "boolean"
-              },
-              "courses": {
-                "type": "boolean"
-              },
-              "announcements": {
-                "type": "boolean"
-              },
-              "profile": {
-                "type": "boolean"
-              },
-              "settings": {
-                "type": "boolean"
-              },
-              "providerInformation": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "id",
-              "createdAt",
-              "updatedAt",
-              "userId",
-              "dashboard",
-              "courses",
-              "announcements",
-              "profile",
-              "settings",
-              "providerInformation"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
-      "MarkOnboardingCompleteResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "createdAt": {
-                "type": "string"
-              },
-              "updatedAt": {
-                "type": "string"
-              },
-              "userId": {
-                "type": "string"
-              },
-              "dashboard": {
-                "type": "boolean"
-              },
-              "courses": {
-                "type": "boolean"
-              },
-              "announcements": {
-                "type": "boolean"
-              },
-              "profile": {
-                "type": "boolean"
-              },
-              "settings": {
-                "type": "boolean"
-              },
-              "providerInformation": {
-                "type": "boolean"
-              }
-            },
-            "required": [
-              "id",
-              "createdAt",
-              "updatedAt",
-              "userId",
-              "dashboard",
-              "courses",
-              "announcements",
-              "profile",
-              "settings",
-              "providerInformation"
-            ]
-          }
-        },
-        "required": [
-          "data"
-        ]
-      },
       "GetAllGroupsResponse": {
         "type": "object",
         "properties": {
@@ -11857,7 +12011,24 @@
                         "type": "string"
                       },
                       "email": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "phone": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "firstName": {
                         "type": "string"
@@ -11897,6 +12068,7 @@
                       "createdAt",
                       "updatedAt",
                       "email",
+                      "phone",
                       "firstName",
                       "lastName",
                       "role",
@@ -11989,7 +12161,24 @@
                       "type": "string"
                     },
                     "email": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "phone": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
                     },
                     "firstName": {
                       "type": "string"
@@ -12029,6 +12218,7 @@
                     "createdAt",
                     "updatedAt",
                     "email",
+                    "phone",
                     "firstName",
                     "lastName",
                     "role",
@@ -12096,7 +12286,24 @@
                         "type": "string"
                       },
                       "email": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "phone": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
                       },
                       "firstName": {
                         "type": "string"
@@ -12136,6 +12343,7 @@
                       "createdAt",
                       "updatedAt",
                       "email",
+                      "phone",
                       "firstName",
                       "lastName",
                       "role",
@@ -21599,6 +21807,728 @@
             "required": [
               "name",
               "value"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetCartResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "courseId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "thumbnailUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "authorName": {
+                      "type": "string"
+                    },
+                    "categoryName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "priceInCents": {
+                      "type": "number"
+                    },
+                    "mercadopagoPriceInCents": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "stripePriceId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "mercadopagoProductId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "slug": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "addedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "courseId",
+                    "title",
+                    "description",
+                    "thumbnailUrl",
+                    "authorName",
+                    "categoryName",
+                    "priceInCents",
+                    "mercadopagoPriceInCents",
+                    "currency",
+                    "stripePriceId",
+                    "mercadopagoProductId",
+                    "slug",
+                    "addedAt"
+                  ]
+                }
+              },
+              "itemCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "items",
+              "itemCount"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "AddItemBody": {
+        "type": "object",
+        "properties": {
+          "courseId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "courseId"
+        ]
+      },
+      "AddItemResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "RemoveItemResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ClearCartResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "success"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "MergeGuestCartBody": {
+        "type": "object",
+        "properties": {
+          "courseIds": {
+            "type": "array",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "courseIds"
+        ]
+      },
+      "MergeGuestCartResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "courseId": {
+                      "format": "uuid",
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "thumbnailUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "authorName": {
+                      "type": "string"
+                    },
+                    "categoryName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "priceInCents": {
+                      "type": "number"
+                    },
+                    "mercadopagoPriceInCents": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "stripePriceId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "mercadopagoProductId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "slug": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "addedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "courseId",
+                    "title",
+                    "description",
+                    "thumbnailUrl",
+                    "authorName",
+                    "categoryName",
+                    "priceInCents",
+                    "mercadopagoPriceInCents",
+                    "currency",
+                    "stripePriceId",
+                    "mercadopagoProductId",
+                    "slug",
+                    "addedAt"
+                  ]
+                }
+              },
+              "itemCount": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "items",
+              "itemCount"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "RequestPaymentLinkBody": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "anyOf": [
+              {
+                "const": "stripe",
+                "type": "string"
+              },
+              {
+                "const": "mercadopago",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "method"
+        ]
+      },
+      "RequestPaymentLinkResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "orderId",
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetOrderStatusResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "totalAmountInCents": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "orderId",
+              "status",
+              "provider",
+              "totalAmountInCents",
+              "currency",
+              "createdAt"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "StripeCheckoutBody": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          }
+        }
+      },
+      "StripeCheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "clientSecret": {
+                "type": "string"
+              },
+              "orderId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "clientSecret",
+              "orderId"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "MercadopagoCheckoutBody": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "paymentMethodId": {
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "installments": {
+            "default": 1,
+            "type": "number"
+          },
+          "identification": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "number": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "type",
+              "number"
+            ]
+          }
+        },
+        "required": [
+          "token",
+          "paymentMethodId",
+          "email"
+        ]
+      },
+      "MercadopagoCheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string"
+              },
+              "paymentId": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string"
+              },
+              "statusDetail": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "orderId",
+              "paymentId",
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "FreeCheckoutBody": {
+        "type": "object",
+        "properties": {
+          "courseIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FreeCheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "orderId": {
+                "type": "string"
+              },
+              "enrolledCourseIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "orderId",
+              "enrolledCourseIds"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ListOrdersResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "orders": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "provider": {
+                      "type": "string"
+                    },
+                    "totalAmountInCents": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "courseId": {
+                            "type": "string"
+                          },
+                          "courseTitle": {
+                            "type": "string"
+                          },
+                          "courseThumbnailUrl": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "priceInCents": {
+                            "type": "number"
+                          },
+                          "currency": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "courseId",
+                          "courseTitle",
+                          "courseThumbnailUrl",
+                          "priceInCents",
+                          "currency"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "provider",
+                    "totalAmountInCents",
+                    "currency",
+                    "createdAt",
+                    "items"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "orders"
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetOrderResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "totalAmountInCents": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "courseId": {
+                      "type": "string"
+                    },
+                    "courseTitle": {
+                      "type": "string"
+                    },
+                    "courseThumbnailUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "priceInCents": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "courseId",
+                    "courseTitle",
+                    "courseThumbnailUrl",
+                    "priceInCents",
+                    "currency"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "provider",
+              "totalAmountInCents",
+              "currency",
+              "createdAt",
+              "items"
             ]
           }
         },

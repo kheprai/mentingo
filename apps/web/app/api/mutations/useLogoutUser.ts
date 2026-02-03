@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 import { useToast } from "~/components/ui/use-toast";
+import { useCartStore } from "~/lib/stores/cartStore";
 import { useNavigationHistoryStore } from "~/lib/stores/navigationHistory";
 import { useAuthStore } from "~/modules/Auth/authStore";
 import { useCurrentUserStore } from "~/modules/common/store/useCurrentUserStore";
@@ -27,6 +28,7 @@ export function useLogoutUser() {
       setCurrentUser(undefined);
       setLoggedIn(false);
       setIsVisible(true);
+      useCartStore.getState().clearCart();
 
       return response.data;
     },

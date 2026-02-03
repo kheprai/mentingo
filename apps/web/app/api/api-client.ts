@@ -41,15 +41,19 @@ export const ApiClient = new API({
 });
 
 ApiClient.instance.interceptors.request.use((config) => {
-  const isAuthEndpoint =
+  const isPublicOrAuthEndpoint =
     config.url?.includes("/login") ||
     config.url?.includes("/refresh") ||
     config.url?.includes("/forgot-password") ||
-    config.url?.includes("/register");
+    config.url?.includes("/register") ||
+    config.url?.includes("/send-otp") ||
+    config.url?.includes("/verify-otp") ||
+    config.url?.includes("/current-user") ||
+    config.url?.includes("/settings/") ||
+    config.url?.includes("/env/") ||
+    config.url?.includes("/sso");
 
-  const isSettingsGlobalEndpoint = config.url?.includes("/settings/global");
-
-  if (!isAuthEndpoint && !isSettingsGlobalEndpoint && !useAuthStore.getState().isLoggedIn) {
+  if (!isPublicOrAuthEndpoint && !useAuthStore.getState().isLoggedIn) {
     config.signal = requestManager.controller.signal;
   }
 

@@ -636,7 +636,7 @@ export class StudentLessonProgressService {
 
     return {
       userId: user.userId,
-      email: user.email,
+      email: user.email ?? undefined,
       role: user.role as UserRole,
     };
   }

@@ -131,6 +131,8 @@ export class NotifyUsersHandler implements IEventHandler {
 
     const user = await this.userService.getUserById(userId);
 
+    if (!user.email) return;
+
     const defaultEmailSettings = await this.emailService.getDefaultEmailProperties(user.id);
 
     const { text, html } = new UserFirstLoginEmail({
@@ -163,6 +165,8 @@ export class NotifyUsersHandler implements IEventHandler {
 
     await Promise.allSettled(
       studentContacts.map(async ({ id: studentId, email }) => {
+        if (!email) return;
+
         const defaultEmailSettings = await this.emailService.getDefaultEmailProperties(studentId);
 
         const { text, html } = new UserAssignedToCourseEmail({
@@ -192,6 +196,8 @@ export class NotifyUsersHandler implements IEventHandler {
 
     await Promise.all(
       users.map(async (user) => {
+        if (!user.email) return;
+
         const course = recentCourses.find((course) => course.studentId == user.userId);
         const courseLink = `${process.env.CORS_ORIGIN}/course/${course?.courseId}`;
 
@@ -223,6 +229,8 @@ export class NotifyUsersHandler implements IEventHandler {
 
     await Promise.all(
       users.map(async (user) => {
+        if (!user.email) return;
+
         const course = recentCourses.find((course) => course.studentId == user.userId);
 
         if (!course) return;
@@ -251,6 +259,9 @@ export class NotifyUsersHandler implements IEventHandler {
     const { chapterFinishedData } = event;
 
     const user = await this.userService.getUserById(chapterFinishedData.userId);
+
+    if (!user.email) return;
+
     const chapterName = await this.courseService.getChapterName(chapterFinishedData.chapterId);
     const { courseName } = await this.courseService.getCourseEmailData(
       chapterFinishedData.courseId,
@@ -281,6 +292,9 @@ export class NotifyUsersHandler implements IEventHandler {
     const { courseFinishedData } = event;
 
     const user = await this.userService.getUserById(courseFinishedData.userId);
+
+    if (!user.email) return;
+
     const { courseName, hasCertificate } = await this.courseService.getCourseEmailData(
       courseFinishedData.courseId,
     );

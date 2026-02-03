@@ -1,9 +1,7 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 
-import { ResendVerificationMailCron } from "src/auth/resend-verification-mail-cron";
 import { BunnyStreamService } from "src/bunny/bunnyStream.service";
-import { EmailModule } from "src/common/emails/emails.module";
 import { GoogleOAuthGuard } from "src/common/guards/google-oauth.guard";
 import { MicrosoftOAuthGuard } from "src/common/guards/microsoft-oauth.guard";
 import { FileModule } from "src/file/files.module";
@@ -17,18 +15,15 @@ import { UserModule } from "src/user/user.module";
 
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { CreatePasswordService } from "./create-password.service";
-import { ResetPasswordService } from "./reset-password.service";
+import { OTPService } from "./otp.service";
 import { GoogleStrategy } from "./strategy/google.strategy";
 import { JwtStrategy } from "./strategy/jwt.strategy";
-import { LocalStrategy } from "./strategy/local.strategy";
 import { MicrosoftStrategy } from "./strategy/microsoft.strategy";
 import { TokenService } from "./token.service";
 
 @Module({
   imports: [
     PassportModule,
-    EmailModule,
     StatisticsModule,
     UserModule,
     FileModule,
@@ -41,10 +36,7 @@ import { TokenService } from "./token.service";
     StatisticsService,
     TokenService,
     JwtStrategy,
-    LocalStrategy,
-    CreatePasswordService,
-    ResetPasswordService,
-    ResendVerificationMailCron,
+    OTPService,
     S3Service,
     BunnyStreamService,
     GoogleStrategy,
@@ -53,6 +45,6 @@ import { TokenService } from "./token.service";
     MicrosoftOAuthGuard,
     SettingsService,
   ],
-  exports: [CreatePasswordService],
+  exports: [],
 })
 export class AuthModule {}

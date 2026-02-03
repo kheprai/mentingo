@@ -39,6 +39,8 @@ export const CategoryChip = ({
   const dotClasses = cn("flex-shrink-0", color);
   const displayValue = getCategoryDisplayValue(category, i18n.language);
 
+  if (!displayValue) return null;
+
   return (
     <div
       className={cn("flex max-w-fit items-center gap-2 rounded-lg bg-white px-2 py-1", className)}

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useLogoutUser } from "~/api/mutations";
 import { useCurrentUser } from "~/api/queries/useCurrentUser";
+import { CartIcon } from "~/modules/Cart/CartIcon";
 import { Icon } from "~/components/Icon";
 import { PlatformLogo } from "~/components/PlatformLogo";
 import { Button } from "~/components/ui/button";
@@ -339,6 +340,7 @@ export function LandingHeader() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+          <CartIcon />
           {isLoggedIn ? (
             <UserDropdown />
           ) : (

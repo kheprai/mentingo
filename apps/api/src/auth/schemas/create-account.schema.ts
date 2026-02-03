@@ -1,14 +1,10 @@
-import { SUPPORTED_LANGUAGES } from "@repo/shared";
 import { type Static, Type } from "@sinclair/typebox";
 
-import { passwordSchema } from "./password.schema";
-
 export const createAccountSchema = Type.Object({
-  email: Type.String({ format: "email" }),
+  phone: Type.String({ pattern: "^\\+[1-9]\\d{6,14}$" }),
   firstName: Type.String({ minLength: 1, maxLength: 64 }),
   lastName: Type.String({ minLength: 1, maxLength: 64 }),
-  password: passwordSchema,
-  language: Type.Enum(SUPPORTED_LANGUAGES),
+  otpToken: Type.String(),
 });
 
 export type CreateAccountBody = Static<typeof createAccountSchema>;

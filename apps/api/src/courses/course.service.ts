@@ -428,7 +428,7 @@ export class CourseService {
       conditions.push(getGroupFilterConditions(filters.groups));
     }
 
-    const data = await this.db
+    const rawData = await this.db
       .select({
         firstName: users.firstName,
         lastName: users.lastName,
@@ -475,8 +475,13 @@ export class CourseService {
       .leftJoin(groups, eq(groupUsers.groupId, groups.id))
       .where(and(...conditions));
 
+    const data = (rawData ?? []).map((student) => ({
+      ...student,
+      email: student.email ?? "",
+    }));
+
     return {
-      data: data ?? [],
+      data,
       pagination: {
         totalItems: totalItems || 0,
         page,
@@ -3389,6 +3394,8 @@ export class CourseService {
 
     await Promise.all(
       adminsToNotify.map(async ({ id: adminId, email: adminEmail }) => {
+        if (!adminEmail) return;
+
         const defaultEmailSettings = await this.emailService.getDefaultEmailProperties(adminId);
 
         const lines: string[] = [];

@@ -597,19 +597,21 @@ export class UserService {
         ...defaultEmailSettings,
       });
 
-      await this.emailService.sendEmailWithLogo({
-        to: createdUser.email,
-        subject: getEmailSubject("passwordReminderEmail", defaultEmailSettings.language),
-        text: createPasswordEmail.text,
-        html: createPasswordEmail.html,
-      });
+      if (createdUser.email) {
+        await this.emailService.sendEmailWithLogo({
+          to: createdUser.email,
+          subject: getEmailSubject("passwordReminderEmail", defaultEmailSettings.language),
+          text: createPasswordEmail.text,
+          html: createPasswordEmail.html,
+        });
+      }
 
       return createdUser;
     }
 
     const userInviteDetails: UserInvite = {
       creatorId: creator.userId,
-      email: createdUser.email,
+      email: createdUser.email ?? "",
       token,
       userId: createdUser.id,
       ...defaultEmailSettings,
@@ -840,7 +842,7 @@ export class UserService {
     }
   }
 
-  public async getAdminsToNotifyAboutFinishedCourse(): Promise<{ email: string; id: string }[]> {
+  public async getAdminsToNotifyAboutFinishedCourse(): Promise<{ email: string | null; id: string }[]> {
     return this.db
       .select({
         id: users.id,
@@ -857,7 +859,7 @@ export class UserService {
       );
   }
 
-  public async getAdminsToNotifyAboutOverdueCourse(): Promise<{ email: string; id: string }[]> {
+  public async getAdminsToNotifyAboutOverdueCourse(): Promise<{ email: string | null; id: string }[]> {
     return this.db
       .select({
         id: users.id,

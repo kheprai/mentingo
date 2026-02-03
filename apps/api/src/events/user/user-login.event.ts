@@ -1,7 +1,7 @@
 import type { UUIDType } from "src/common";
 import type { CurrentUser } from "src/common/types/current-user.type";
 
-export type UserLoginMethod = "password" | "provider" | "refresh_token";
+export type UserLoginMethod = "password" | "provider" | "refresh_token" | "otp";
 
 type UserLoginData = {
   userId: UUIDType;

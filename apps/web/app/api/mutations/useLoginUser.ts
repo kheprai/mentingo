@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 import { useToast } from "~/components/ui/use-toast";
+import { useCartStore } from "~/lib/stores/cartStore";
 import { useNavigationHistoryStore } from "~/lib/stores/navigationHistory";
 import { useAuthStore } from "~/modules/Auth/authStore";
 import { LOGIN_REDIRECT_URL } from "~/modules/Auth/constants";
@@ -51,6 +52,19 @@ export function useLoginUser() {
       setHasVerifiedMFA(!shouldVerifyMFA);
 
       mergeNavigationHistory();
+
+      // Merge guest cart with server
+      const guestCourseIds = useCartStore.getState().getGuestCourseIds();
+      if (guestCourseIds.length > 0) {
+        ApiClient.instance
+          .post("/api/cart/merge", { courseIds: guestCourseIds })
+          .then((res) => {
+            useCartStore.getState().replaceCart(res.data.data.items);
+          })
+          .catch(() => {
+            // Cart merge is non-blocking
+          });
+      }
 
       const lastEntry = getLastEntry();
 

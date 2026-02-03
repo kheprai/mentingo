@@ -3,7 +3,7 @@ import type { UUIDType } from "src/common";
 export type InactiveUser = {
   userId: UUIDType;
   name: string;
-  email: string;
+  email: string | null;
 };
 export type InactiveUsers = {
   users: InactiveUser[];

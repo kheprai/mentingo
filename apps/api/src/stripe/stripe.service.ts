@@ -232,6 +232,31 @@ export class StripeService {
     }
   }
 
+  async createPaymentLink(data: {
+    lineItems: Array<{ price: string; quantity: number }>;
+    orderId: string;
+    userId: string;
+  }): Promise<{ url: string }> {
+    const client = await this.getClient();
+    const appUrl = process.env.CORS_ORIGIN || "https://app.lms.localhost";
+
+    const session = await client.checkout.sessions.create({
+      line_items: data.lineItems,
+      mode: "payment",
+      success_url: `${appUrl}/orders/${data.orderId}`,
+      cancel_url: `${appUrl}/orders/${data.orderId}`,
+      payment_intent_data: {
+        metadata: {
+          orderId: data.orderId,
+          customerId: data.userId,
+          type: "cart_checkout",
+        },
+      },
+    });
+
+    return { url: session.url! };
+  }
+
   promotionCodeToCamelCase(promotionCode: any): PromotionCode {
     return {
       id: promotionCode.id,

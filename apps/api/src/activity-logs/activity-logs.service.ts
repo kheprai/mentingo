@@ -73,7 +73,7 @@ export class ActivityLogsService {
   private getActorFromPayload(actor: CurrentUser): ActorType {
     return {
       actorId: actor.userId,
-      actorEmail: actor.email,
+      actorEmail: actor.email ?? "",
       actorRole: actor.role,
     };
   }

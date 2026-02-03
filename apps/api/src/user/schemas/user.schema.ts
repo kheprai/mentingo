@@ -18,7 +18,6 @@ export const userOnboardingStatusSchema = createSelectSchema(userOnboarding);
 export const currentUserResponseSchema = Type.Composite([
   baseUserResponseSchema,
   Type.Object({
-    shouldVerifyMFA: Type.Boolean(),
     onboardingStatus: userOnboardingStatusSchema,
   }),
 ]);

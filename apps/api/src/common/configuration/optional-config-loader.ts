@@ -2,6 +2,7 @@ import { hasRequiredEnvsConfig } from "src/utils/hasRequiredEnvsConfig";
 
 import awsConfig from "./aws";
 import googleConfig from "./google";
+import kapsoConfig from "./kapso";
 import microsoftConfig from "./microsoft";
 import slackConfig from "./slack";
 
@@ -30,11 +31,18 @@ const hasMicrosoftConfig = hasRequiredEnvsConfig([
   "MICROSOFT_OAUTH_ENABLED",
 ]);
 
+export const hasKapsoConfig = hasRequiredEnvsConfig([
+  "KAPSO_API_BASE_URL",
+  "KAPSO_API_KEY",
+  "KAPSO_PHONE_NUMBER_ID",
+]);
+
 export const getOptionalConfigs = () => {
   return [
     ...(hasAwsConfig ? [awsConfig] : []),
     ...(hasGoogleConfig ? [googleConfig] : []),
     ...(hasSlackConfig ? [slackConfig] : []),
     ...(hasMicrosoftConfig ? [microsoftConfig] : []),
+    ...(hasKapsoConfig ? [kapsoConfig] : []),
   ];
 };

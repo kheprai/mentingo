@@ -3,13 +3,17 @@ import { Outlet } from "@remix-run/react";
 import { currentUserQueryOptions } from "~/api/queries";
 import { queryClient } from "~/api/queryClient";
 import { MFAGuard } from "~/Guards/MFAGuard";
-
-import { useCurrentUserStore } from "../common/store/useCurrentUserStore";
+import { useAuthStore } from "~/modules/Auth/authStore";
 
 export const clientLoader = async () => {
   try {
-    await queryClient.ensureQueryData(currentUserQueryOptions);
+    const user = await queryClient.ensureQueryData(currentUserQueryOptions);
+
+    if (!user) {
+      useAuthStore.getState().setLoggedIn(false);
+    }
   } catch {
+    useAuthStore.getState().setLoggedIn(false);
     return null;
   }
 
@@ -17,10 +21,6 @@ export const clientLoader = async () => {
 };
 
 export default function AuthLayout() {
-  const setHasVerifiedMFA = useCurrentUserStore((state) => state.setHasVerifiedMFA);
-
-  setHasVerifiedMFA(false);
-
   return (
     <main className="flex h-screen w-screen items-center justify-center">
       <MFAGuard mode="auth">

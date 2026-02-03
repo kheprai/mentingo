@@ -109,6 +109,7 @@ export class LocalizationService {
     return sql<string>`
         COALESCE(
             ${fieldColumn}::jsonb ->> ${langExpr}::text,
+            ${fieldColumn}::jsonb ->> 'en',
             ''
         )
     `;

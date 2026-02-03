@@ -1,15 +1,11 @@
-import { Link, redirect, useNavigate, useParams } from "@remix-run/react";
+import { Link, redirect, useParams } from "@remix-run/react";
 import { SUPPORTED_LANGUAGES } from "@repo/shared";
-import { ArrowLeft, BookOpen, Gift, Globe, PlayCircle } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, BookOpen, Gift, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { ApiClient } from "~/api/api-client";
-import { useEnrollCourse } from "~/api/mutations";
-import { useCourse, useCurrentUser, courseQueryOptions } from "~/api/queries";
+import { useCourse, useCurrentUser } from "~/api/queries";
 import { useUserDetails } from "~/api/queries/useUserDetails";
-import { queryClient } from "~/api/queryClient";
-import { Enroll } from "~/assets/svgs";
 import DefaultPhotoCourse from "~/assets/svgs/default-photo-course.svg";
 import { CoursePriceDisplay } from "~/components/CoursePriceDisplay/CoursePriceDisplay";
 import Viewer from "~/components/RichText/Viever";
@@ -18,16 +14,13 @@ import { Button } from "~/components/ui/button";
 import { CategoryChip } from "~/components/ui/CategoryChip";
 import { Skeleton } from "~/components/ui/skeleton";
 import { UserAvatar } from "~/components/UserProfile/UserAvatar";
-import { formatPrice } from "~/lib/formatters/priceFormatter";
 import { cn } from "~/lib/utils";
 import {
   useLanguageStore,
   type Language,
 } from "~/modules/Dashboard/Settings/Language/LanguageStore";
-import { MercadoPagoCheckout } from "~/modules/mercadopago";
-import { PaymentModal } from "~/modules/stripe/PaymentModal";
+import { CourseCardActions } from "~/modules/Cart/CourseCardActions";
 import { isSupportedLanguage } from "~/utils/browser-language";
-import { getCurrencyLocale } from "~/utils/getCurrencyLocale";
 
 import type { SupportedLanguages } from "@repo/shared";
 
@@ -181,36 +174,21 @@ function LanguageNotAvailable({
 export default function CourseDetailPage() {
   const { t, i18n } = useTranslation();
   const { slug = "" } = useParams();
-  const navigate = useNavigate();
 
   const { language, setLanguage } = useLanguageStore();
   const { data: course, isLoading } = useCourse(slug, language);
   const { data: currentUser } = useCurrentUser();
   const { data: authorDetails } = useUserDetails(course?.authorId ?? "");
-  const { mutateAsync: enrollCourse, isPending: isEnrolling } = useEnrollCourse();
 
   const authorName = authorDetails
     ? `${authorDetails.firstName ?? ""} ${authorDetails.lastName ?? ""}`.trim() || "Unknown"
     : "Unknown";
 
-  const isLoggedIn = !!currentUser;
   const isEnrolled = course?.enrolled ?? false;
 
   const handleLanguageChange = (newLang: Language) => {
     setLanguage(newLang);
     i18n.changeLanguage(newLang);
-  };
-
-  const handleEnroll = async () => {
-    if (!course?.id) return;
-    await enrollCourse({ id: course.id });
-    queryClient.invalidateQueries(courseQueryOptions(course.id, language));
-  };
-
-  const handleContinueLearning = () => {
-    if (course?.id) {
-      navigate(`/course/${course.slug}`);
-    }
   };
 
   if (isLoading) {
@@ -256,35 +234,24 @@ export default function CourseDetailPage() {
   const isPaid = hasStripe || hasMercadoPago;
 
   const renderEnrollmentButton = () => {
-    if (isEnrolled) {
-      return (
-        <Button size="lg" variant="secondary" onClick={handleContinueLearning}>
-          <PlayCircle className="mr-2 size-5" />
-          {t("landing.courseDetail.continueLearning")}
-        </Button>
-      );
-    }
-
-    if (!isLoggedIn) {
-      return (
-        <Button size="lg" asChild>
-          <Link to={`/auth/login?redirect=/courses/${slug}`}>
-            <Enroll className="mr-2" />
-            {t("landing.courseDetail.loginToEnroll")}
-          </Link>
-        </Button>
-      );
-    }
-
-    if (isPaid) {
-      return <CourseDetailPaymentSelector course={course} />;
-    }
-
     return (
-      <Button size="lg" onClick={handleEnroll} disabled={isEnrolling}>
-        <Enroll className="mr-2" />
-        {t("landing.courseDetail.enrollFree")}
-      </Button>
+      <CourseCardActions
+        course={{
+          id: course.id,
+          title: course.title,
+          slug: slug ?? null,
+          thumbnailUrl: course.thumbnailUrl ?? null,
+          authorName,
+          categoryName: course.category ?? null,
+          priceInCents: course.priceInCents,
+          mercadopagoPriceInCents: course.mercadopagoPriceInCents ?? 0,
+          currency: course.currency,
+          stripePriceId: course.stripePriceId ?? null,
+          mercadopagoProductId: course.mercadopagoProductId ?? null,
+        }}
+        isEnrolled={isEnrolled}
+        variant="detail"
+      />
     );
   };
 
@@ -458,71 +425,6 @@ export default function CourseDetailPage() {
         </div>
       </div>
     </section>
-  );
-}
-
-function CourseDetailPaymentSelector({
-  course,
-}: {
-  course: NonNullable<ReturnType<typeof useCourse>["data"]>;
-}) {
-  const { t } = useTranslation();
-  const [selectedMethod, setSelectedMethod] = useState<"stripe" | "mercadopago" | null>(null);
-
-  const hasStripe = !!course.stripePriceId && course.priceInCents > 0;
-  const hasMercadoPago = !!course.mercadopagoProductId && (course.mercadopagoPriceInCents ?? 0) > 0;
-
-  return (
-    <div className="flex flex-col gap-y-3">
-      <p className="body-sm-md text-neutral-700">
-        {t("studentCourseView.paymentMethodSelection.title")}
-      </p>
-      <div className="flex flex-col gap-y-2">
-        {hasStripe && (
-          <Button
-            variant={selectedMethod === "stripe" ? "primary" : "outline"}
-            className="w-full justify-start gap-x-2"
-            onClick={() => setSelectedMethod("stripe")}
-          >
-            <span>
-              {t("studentCourseView.paymentMethodSelection.stripe")} -{" "}
-              {formatPrice(course.priceInCents, "USD", getCurrencyLocale("USD"))}
-            </span>
-          </Button>
-        )}
-        {hasMercadoPago && (
-          <Button
-            variant={selectedMethod === "mercadopago" ? "primary" : "outline"}
-            className="w-full justify-start gap-x-2"
-            onClick={() => setSelectedMethod("mercadopago")}
-          >
-            <span>
-              {t("studentCourseView.paymentMethodSelection.mercadopago")} -{" "}
-              {formatPrice(course.mercadopagoPriceInCents ?? 0, "ARS", getCurrencyLocale("ARS"))}
-            </span>
-          </Button>
-        )}
-      </div>
-      {selectedMethod === "stripe" && course.stripePriceId && (
-        <PaymentModal
-          courseCurrency="usd"
-          coursePrice={course.priceInCents}
-          courseTitle={course.title}
-          courseDescription={course.description}
-          courseId={course.id}
-          coursePriceId={course.stripePriceId}
-        />
-      )}
-      {selectedMethod === "mercadopago" && (
-        <MercadoPagoCheckout
-          courseCurrency="ars"
-          coursePrice={course.mercadopagoPriceInCents ?? 0}
-          courseTitle={course.title}
-          courseDescription={course.description}
-          courseId={course.id}
-        />
-      )}
-    </div>
   );
 }
 

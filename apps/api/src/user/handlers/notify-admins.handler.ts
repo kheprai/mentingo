@@ -38,10 +38,12 @@ export class NotifyAdminsHandler implements IEventHandler<EventType> {
     const { user } = event;
     const { firstName, lastName, email } = user;
 
-    const adminsToNotify = await this.userService.getAdminsToNotifyAboutNewUser(email);
+    const adminsToNotify = await this.userService.getAdminsToNotifyAboutNewUser(email ?? "");
 
     await Promise.all(
       adminsToNotify.map(async ({ id: adminId, email: adminsEmail }) => {
+        if (!adminsEmail) return;
+
         const defaultEmailSettings = await this.emailService.getDefaultEmailProperties(adminId);
 
         const { text, html } = new NewUserEmail({
@@ -69,6 +71,8 @@ export class NotifyAdminsHandler implements IEventHandler<EventType> {
 
     await Promise.all(
       adminsToNotify.map(async ({ id: adminId, email: adminsEmail }) => {
+        if (!adminsEmail) return;
+
         const defaultEmailSettings = await this.emailService.getDefaultEmailProperties(adminId);
 
         const { text, html } = new FinishedCourseEmail({

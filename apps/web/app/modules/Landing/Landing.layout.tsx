@@ -1,5 +1,7 @@
 import { Outlet } from "@remix-run/react";
 
+import { CartSidebar } from "~/modules/Cart/CartSidebar";
+
 import { LandingFooter } from "./components/LandingFooter";
 import { LandingHeader } from "./components/LandingHeader";
 
@@ -11,6 +13,7 @@ export default function LandingLayout() {
         <Outlet />
       </main>
       <LandingFooter />
+      <CartSidebar />
     </div>
   );
 }

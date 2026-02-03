@@ -2699,5 +2699,72 @@
       "contactSupport": "Can't find what you're looking for?",
       "contactUs": "Contact us"
     }
+  },
+  "cart": {
+    "sidebar": {
+      "title": "Shopping Cart",
+      "empty": "Your cart is empty",
+      "viewCart": "View Cart",
+      "checkout": "Checkout",
+      "subtotal": "Subtotal",
+      "itemCount": "{{count}} item(s)"
+    },
+    "page": {
+      "title": "Shopping Cart",
+      "continueShopping": "Continue Shopping",
+      "proceedToCheckout": "Proceed to Checkout",
+      "removeItem": "Remove",
+      "clearCart": "Clear Cart"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "selectPaymentMethod": "Select Payment Method",
+      "orderSummary": "Order Summary",
+      "total": "Total",
+      "payNow": "Pay Now",
+      "loginRequired": "Login or register to complete your purchase",
+      "paymentApproved": "Payment approved! You are now enrolled.",
+      "paymentPending": "Payment is being processed. You will be enrolled once confirmed.",
+      "freeEnrollment": "Free Enrollment",
+      "freeEnrollmentDesc": "These courses are free. Click below to enroll instantly.",
+      "freeEnrollmentSuccess": "You have been enrolled in the free courses!",
+      "mixedCartNote": "Free courses will be enrolled automatically when you complete your payment."
+    },
+    "confirmation": {
+      "title": "Order Confirmed!",
+      "subtitle": "Your payment was successful and you have been enrolled in the courses.",
+      "orderId": "Order ID",
+      "enrolledCourses": "Enrolled Courses",
+      "goToCourse": "Go to Course",
+      "browseMore": "Browse More Courses",
+      "notFound": "Order not found"
+    },
+    "button": {
+      "addToCart": "Add to Cart",
+      "inCart": "In Cart",
+      "goToCart": "Go to Cart",
+      "enroll": "Enroll",
+      "addToCartShort": "+ Cart",
+      "removeFromCart": "Remove from Cart",
+      "viewCart": "View Cart",
+      "goToCheckout": "Go to Checkout",
+      "enrollFree": "Enroll Free"
+    },
+    "currency": {
+      "toggle": "Currency"
+    },
+    "toast": {
+      "added": "Course added to cart",
+      "removed": "Course removed from cart",
+      "alreadyEnrolled": "You are already enrolled in this course",
+      "mergeConflict": "Some courses were already in your cart"
+    },
+    "errors": {
+      "checkoutFailed": "Checkout failed. Please try again.",
+      "paymentFailed": "Payment failed. Please try again.",
+      "syncFailed": "Failed to sync cart with server",
+      "addFailed": "Failed to add item to cart",
+      "removeFailed": "Failed to remove item from cart"
+    }
   }
 }

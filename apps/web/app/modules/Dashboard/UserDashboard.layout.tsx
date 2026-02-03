@@ -11,7 +11,6 @@ import { Dashboard } from "~/modules/Dashboard/Dashboard";
 import { saveEntryToNavigationHistory } from "~/utils/saveEntryToNavigationHistory";
 
 import { LOGIN_REDIRECT_URL } from "../Auth/constants";
-import { useCurrentUserStore } from "../common/store/useCurrentUserStore";
 
 import { useSyncUserAfterLogin } from "./hooks/useSyncUserAfterLogin";
 
@@ -35,7 +34,6 @@ export default function UserDashboardLayout() {
   const location = useLocation();
 
   const { data: user } = useCurrentUser();
-  const hasVerifiedMFA = useCurrentUserStore((state) => state.hasVerifiedMFA);
   const getLastEntry = useNavigationHistoryStore((state) => state.getLastEntry);
   const mergeNavigationHistory = useNavigationHistoryStore((state) => state.mergeNavigationHistory);
   const clearHistory = useNavigationHistoryStore((state) => state.clearHistory);
@@ -54,7 +52,7 @@ export default function UserDashboardLayout() {
     return <Navigate to={lastEntry.pathname || LOGIN_REDIRECT_URL} />;
   }
 
-  const isAuthenticated = Boolean(user && (!user.shouldVerifyMFA || hasVerifiedMFA));
+  const isAuthenticated = Boolean(user);
 
   return (
     <MFAGuard mode="app">

@@ -3008,6 +3008,165 @@ export interface GetEnvKeyResponse {
   };
 }
 
+export interface GetCartResponse {
+  data: {
+    items: {
+      /** @format uuid */
+      id: string;
+      /** @format uuid */
+      courseId: string;
+      title: string;
+      description: string;
+      thumbnailUrl: string | null;
+      authorName: string;
+      categoryName: string | null;
+      priceInCents: number;
+      mercadopagoPriceInCents: number;
+      currency: string;
+      stripePriceId: string | null;
+      mercadopagoProductId: string | null;
+      slug: string | null;
+      addedAt: string;
+    }[];
+    itemCount: number;
+  };
+}
+
+export interface AddItemBody {
+  /** @format uuid */
+  courseId: string;
+}
+
+export interface AddItemResponse {
+  data: {
+    success: boolean;
+  };
+}
+
+export interface RemoveItemResponse {
+  data: {
+    success: boolean;
+  };
+}
+
+export interface ClearCartResponse {
+  data: {
+    success: boolean;
+  };
+}
+
+export interface MergeGuestCartBody {
+  courseIds: string[];
+}
+
+export interface MergeGuestCartResponse {
+  data: {
+    items: {
+      /** @format uuid */
+      id: string;
+      /** @format uuid */
+      courseId: string;
+      title: string;
+      description: string;
+      thumbnailUrl: string | null;
+      authorName: string;
+      categoryName: string | null;
+      priceInCents: number;
+      mercadopagoPriceInCents: number;
+      currency: string;
+      stripePriceId: string | null;
+      mercadopagoProductId: string | null;
+      slug: string | null;
+      addedAt: string;
+    }[];
+    itemCount: number;
+  };
+}
+
+export interface StripeCheckoutBody {
+  locale?: string;
+}
+
+export interface StripeCheckoutResponse {
+  data: {
+    clientSecret: string;
+    orderId: string;
+  };
+}
+
+export interface MercadopagoCheckoutBody {
+  token: string;
+  paymentMethodId: string;
+  /** @format email */
+  email: string;
+  /** @default 1 */
+  installments?: number;
+  identification?: {
+    type: string;
+    number: string;
+  };
+}
+
+export interface MercadopagoCheckoutResponse {
+  data: {
+    orderId: string;
+    paymentId: number;
+    status: string;
+    statusDetail?: string;
+  };
+}
+
+export interface FreeCheckoutBody {
+  courseIds?: string[];
+}
+
+export interface FreeCheckoutResponse {
+  data: {
+    orderId: string;
+    enrolledCourseIds: string[];
+  };
+}
+
+export interface ListOrdersResponse {
+  data: {
+    orders: {
+      id: string;
+      status: string;
+      provider: string;
+      totalAmountInCents: number;
+      currency: string;
+      createdAt: string;
+      items: {
+        id: string;
+        courseId: string;
+        courseTitle: string;
+        courseThumbnailUrl: string | null;
+        priceInCents: number;
+        currency: string;
+      }[];
+    }[];
+  };
+}
+
+export interface GetOrderResponse {
+  data: {
+    id: string;
+    status: string;
+    provider: string;
+    totalAmountInCents: number;
+    currency: string;
+    createdAt: string;
+    items: {
+      id: string;
+      courseId: string;
+      courseTitle: string;
+      courseThumbnailUrl: string | null;
+      priceInCents: number;
+      currency: string;
+    }[];
+  };
+}
+
 export interface UploadScormPackageResponse {
   data: {
     message: string;
@@ -7415,6 +7574,159 @@ export class API<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     envControllerGetEnvKey: (envName: string, params: RequestParams = {}) =>
       this.request<GetEnvKeyResponse, any>({
         path: `/api/env/${envName}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartControllerGetCart
+     * @request GET:/api/cart
+     */
+    cartControllerGetCart: (params: RequestParams = {}) =>
+      this.request<GetCartResponse, any>({
+        path: `/api/cart`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartControllerClearCart
+     * @request DELETE:/api/cart
+     */
+    cartControllerClearCart: (params: RequestParams = {}) =>
+      this.request<ClearCartResponse, any>({
+        path: `/api/cart`,
+        method: "DELETE",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartControllerAddItem
+     * @request POST:/api/cart/items
+     */
+    cartControllerAddItem: (data: AddItemBody, params: RequestParams = {}) =>
+      this.request<AddItemResponse, any>({
+        path: `/api/cart/items`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartControllerRemoveItem
+     * @request DELETE:/api/cart/items/{courseId}
+     */
+    cartControllerRemoveItem: (courseId: string, params: RequestParams = {}) =>
+      this.request<RemoveItemResponse, any>({
+        path: `/api/cart/items/${courseId}`,
+        method: "DELETE",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartControllerMergeGuestCart
+     * @request POST:/api/cart/merge
+     */
+    cartControllerMergeGuestCart: (data: MergeGuestCartBody, params: RequestParams = {}) =>
+      this.request<MergeGuestCartResponse, any>({
+        path: `/api/cart/merge`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CheckoutControllerStripeCheckout
+     * @request POST:/api/checkout/stripe
+     */
+    checkoutControllerStripeCheckout: (data: StripeCheckoutBody, params: RequestParams = {}) =>
+      this.request<StripeCheckoutResponse, any>({
+        path: `/api/checkout/stripe`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CheckoutControllerMercadopagoCheckout
+     * @request POST:/api/checkout/mercadopago
+     */
+    checkoutControllerMercadopagoCheckout: (
+      data: MercadopagoCheckoutBody,
+      params: RequestParams = {},
+    ) =>
+      this.request<MercadopagoCheckoutResponse, any>({
+        path: `/api/checkout/mercadopago`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CheckoutControllerFreeCheckout
+     * @request POST:/api/checkout/free
+     */
+    checkoutControllerFreeCheckout: (data: FreeCheckoutBody, params: RequestParams = {}) =>
+      this.request<FreeCheckoutResponse, any>({
+        path: `/api/checkout/free`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name OrderControllerListOrders
+     * @request GET:/api/orders
+     */
+    orderControllerListOrders: (params: RequestParams = {}) =>
+      this.request<ListOrdersResponse, any>({
+        path: `/api/orders`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name OrderControllerGetOrder
+     * @request GET:/api/orders/{id}
+     */
+    orderControllerGetOrder: (id: string, params: RequestParams = {}) =>
+      this.request<GetOrderResponse, any>({
+        path: `/api/orders/${id}`,
         method: "GET",
         format: "json",
         ...params,

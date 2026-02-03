@@ -2477,5 +2477,72 @@
       "title": "Usuń wpis do bazy wiedzy",
       "description": "Czy na pewno chcesz usunąć ten wpis do bazy wiedzy? Tej operacji nie można cofnąć."
     }
+  },
+  "cart": {
+    "sidebar": {
+      "title": "Koszyk",
+      "empty": "Twój koszyk jest pusty",
+      "viewCart": "Zobacz Koszyk",
+      "checkout": "Przejdź do Płatności",
+      "subtotal": "Suma częściowa",
+      "itemCount": "{{count}} kurs(ów)"
+    },
+    "page": {
+      "title": "Koszyk",
+      "continueShopping": "Kontynuuj Zakupy",
+      "proceedToCheckout": "Przejdź do Płatności",
+      "removeItem": "Usuń",
+      "clearCart": "Wyczyść Koszyk"
+    },
+    "checkout": {
+      "title": "Płatność",
+      "selectPaymentMethod": "Wybierz Metodę Płatności",
+      "orderSummary": "Podsumowanie Zamówienia",
+      "total": "Razem",
+      "payNow": "Zapłać Teraz",
+      "loginRequired": "Zaloguj się lub zarejestruj, aby sfinalizować zakup",
+      "paymentApproved": "Płatność zatwierdzona! Jesteś już zapisany.",
+      "paymentPending": "Płatność jest przetwarzana. Zostaniesz zapisany po potwierdzeniu.",
+      "freeEnrollment": "Bezpłatna Rejestracja",
+      "freeEnrollmentDesc": "Te kursy są bezpłatne. Kliknij poniżej, aby zapisać się natychmiast.",
+      "freeEnrollmentSuccess": "Zostałeś zapisany na bezpłatne kursy!",
+      "mixedCartNote": "Bezpłatne kursy zostaną zapisane automatycznie po dokonaniu płatności."
+    },
+    "confirmation": {
+      "title": "Zamówienie Potwierdzone!",
+      "subtitle": "Płatność zakończona sukcesem. Zostałeś zapisany na kursy.",
+      "orderId": "ID Zamówienia",
+      "enrolledCourses": "Zapisane Kursy",
+      "goToCourse": "Przejdź do Kursu",
+      "browseMore": "Przeglądaj Więcej Kursów",
+      "notFound": "Zamówienie nie znalezione"
+    },
+    "button": {
+      "addToCart": "Dodaj do Koszyka",
+      "inCart": "W Koszyku",
+      "goToCart": "Przejdź do Koszyka",
+      "enroll": "Zapisz się",
+      "addToCartShort": "+ Koszyk",
+      "removeFromCart": "Usuń z koszyka",
+      "viewCart": "Zobacz koszyk",
+      "goToCheckout": "Przejdź do kasy",
+      "enrollFree": "Zapisz się za darmo"
+    },
+    "currency": {
+      "toggle": "Waluta"
+    },
+    "toast": {
+      "added": "Kurs dodany do koszyka",
+      "removed": "Kurs usunięty z koszyka",
+      "alreadyEnrolled": "Jesteś już zapisany na ten kurs",
+      "mergeConflict": "Niektóre kursy były już w koszyku"
+    },
+    "errors": {
+      "checkoutFailed": "Płatność nie powiodła się. Spróbuj ponownie.",
+      "paymentFailed": "Płatność nie powiodła się. Spróbuj ponownie.",
+      "syncFailed": "Nie udało się zsynchronizować koszyka",
+      "addFailed": "Nie udało się dodać do koszyka",
+      "removeFailed": "Nie udało się usunąć z koszyka"
+    }
   }
 }

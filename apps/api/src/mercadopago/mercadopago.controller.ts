@@ -36,7 +36,7 @@ export class MercadoPagoController {
   })
   async getOrCreateCustomer(@Req() request: { user: CurrentUser }) {
     const { userId, email } = request.user;
-    const customerId = await this.mercadopagoService.getOrCreateCustomer(userId, email);
+    const customerId = await this.mercadopagoService.getOrCreateCustomer(userId, email ?? "");
     return new BaseResponse({ customerId });
   }
 
